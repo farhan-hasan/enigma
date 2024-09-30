@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1015120837572",
+    "project_id": "enigma-7099b",
+    "storage_bucket": "enigma-7099b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1015120837572:android:118c7fb4d330a92fd20291",
+        "android_client_info": {
+          "package_name": "com.wakil_training_.enigma"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRpeeQ4lM0FGiC4WS2FLRkUR4X7WRutZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
