@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   preferenceManager.getValue<int>(
                       key: SharedPreferenceKeys.CHECK_KEY);
                 },
-                child: Text("Check")),
+                child: const Text("Check")),
             Text("${widget.loginEntity?.id} - ${widget.loginEntity?.name}")
           ],
         ),
