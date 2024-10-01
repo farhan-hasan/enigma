@@ -2,9 +2,11 @@ import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/core/utils/validators/validator.dart';
 import 'package:enigma/src/features/auth/presentation/components/custom_elevated_button.dart';
 import 'package:enigma/src/features/auth/presentation/components/custom_form_field.dart';
+import 'package:enigma/src/features/auth/presentation/signup/view_model/signup_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends ConsumerWidget {
   SignupScreen({super.key});
 
   static const route = '/signup';
@@ -20,7 +22,8 @@ class SignupScreen extends StatelessWidget {
   final formKey = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final signupController = ref.watch(signUpProvider);
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -61,13 +64,23 @@ class SignupScreen extends StatelessWidget {
                 CustomFormField(
                   controller: confirmPasswordController,
                   labelText: "Confirm Password",
-                  validator: (val) {},
+                  validator: (val) {
+                    if (val?.trim() != passwordController.text.trim()) {
+                      return "Password Not Matched";
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: context.height * 0.1),
                 CustomElevatedButton(
                   buttonName: "Create an Account",
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {}
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      await ref.read(signUpProvider.notifier).signUp(
+                            email: emailController.text.trim(),
+                            password: passwordController.text.trim(),
+                          );
+                    }
                   },
                 )
               ],
