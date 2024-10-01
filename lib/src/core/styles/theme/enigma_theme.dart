@@ -9,10 +9,10 @@ final ThemeData customLightTheme = ThemeData(
   applyElevationOverlayColor: false,
 
   // Colors
-  primaryColor: const Color(0xff36618e),
+  primaryColor: Colors.white,
   primaryColorLight: const Color(0xffbbdefb),
   primaryColorDark: const Color(0xff1976d2),
-  scaffoldBackgroundColor: const Color(0xfff8f9ff),
+  scaffoldBackgroundColor: Colors.white,
   canvasColor: const Color(0xfff8f9ff),
   cardColor: const Color(0xfff8f9ff),
   dividerColor: const Color(0x1f191c20),
@@ -28,12 +28,12 @@ final ThemeData customLightTheme = ThemeData(
   // Color Scheme
   colorScheme: const ColorScheme(
     brightness: Brightness.light,
-    primary: Color(0xff36618e),
-    onPrimary: Color(0xffffffff),
+    primary: Colors.white,
+    onPrimary: Color(0xff001d36),
     primaryContainer: Color(0xffd1e4ff),
     onPrimaryContainer: Color(0xff001d36),
-    secondary: Color(0xff535f70),
-    onSecondary: Color(0xffffffff),
+    secondary: Color(0xff001d36),
+    onSecondary: Colors.white,
     secondaryContainer: Color(0xffd7e3f7),
     onSecondaryContainer: Color(0xff101c2b),
     tertiary: Color(0xff6b5778),
@@ -59,6 +59,9 @@ final ThemeData customLightTheme = ThemeData(
     surfaceTint: Color(0xff36618e),
   ),
 
+  appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xff001d36), foregroundColor: Colors.white),
+
   // Button Theme
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -82,14 +85,14 @@ final ThemeData customLightTheme = ThemeData(
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       foregroundColor: const Color(0xffffffff),
-      padding: const EdgeInsets.all(16),
+      //padding: const EdgeInsets.all(16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(500.0),
-        side: const BorderSide(
-          color: Color(0xff000000),
-          width: 100,
-          style: BorderStyle.none,
-        ),
+        // side: const BorderSide(
+        //   color: Color(0xff000000),
+        //   width: 50,
+        //   style: BorderStyle.none,
+        // ),
       ),
       minimumSize: const Size(88, 36),
     ),
@@ -125,6 +128,21 @@ final ThemeData customLightTheme = ThemeData(
     color: Color(0x1f191c20),
     thickness: 1.0,
   ),
+
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: Colors.white, // Background color of the nav bar
+    selectedItemColor:
+        Color(0xff36618e), // Color of the selected icon and label
+    unselectedItemColor: Colors.grey, // Color of unselected items
+    selectedLabelStyle: TextStyle(
+        fontSize: 14,
+        fontFamily: "Circular Std"), // Font size of the selected label
+    unselectedLabelStyle: TextStyle(
+        fontSize: 12,
+        fontFamily: "Circular Std"), // Font size of the unselected label
+    type: BottomNavigationBarType
+        .fixed, // Set it to fixed to avoid shifting behavior
+  ),
 );
 
 // Dark Theme Data
@@ -137,10 +155,10 @@ final ThemeData customDarkTheme = ThemeData(
   applyElevationOverlayColor: true,
 
   // Colors
-  primaryColor: const Color(0xffa0cafd),
+  primaryColor: const Color(0xff001d36),
   primaryColorLight: const Color(0xff9e9e9e),
   primaryColorDark: const Color(0xff000000),
-  scaffoldBackgroundColor: const Color(0xff111418),
+  scaffoldBackgroundColor: Color(0xff001d36),
   canvasColor: const Color(0xff111418),
   cardColor: const Color(0xff111418),
   dividerColor: const Color(0x1fe1e2e8),
@@ -156,12 +174,12 @@ final ThemeData customDarkTheme = ThemeData(
   // Color Scheme
   colorScheme: const ColorScheme(
     brightness: Brightness.dark,
-    primary: Color(0xffa0cafd),
-    onPrimary: Color(0xff003258),
+    primary: Color(0xff001d36),
+    onPrimary: Colors.white,
     primaryContainer: Color(0xff194975),
     onPrimaryContainer: Color(0xffd1e4ff),
-    secondary: Color(0xffbbc7db),
-    onSecondary: Color(0xff253140),
+    secondary: Colors.white,
+    onSecondary: Color(0xff001d36),
     secondaryContainer: Color(0xff3b4858),
     onSecondaryContainer: Color(0xffd7e3f7),
     tertiary: Color(0xffd6bee4),
@@ -187,6 +205,25 @@ final ThemeData customDarkTheme = ThemeData(
     surfaceTint: Color(0xffa0cafd),
   ),
 
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: Color(0xff001d36), // Background color of the nav bar
+    selectedItemColor: Colors.white, // Color of the selected icon and label
+    unselectedItemColor: Colors.grey, // Color of unselected items
+    selectedLabelStyle: TextStyle(
+        fontSize: 14,
+        fontFamily: "Circular Std"), // Font size of the selected label
+    unselectedLabelStyle: TextStyle(
+        fontSize: 12,
+        fontFamily: "Circular Std"), // Font size of the unselected label
+    type: BottomNavigationBarType
+        .fixed, // Set it to fixed to avoid shifting behavior
+  ),
+
+  appBarTheme: const AppBarTheme(
+      toolbarHeight: 100,
+      backgroundColor: Colors.white,
+      foregroundColor: Color(0xff001d36)),
+
   // Button Theme
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -209,13 +246,13 @@ final ThemeData customDarkTheme = ThemeData(
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: const Color(0xffa0cafd),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+      foregroundColor: const Color(0xff001d36),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(2.0),
+        borderRadius: BorderRadius.circular(500),
         side: const BorderSide(
           color: Color(0xff000000),
-          width: 0,
+          width: 5,
           style: BorderStyle.none,
         ),
       ),
@@ -350,7 +387,7 @@ TextTheme _buildLightTextTheme() {
       color: const Color(0xff191c20),
       fontSize: 10,
       fontWeight: FontWeight.w400,
-      letterSpacing: 1.5,
+      letterSpacing: 0.75,
       fontFamily: 'Circular Std',
       height: 1.45,
     ),
@@ -476,7 +513,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       color: const Color(0xfff8f9ff),
       fontSize: 10,
       fontWeight: FontWeight.w400,
-      letterSpacing: 1.5,
+      letterSpacing: 0.75,
       fontFamily: 'Circular Std',
       height: 1.45,
     ),
@@ -729,7 +766,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 10,
       fontWeight: FontWeight.w400,
       letterSpacing: 1.5,
-      fontFamily: 'Circular Std',
+      fontFamily: 'Caros',
       height: 1.45,
     ),
     titleLarge: _buildTextStyle(
