@@ -11,6 +11,7 @@ class App extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(goRouterProvider);
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       title: 'Enigma',
       builder: BotToastInit(),
       routerDelegate: router.routerDelegate,

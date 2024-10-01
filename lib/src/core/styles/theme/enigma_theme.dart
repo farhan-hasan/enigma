@@ -263,7 +263,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 16,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.5,
     ),
     bodyMedium: _buildTextStyle(
@@ -271,7 +271,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
     bodySmall: _buildTextStyle(
@@ -279,7 +279,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 12,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.4,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     displayLarge: _buildTextStyle(
@@ -287,7 +287,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 96,
       fontWeight: FontWeight.w300,
       letterSpacing: -1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.12,
     ),
     displayMedium: _buildTextStyle(
@@ -295,7 +295,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 60,
       fontWeight: FontWeight.w300,
       letterSpacing: -0.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.16,
     ),
     displaySmall: _buildTextStyle(
@@ -303,7 +303,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 48,
       fontWeight: FontWeight.w400,
       letterSpacing: 0,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.22,
     ),
     headlineLarge: _buildTextStyle(
@@ -311,7 +311,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 40,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.25,
     ),
     headlineMedium: _buildTextStyle(
@@ -319,7 +319,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 34,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.29,
     ),
     headlineSmall: _buildTextStyle(
@@ -327,7 +327,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 24,
       fontWeight: FontWeight.w400,
       letterSpacing: 0,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     labelLarge: _buildTextStyle(
@@ -335,7 +335,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w500,
       letterSpacing: 1.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
     labelMedium: _buildTextStyle(
@@ -343,7 +343,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 11,
       fontWeight: FontWeight.w400,
       letterSpacing: 1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     labelSmall: _buildTextStyle(
@@ -351,7 +351,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 10,
       fontWeight: FontWeight.w400,
       letterSpacing: 1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.45,
     ),
     titleLarge: _buildTextStyle(
@@ -359,7 +359,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 20,
       fontWeight: FontWeight.w500,
       letterSpacing: 0.15,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.27,
     ),
     titleMedium: _buildTextStyle(
@@ -367,7 +367,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 16,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.15,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.5,
     ),
     titleSmall: _buildTextStyle(
@@ -375,7 +375,7 @@ TextTheme _buildLightTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w500,
       letterSpacing: 0.1,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
   );
@@ -389,7 +389,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 16,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.5,
     ),
     bodyMedium: _buildTextStyle(
@@ -397,7 +397,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
     bodySmall: _buildTextStyle(
@@ -405,7 +405,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 12,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.4,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     displayLarge: _buildTextStyle(
@@ -413,7 +413,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 96,
       fontWeight: FontWeight.w300,
       letterSpacing: -1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.12,
     ),
     displayMedium: _buildTextStyle(
@@ -421,7 +421,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 60,
       fontWeight: FontWeight.w300,
       letterSpacing: -0.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.16,
     ),
     displaySmall: _buildTextStyle(
@@ -429,7 +429,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 48,
       fontWeight: FontWeight.w400,
       letterSpacing: 0,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.22,
     ),
     headlineLarge: _buildTextStyle(
@@ -437,7 +437,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 40,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.25,
     ),
     headlineMedium: _buildTextStyle(
@@ -445,7 +445,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 34,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.29,
     ),
     headlineSmall: _buildTextStyle(
@@ -453,7 +453,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 24,
       fontWeight: FontWeight.w400,
       letterSpacing: 0,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     labelLarge: _buildTextStyle(
@@ -461,7 +461,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w500,
       letterSpacing: 1.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
     labelMedium: _buildTextStyle(
@@ -469,7 +469,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 11,
       fontWeight: FontWeight.w400,
       letterSpacing: 1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     labelSmall: _buildTextStyle(
@@ -477,7 +477,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 10,
       fontWeight: FontWeight.w400,
       letterSpacing: 1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.45,
     ),
     titleLarge: _buildTextStyle(
@@ -485,7 +485,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 20,
       fontWeight: FontWeight.w500,
       letterSpacing: 0.15,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.27,
     ),
     titleMedium: _buildTextStyle(
@@ -493,7 +493,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 16,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.15,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.5,
     ),
     titleSmall: _buildTextStyle(
@@ -501,7 +501,7 @@ TextTheme _buildLightPrimaryTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w500,
       letterSpacing: 0.1,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
   );
@@ -515,7 +515,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 16,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.5,
     ),
     bodyMedium: _buildTextStyle(
@@ -523,7 +523,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
     bodySmall: _buildTextStyle(
@@ -531,7 +531,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 12,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.4,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     displayLarge: _buildTextStyle(
@@ -539,7 +539,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 96,
       fontWeight: FontWeight.w300,
       letterSpacing: -1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.12,
     ),
     displayMedium: _buildTextStyle(
@@ -547,7 +547,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 60,
       fontWeight: FontWeight.w300,
       letterSpacing: -0.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.16,
     ),
     displaySmall: _buildTextStyle(
@@ -555,7 +555,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 48,
       fontWeight: FontWeight.w400,
       letterSpacing: 0,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.22,
     ),
     headlineLarge: _buildTextStyle(
@@ -563,7 +563,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 40,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.25,
     ),
     headlineMedium: _buildTextStyle(
@@ -571,7 +571,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 34,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.29,
     ),
     headlineSmall: _buildTextStyle(
@@ -579,7 +579,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 24,
       fontWeight: FontWeight.w400,
       letterSpacing: 0,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     labelLarge: _buildTextStyle(
@@ -587,7 +587,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w500,
       letterSpacing: 1.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
     labelMedium: _buildTextStyle(
@@ -595,7 +595,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 11,
       fontWeight: FontWeight.w400,
       letterSpacing: 1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     labelSmall: _buildTextStyle(
@@ -603,7 +603,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 10,
       fontWeight: FontWeight.w400,
       letterSpacing: 1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.45,
     ),
     titleLarge: _buildTextStyle(
@@ -611,7 +611,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 20,
       fontWeight: FontWeight.w500,
       letterSpacing: 0.15,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.27,
     ),
     titleMedium: _buildTextStyle(
@@ -619,7 +619,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 16,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.15,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.5,
     ),
     titleSmall: _buildTextStyle(
@@ -627,7 +627,7 @@ TextTheme _buildDarkTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w500,
       letterSpacing: 0.1,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
   );
@@ -641,7 +641,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 16,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.5,
     ),
     bodyMedium: _buildTextStyle(
@@ -649,7 +649,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
     bodySmall: _buildTextStyle(
@@ -657,7 +657,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 12,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.4,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     displayLarge: _buildTextStyle(
@@ -665,7 +665,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 96,
       fontWeight: FontWeight.w300,
       letterSpacing: -1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.12,
     ),
     displayMedium: _buildTextStyle(
@@ -673,7 +673,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 60,
       fontWeight: FontWeight.w300,
       letterSpacing: -0.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.16,
     ),
     displaySmall: _buildTextStyle(
@@ -681,7 +681,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 48,
       fontWeight: FontWeight.w400,
       letterSpacing: 0,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.22,
     ),
     headlineLarge: _buildTextStyle(
@@ -689,7 +689,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 40,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.25,
     ),
     headlineMedium: _buildTextStyle(
@@ -697,7 +697,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 34,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.29,
     ),
     headlineSmall: _buildTextStyle(
@@ -705,7 +705,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 24,
       fontWeight: FontWeight.w400,
       letterSpacing: 0,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     labelLarge: _buildTextStyle(
@@ -713,7 +713,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w500,
       letterSpacing: 1.25,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
     labelMedium: _buildTextStyle(
@@ -721,7 +721,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 11,
       fontWeight: FontWeight.w400,
       letterSpacing: 1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.33,
     ),
     labelSmall: _buildTextStyle(
@@ -729,7 +729,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 10,
       fontWeight: FontWeight.w400,
       letterSpacing: 1.5,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.45,
     ),
     titleLarge: _buildTextStyle(
@@ -737,7 +737,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 20,
       fontWeight: FontWeight.w500,
       letterSpacing: 0.15,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.27,
     ),
     titleMedium: _buildTextStyle(
@@ -745,7 +745,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 16,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.15,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.5,
     ),
     titleSmall: _buildTextStyle(
@@ -753,7 +753,7 @@ TextTheme _buildDarkPrimaryTextTheme() {
       fontSize: 14,
       fontWeight: FontWeight.w500,
       letterSpacing: 0.1,
-      fontFamily: '.AppleSystemUIFont',
+      fontFamily: 'Circular Std',
       height: 1.43,
     ),
   );
