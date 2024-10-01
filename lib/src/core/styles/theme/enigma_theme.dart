@@ -81,13 +81,13 @@ final ThemeData customLightTheme = ThemeData(
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: const Color(0xff36618e),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+      foregroundColor: const Color(0xffffffff),
+      padding: const EdgeInsets.all(16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(2.0),
+        borderRadius: BorderRadius.circular(500.0),
         side: const BorderSide(
           color: Color(0xff000000),
-          width: 0,
+          width: 100,
           style: BorderStyle.none,
         ),
       ),
