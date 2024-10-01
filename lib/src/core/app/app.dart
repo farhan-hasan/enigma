@@ -19,6 +19,7 @@ class App extends ConsumerWidget {
       routeInformationProvider: router.routeInformationProvider,
       darkTheme: customDarkTheme,
       theme: customLightTheme,
+      themeMode: ThemeMode.light,
     );
   }
 }

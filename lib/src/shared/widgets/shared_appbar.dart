@@ -1,4 +1,3 @@
-import 'package:enigma/src/core/styles/theme/enigma_theme.dart';
 import 'package:flutter/material.dart';
 
 class SharedAppbar extends StatelessWidget implements PreferredSizeWidget {
@@ -16,13 +15,14 @@ class SharedAppbar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: customDarkTheme.canvasColor,
-      foregroundColor: customDarkTheme.focusColor,
-      centerTitle: true,
-      title: Text(title),
-      leading: leadingWidget,
-      actions: trailingWidgets,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: AppBar(
+        centerTitle: true,
+        title: Text(title),
+        leading: leadingWidget,
+        actions: trailingWidgets,
+      ),
     );
   }
 }

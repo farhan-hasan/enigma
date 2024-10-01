@@ -41,7 +41,9 @@ final goRouterProvider = Provider(
         StatefulShellRoute.indexedStack(
             branches: [
               StatefulShellBranch(
-                  initialLocation: MessageScreen.route,
+                  initialLocation: MessageScreen.setRoute(
+                      messageEntity:
+                          MessageEntity(id: 1, message: "Message Screen")),
                   routes: [
                     GoRoute(
                         path: MessageScreen.route,
@@ -50,7 +52,28 @@ final goRouterProvider = Provider(
                             data: state.pathParameters,
                           );
                         }),
-                  ])
+                  ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                    path: "/calls",
+                    builder: (context, state) {
+                      return Center(child: Text("This is calls screen"));
+                    }),
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                    path: "/contacts",
+                    builder: (context, state) {
+                      return Center(child: Text("This is contacts screen"));
+                    }),
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                    path: "/settings",
+                    builder: (context, state) {
+                      return Center(child: Text("This is settings screen"));
+                    }),
+              ])
             ],
             builder: (context, state, navigationShell) {
               return BottomNavScreen(navigationShell: navigationShell);
