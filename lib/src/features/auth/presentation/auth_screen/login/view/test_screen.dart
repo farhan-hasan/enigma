@@ -1,7 +1,7 @@
 import 'package:enigma/src/core/global/global_variables.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/features/auth/domain/entity/login_entity.dart';
-import 'package:enigma/src/features/auth/presentation/login/view/login_screen.dart';
+import 'package:enigma/src/features/auth/presentation/auth_screen/login/view/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class TestScreen extends StatelessWidget {
