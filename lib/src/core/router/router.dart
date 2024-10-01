@@ -33,15 +33,17 @@ final goRouterProvider = Provider(
         ),
         StatefulShellRoute.indexedStack(
             branches: [
-              StatefulShellBranch(routes: [
-                GoRoute(
-                    path: MessageScreen.route,
-                    builder: (context, state) {
-                      return MessageScreen(
-                        data: state.pathParameters,
-                      );
-                    }),
-              ])
+              StatefulShellBranch(
+                  initialLocation: MessageScreen.route,
+                  routes: [
+                    GoRoute(
+                        path: MessageScreen.route,
+                        builder: (context, state) {
+                          return MessageScreen(
+                            data: state.pathParameters,
+                          );
+                        }),
+                  ])
             ],
             builder: (context, state, navigationShell) {
               return BottomNavScreen(navigationShell: navigationShell);
