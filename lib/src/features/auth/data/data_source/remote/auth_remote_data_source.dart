@@ -94,7 +94,7 @@ class AuthRemoteDataSource {
           break;
       }
     }
-    return left(failure);
+    return Left(failure);
   }
 
   Future<Either<Failure, Success>> logout() async {

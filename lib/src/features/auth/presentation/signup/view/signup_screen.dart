@@ -25,7 +25,10 @@ class SignupScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // final signupController = ref.watch(signUpProvider);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Form(
@@ -38,7 +41,7 @@ class SignupScreen extends ConsumerWidget {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Text(
                     'Get chatting with friends and family today by signing up for our chat app',
                     style: Theme.of(context).textTheme.bodyLarge,

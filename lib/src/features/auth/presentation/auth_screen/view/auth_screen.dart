@@ -17,7 +17,7 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Row(
@@ -75,7 +75,7 @@ class AuthScreen extends StatelessWidget {
                     onPressed: () {},
                   ),
                   SocialMediaIconButton(
-                    iconSource: IconsPath.appleIcon,
+                    iconSource: IconsPath.appleLightIcon,
                     onPressed: () {},
                   )
                 ],

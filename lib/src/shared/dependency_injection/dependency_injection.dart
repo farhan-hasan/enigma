@@ -1,7 +1,6 @@
 import 'package:enigma/firebase_options.dart';
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_manager.dart';
 import 'package:enigma/src/features/auth/data/repository/auth_repository_impl.dart';
-import 'package:enigma/src/features/auth/domain/repository/auth_repository.dart';
 import 'package:enigma/src/features/auth/domain/usecases/change_password_usecase.dart';
 import 'package:enigma/src/features/auth/domain/usecases/forgot_password_usecase.dart';
 import 'package:enigma/src/features/auth/domain/usecases/login_usecase.dart';
@@ -23,19 +22,17 @@ Future<void> setupService() async {
     return sharedPreferenceManager;
   });
 
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl());
+  sl.registerSingleton<AuthRepositoryImpl>(AuthRepositoryImpl());
 
-  sl.registerLazySingleton<ChangePasswordUsecase>(
-      () => ChangePasswordUsecase());
+  sl.registerSingleton<ChangePasswordUsecase>(ChangePasswordUsecase());
 
-  sl.registerLazySingleton<ForgotPasswordUsecase>(
-      () => ForgotPasswordUsecase());
+  sl.registerSingleton<ForgotPasswordUsecase>(ForgotPasswordUsecase());
 
-  sl.registerLazySingleton<LoginUseCase>(() => LoginUseCase());
+  sl.registerSingleton<LoginUseCase>(LoginUseCase());
 
-  sl.registerLazySingleton<LogoutUseCase>(() => LogoutUseCase());
+  sl.registerSingleton<LogoutUseCase>(LogoutUseCase());
 
-  sl.registerLazySingleton<SignupUseCase>(() => SignupUseCase());
+  sl.registerSingleton<SignupUseCase>(SignupUseCase());
 
   await sl.allReady();
 }
