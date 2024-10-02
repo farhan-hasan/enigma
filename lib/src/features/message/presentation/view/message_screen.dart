@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
+import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
 
@@ -18,28 +20,228 @@ class MessageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //backgroundColor: Theme.of(context).colorScheme.secondary,
       appBar: SharedAppbar(
           title: "Home",
-          leadingWidget: OutlinedButton(
-            onPressed: () {},
-            child: const Icon(
-              Icons.search,
+          leadingWidget: GestureDetector(
+            onTap: () {},
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(500),
+              ),
+              child: const Icon(
+                Icons.search,
+                size: 25,
+              ),
             ),
           ),
           trailingWidgets: [
-            CircleAvatar(
-              radius: 44,
-              child: ClipOval(
-                child: Image.network(
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                    "https://s3-alpha-sig.figma.com/img/b1fb/7717/906c952085307b6af6e1051a901bdb02?Expires=1728864000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=edtDSMIHBYzR5Wos5wA0lQVreSXkLV9Z4snQyZArYDI4cMVT-m~m67qlV447q3PXrBSC6OIb7F8HG9qgAdF7oU3eWSQqVgV8cpRyJe3m6iMFacyfd4dnz~tYghPejkfrX~ToE6ieUZ1Uuok2r6Z1dPr5ytPPg0bQYMuTiZO0UXdYqT~a8~nLiK48lNtV8KnVtoQScVMuWO2XmVtJ1t4T-CUxJwOf6QBuXsWHi9ZZ3VaLB0894uLMJw23yaDcaLld2UtIH0NcSJCd2kbRHub6eHvgzu~SEQApa3zAM8~0Y6YUIws0rAGj55yvCllkC7kqPee1b7S8Hpz90L9E4D8Bdw__"),
+            Container(
+              height: 55,
+              width: 55,
+              padding: EdgeInsets.all(10),
+              child: CircularDisplayPicture(
+                radius: 30,
               ),
             )
           ]),
       body: Center(
-        child: Text(messageEntity?.message ?? ""),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Story section
+            buildStorySection(context),
+            // Chat section
+            buildChatSection(context)
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildChatSection(BuildContext context) {
+    return Expanded(
+      flex: 4,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(40), topRight: Radius.circular(40)),
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+        child: ListView.separated(
+          padding: const EdgeInsets.only(top: 30),
+          primary: false,
+          shrinkWrap: false,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          children: [
+                            CircularDisplayPicture(
+                              radius: 23,
+                            ),
+                            const Positioned(
+                                right: 0,
+                                bottom: 0,
+                                child: Icon(
+                                  Icons.circle,
+                                  color: Colors.green,
+                                  size: 15,
+                                ))
+                          ],
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        SizedBox(
+                          width: context.width / 1.7,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Text Linderson",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                  "How are you doing today?asdsadasdasdsadsadasdaasdasdasdsaddddddddsssssssssssssssssssssss",
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.labelSmall)
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          "2 min ago",
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                        CircleAvatar(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          radius: 10,
+                          child: Text(
+                            "3",
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontSize: 10),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
+          itemCount: 20,
+          separatorBuilder: (BuildContext context, int index) {
+            return const SizedBox(
+              height: 30,
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Expanded buildStorySection(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: Container(
+        padding: const EdgeInsets.only(left: 15, top: 24),
+        //color: Theme.of(context).colorScheme.secondary,
+        width: double.infinity,
+        child: ListView.builder(
+          shrinkWrap: true,
+          primary: false,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: SizedBox(
+                  width: 70,
+                  child: Column(
+                    children: [
+                      Stack(
+                        children: [
+                          CircularDisplayPicture(
+                            radius: 25,
+                          ),
+                          Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(500)),
+                                child: const Icon(
+                                  Icons.add_circle_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ))
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        "Alex Linderson",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        //style: customLightTheme.primaryTextTheme.labelLarge,
+                      )
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: SizedBox(
+                  width: 70,
+                  child: Column(
+                    children: [
+                      CircularDisplayPicture(
+                        radius: 25,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        "Alex Linderson",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        //style: customLightTheme.primaryTextTheme.labelLarge,
+                      )
+                    ],
+                  ),
+                ),
+              );
+            }
+          },
+          itemCount: 30,
+          scrollDirection: Axis.horizontal,
+        ),
       ),
     );
   }

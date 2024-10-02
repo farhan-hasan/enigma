@@ -8,10 +8,10 @@ import 'package:enigma/src/shared/domain/use_cases/base_use_case.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SignupUseCase extends UseCase<Either<Failure, User>, SignupDto> {
-  AuthRepository authRepository = sl.get<AuthRepositoryImpl>();
+  final AuthRepository _authRepository = sl.get<AuthRepositoryImpl>();
   @override
   Future<Either<Failure, User>> call(SignupDto params) async {
-    return await authRepository.signUp(
+    return await _authRepository.signUp(
         email: params.email, password: params.password);
   }
 }
