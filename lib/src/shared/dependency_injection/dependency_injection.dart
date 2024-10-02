@@ -1,4 +1,5 @@
 import 'package:enigma/firebase_options.dart';
+import 'package:enigma/src/core/database/local/sembast/sembast_db_config.dart';
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_manager.dart';
 import 'package:enigma/src/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:enigma/src/features/auth/domain/usecases/change_password_usecase.dart';
@@ -20,6 +21,12 @@ Future<void> setupService() async {
         SharedPreferenceManager();
     await sharedPreferenceManager.init();
     return sharedPreferenceManager;
+  });
+
+  sl.registerSingletonAsync<SembastDbConfig>(() async {
+    final sembastDbConfig = SembastDbConfig();
+    await sembastDbConfig.init();
+    return sembastDbConfig;
   });
 
   sl.registerSingleton<AuthRepositoryImpl>(AuthRepositoryImpl());
