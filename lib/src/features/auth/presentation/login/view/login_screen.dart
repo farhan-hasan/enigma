@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () {},
                       ),
                       SocialMediaIconButton(
-                        iconSource: IconsPath.appleIcon,
+                        iconSource: IconsPath.appleDarkIcon,
                         onPressed: () {},
                       )
                     ],

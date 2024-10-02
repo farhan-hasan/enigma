@@ -67,7 +67,7 @@ class AuthScreen extends StatelessWidget {
                     onPressed: () {},
                   ),
                   SocialMediaIconButton(
-                    iconSource: IconsPath.appleIcon,
+                    iconSource: IconsPath.appleLightIcon,
                     onPressed: () {},
                   )
                 ],
