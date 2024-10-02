@@ -6,10 +6,10 @@ import 'package:enigma/src/features/auth/domain/repository/auth_repository.dart'
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:enigma/src/shared/domain/use_cases/base_use_case.dart';
 
-class ChangePasswordUsecase extends UseCase<Either<Failure, Success>, String> {
-  AuthRepository authRepository = sl.get<AuthRepositoryImpl>();
+class ChangePasswordUseCase extends UseCase<Either<Failure, Success>, String> {
+  final AuthRepository _authRepository = sl.get<AuthRepositoryImpl>();
   @override
   Future<Either<Failure, Success>> call(String params) async {
-    return await authRepository.changePassword(password: params);
+    return await _authRepository.changePassword(password: params);
   }
 }

@@ -7,9 +7,9 @@ import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart
 import 'package:enigma/src/shared/domain/use_cases/base_use_case.dart';
 
 class LogoutUseCase extends UseCase<Either<Failure, Success>, NoParams> {
-  AuthRepository authRepository = sl.get<AuthRepositoryImpl>();
+  final AuthRepository _authRepository = sl.get<AuthRepositoryImpl>();
   @override
   Future<Either<Failure, Success>> call(NoParams params) async {
-    return await authRepository.logout();
+    return await _authRepository.logout();
   }
 }

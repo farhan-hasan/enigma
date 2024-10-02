@@ -9,7 +9,7 @@ class FirebaseHandler {
     return _auth;
   }
 
-  static fireStore() {
+  static FirebaseFirestore get fireStore {
     return _firestore;
   }
 }

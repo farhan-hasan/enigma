@@ -1,3 +1,3 @@
 class SharedPreferenceKeys {
-  static const String CHECK_KEY = "check_key";
+  static const String AUTH_STATE = "auth_state";
 }
