@@ -13,7 +13,8 @@ import 'package:go_router/go_router.dart';
 final goRouterProvider = Provider(
   (ref) {
     return GoRouter(
-      initialLocation: SplashScreen.route,
+      initialLocation: MessageScreen.setRoute(
+          messageEntity: MessageEntity(id: 10, message: "Message Screen")),
       observers: [BotToastNavigatorObserver()],
       routes: [
         GoRoute(

@@ -40,7 +40,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Form(
@@ -52,10 +55,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   "Log in to Enigma",
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
-                Text(
-                  'Welcome back! Sign in using your social account or email to continue',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    'Welcome back! Sign in using your social account or email to continue',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -80,8 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20.0),
                   child: OrWidget(
-                    color: Theme.of(context).primaryColor,
-                  ),
+                      //color: Theme.of(context).colorScheme.secondary,
+                      ),
                 ),
                 CustomFormField(
                   controller: emailController,
