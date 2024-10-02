@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class OrWidget extends StatelessWidget {
-  const OrWidget({super.key, required this.color});
-  final Color color;
+  const OrWidget({
+    super.key,
+  });
+  //final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class OrWidget extends StatelessWidget {
             child: Divider(
               // endIndent: context.width * 0.7,
               thickness: 1.5,
-              color: color,
+              //color: color,
             ),
           ),
           Padding(
@@ -22,7 +24,7 @@ class OrWidget extends StatelessWidget {
             child: Text(
               "OR",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: color,
+                  //color: color,
                   ),
             ),
           ),
@@ -30,7 +32,7 @@ class OrWidget extends StatelessWidget {
             child: Divider(
               // indent: context.width * 0.7,
               thickness: 1.5,
-              color: color,
+              //color: color,
             ),
           ),
         ],

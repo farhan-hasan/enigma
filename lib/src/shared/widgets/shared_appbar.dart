@@ -15,14 +15,15 @@ class SharedAppbar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: AppBar(
-        centerTitle: true,
-        title: Text(title),
-        leading: leadingWidget,
-        actions: trailingWidgets,
-      ),
+    return AppBar(
+      centerTitle: true,
+      title: Text(title),
+      leading: Container(
+          height: 50,
+          width: 50,
+          margin: EdgeInsets.all(10),
+          child: leadingWidget),
+      actions: trailingWidgets,
     );
   }
 }

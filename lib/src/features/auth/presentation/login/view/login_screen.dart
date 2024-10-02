@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     'Welcome back! Sign in using your social account or email to continue',
                     style: Theme.of(context).textTheme.bodyLarge,
@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () {},
                       ),
                       SocialMediaIconButton(
-                        iconSource: IconsPath.appleDarkIcon,
+                        iconSource: IconsPath.appleIcon,
                         onPressed: () {},
                       )
                     ],
@@ -86,8 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20.0),
                   child: OrWidget(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+                      //color: Theme.of(context).colorScheme.secondary,
+                      ),
                 ),
                 CustomFormField(
                   controller: emailController,

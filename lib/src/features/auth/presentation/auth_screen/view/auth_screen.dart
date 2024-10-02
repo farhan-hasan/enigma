@@ -17,6 +17,7 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).colorScheme.secondary,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -25,16 +26,13 @@ class AuthScreen extends StatelessWidget {
           children: [
             Text(
               "E ",
-              style: Theme.of(context)
-                  .textTheme
-                  .displaySmall
-                  ?.copyWith(color: Colors.white),
+              style: Theme.of(context).textTheme.displaySmall,
             ),
             Text(
               "Enigma",
               style: TextStyle(
-                color: Theme.of(context).secondaryHeaderColor,
-              ),
+                  //color: Theme.of(context).secondaryHeaderColor,
+                  ),
             ),
           ],
         ),
@@ -46,19 +44,13 @@ class AuthScreen extends StatelessWidget {
           children: [
             Text(
               'Connect friends easily & quickly',
-              style: Theme.of(context)
-                  .textTheme
-                  .displayLarge
-                  ?.copyWith(color: Colors.white),
+              style: Theme.of(context).textTheme.displayLarge,
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 'Our chat app is the perfect way to stay connected with friends and family.',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(color: Colors.white),
+                style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
             Padding(
@@ -75,15 +67,15 @@ class AuthScreen extends StatelessWidget {
                     onPressed: () {},
                   ),
                   SocialMediaIconButton(
-                    iconSource: IconsPath.appleLightIcon,
+                    iconSource: IconsPath.appleIcon,
                     onPressed: () {},
                   )
                 ],
               ),
             ),
             OrWidget(
-              color: Theme.of(context).splashColor,
-            ),
+                //color: Theme.of(context).splashColor,
+                ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CustomElevatedButton(
@@ -98,10 +90,10 @@ class AuthScreen extends StatelessWidget {
                 context.push(LoginScreen.setRoute());
               },
               child: RichText(
-                text: const TextSpan(children: [
+                text: TextSpan(children: [
                   TextSpan(text: "Existing account?"),
                   TextSpan(text: "  Log in")
-                ]),
+                ], style: Theme.of(context).textTheme.bodySmall),
               ),
             )
           ],
