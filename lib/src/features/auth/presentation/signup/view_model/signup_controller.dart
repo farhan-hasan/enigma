@@ -18,7 +18,10 @@ class SignupController extends StateNotifier<SignupGeneric> {
 
   SignupUseCase signupUseCase = sl.get<SignupUseCase>();
 
-  signUp({required String email, required String password}) async {
+  Future<String> signUp(
+      {required String email, required String password}) async {
+    state = state.update(isLoading: true);
+    String uid = "";
     SignupDto params = SignupDto(email: email, password: password);
     Either<Failure, User> response = await signupUseCase.call(params);
     response.fold(
@@ -27,7 +30,10 @@ class SignupController extends StateNotifier<SignupGeneric> {
       },
       (right) {
         BotToast.showText(text: "Account created successfully.");
+        uid = right.uid;
       },
     );
+    state = state.update(isLoading: false);
+    return uid;
   }
 }

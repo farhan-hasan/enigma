@@ -3,6 +3,8 @@ import 'package:enigma/src/core/utils/validators/validator.dart';
 import 'package:enigma/src/features/auth/presentation/components/custom_elevated_button.dart';
 import 'package:enigma/src/features/auth/presentation/components/custom_form_field.dart';
 import 'package:enigma/src/features/auth/presentation/signup/view_model/signup_controller.dart';
+import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,7 +25,8 @@ class SignupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final signupController = ref.watch(signUpProvider);
+    final signupController = ref.watch(signUpProvider);
+    final profileController = ref.watch(profileProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -75,17 +78,32 @@ class SignupScreen extends ConsumerWidget {
                   },
                 ),
                 SizedBox(height: context.height * 0.1),
-                CustomElevatedButton(
-                  buttonName: "Create an Account",
-                  onPressed: () async {
-                    if (formKey.currentState!.validate()) {
-                      await ref.read(signUpProvider.notifier).signUp(
+                if (signupController.isLoading || profileController.isLoading)
+                  const CircularProgressIndicator()
+                else
+                  CustomElevatedButton(
+                    buttonName: "Create an Account",
+                    onPressed: () async {
+                      if (formKey.currentState!.validate()) {
+                        String uid =
+                            await ref.read(signUpProvider.notifier).signUp(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim(),
+                                );
+                        if (uid.isNotEmpty) {
+                          ProfileEntity profileEntity = ProfileEntity(
+                            uid: uid,
+                            name: nameController.text.trim(),
                             email: emailController.text.trim(),
-                            password: passwordController.text.trim(),
+                            createdAt: DateTime.now(),
                           );
-                    }
-                  },
-                )
+                          await ref
+                              .read(profileProvider.notifier)
+                              .createProfile(profileEntity);
+                        }
+                      }
+                    },
+                  )
               ],
             ),
           ),

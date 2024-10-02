@@ -7,20 +7,22 @@ import 'package:enigma/src/features/auth/presentation/components/custom_elevated
 import 'package:enigma/src/features/auth/presentation/components/custom_form_field.dart';
 import 'package:enigma/src/features/auth/presentation/components/or_widget.dart';
 import 'package:enigma/src/features/auth/presentation/components/social_media_icon_button.dart';
+import 'package:enigma/src/features/auth/presentation/login/view_model/login_controller.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   LoginScreen({super.key}) {}
   static const route = "/login";
 
   static setRoute() => "/login";
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final SharedPreferenceManager preferenceManager = sl.get();
@@ -31,14 +33,15 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     // TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((t) {
-      preferenceManager.insertValue<int>(
-          key: SharedPreferenceKeys.CHECK_KEY, data: 10);
+      preferenceManager.insertValue<bool>(
+          key: SharedPreferenceKeys.AUTH_STATE, data: true);
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final loginController = ref.watch(loginProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -83,8 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.0),
                   child: OrWidget(
                       //color: Theme.of(context).colorScheme.secondary,
                       ),
@@ -101,12 +104,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   validator: Validators.passwordValidator,
                 ),
                 SizedBox(height: context.height * 0.2),
-                CustomElevatedButton(
-                  buttonName: "Log in",
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {}
-                  },
-                ),
+                if (loginController.isLoading)
+                  const CircularProgressIndicator()
+                else
+                  CustomElevatedButton(
+                    buttonName: "Log in",
+                    onPressed: () async {
+                      if (formKey.currentState!.validate()) {
+                        await ref.read(loginProvider.notifier).login(
+                            email: emailController.text.trim(),
+                            password: passwordController.text);
+                      }
+                    },
+                  ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextButton(
