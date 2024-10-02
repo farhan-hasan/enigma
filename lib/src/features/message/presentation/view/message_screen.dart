@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:enigma/src/core/styles/theme/enigma_theme.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
@@ -21,7 +20,7 @@ class MessageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.secondary,
+      //backgroundColor: Theme.of(context).colorScheme.secondary,
       appBar: SharedAppbar(
           title: "Home",
           leadingWidget: GestureDetector(
@@ -33,13 +32,18 @@ class MessageScreen extends StatelessWidget {
               ),
               child: const Icon(
                 Icons.search,
-                size: 35,
+                size: 25,
               ),
             ),
           ),
           trailingWidgets: [
-            CircularDisplayPicture(
-              radius: 30,
+            Container(
+              height: 55,
+              width: 55,
+              padding: EdgeInsets.all(10),
+              child: CircularDisplayPicture(
+                radius: 30,
+              ),
             )
           ]),
       body: Center(
@@ -63,7 +67,7 @@ class MessageScreen extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(40), topRight: Radius.circular(40)),
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.secondary,
         ),
         child: ListView.separated(
           padding: const EdgeInsets.only(top: 30),
@@ -114,10 +118,7 @@ class MessageScreen extends StatelessWidget {
                                   "How are you doing today?asdsadasdasdsadsadasdaasdasdasdsaddddddddsssssssssssssssssssssss",
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelSmall
-                                      ?.copyWith(color: Colors.grey))
+                                  style: Theme.of(context).textTheme.labelSmall)
                             ],
                           ),
                         ),
@@ -129,17 +130,17 @@ class MessageScreen extends StatelessWidget {
                       children: [
                         Text(
                           "2 min ago",
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall
-                              ?.copyWith(color: Colors.grey),
+                          style: Theme.of(context).textTheme.labelSmall,
                         ),
-                        const CircleAvatar(
-                          backgroundColor: Colors.deepOrange,
+                        CircleAvatar(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                           radius: 10,
                           child: Text(
                             "3",
-                            style: TextStyle(color: Colors.white, fontSize: 10),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontSize: 10),
                           ),
                         )
                       ],
@@ -165,7 +166,7 @@ class MessageScreen extends StatelessWidget {
       flex: 1,
       child: Container(
         padding: const EdgeInsets.only(left: 15, top: 24),
-        color: Theme.of(context).colorScheme.secondary,
+        //color: Theme.of(context).colorScheme.secondary,
         width: double.infinity,
         child: ListView.builder(
           shrinkWrap: true,
@@ -181,7 +182,7 @@ class MessageScreen extends StatelessWidget {
                       Stack(
                         children: [
                           CircularDisplayPicture(
-                            radius: 30,
+                            radius: 25,
                           ),
                           Positioned(
                               right: 0,
@@ -201,12 +202,12 @@ class MessageScreen extends StatelessWidget {
                       const SizedBox(
                         height: 10,
                       ),
-                      Text(
+                      const Text(
                         "Alex Linderson",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
-                        style: customLightTheme.primaryTextTheme.labelLarge,
+                        //style: customLightTheme.primaryTextTheme.labelLarge,
                       )
                     ],
                   ),
@@ -220,17 +221,17 @@ class MessageScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       CircularDisplayPicture(
-                        radius: 30,
+                        radius: 25,
                       ),
                       const SizedBox(
                         height: 10,
                       ),
-                      Text(
+                      const Text(
                         "Alex Linderson",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
-                        style: customLightTheme.primaryTextTheme.labelLarge,
+                        //style: customLightTheme.primaryTextTheme.labelLarge,
                       )
                     ],
                   ),

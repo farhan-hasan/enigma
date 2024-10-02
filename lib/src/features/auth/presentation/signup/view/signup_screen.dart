@@ -41,7 +41,7 @@ class SignupScreen extends ConsumerWidget {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     'Get chatting with friends and family today by signing up for our chat app',
                     style: Theme.of(context).textTheme.bodyLarge,
