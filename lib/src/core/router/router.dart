@@ -4,6 +4,7 @@ import 'package:enigma/src/features/auth/presentation/login/view/login_screen.da
 import 'package:enigma/src/features/auth/presentation/signup/view/signup_screen.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/features/message/presentation/view/message_screen.dart';
+import 'package:enigma/src/features/profile/presentation/view/people_screen.dart';
 import 'package:enigma/src/features/splash/presentation/view/splash_screen.dart';
 import 'package:enigma/src/shared/view/bottom_nav_screen.dart';
 import 'package:flutter/material.dart';
@@ -64,9 +65,9 @@ final goRouterProvider = Provider(
               ]),
               StatefulShellBranch(routes: [
                 GoRoute(
-                    path: "/contacts",
+                    path: "/people",
                     builder: (context, state) {
-                      return Center(child: Text("This is contacts screen"));
+                      return PeopleScreen(data: state.pathParameters);
                     }),
               ]),
               StatefulShellBranch(routes: [

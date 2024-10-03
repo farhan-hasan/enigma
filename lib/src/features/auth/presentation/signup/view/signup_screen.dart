@@ -4,7 +4,7 @@ import 'package:enigma/src/features/auth/presentation/components/custom_elevated
 import 'package:enigma/src/features/auth/presentation/components/custom_form_field.dart';
 import 'package:enigma/src/features/auth/presentation/signup/view_model/signup_controller.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
-import 'package:enigma/src/features/profile/presentation/view_model/profile_controller.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

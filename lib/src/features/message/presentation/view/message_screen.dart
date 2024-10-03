@@ -26,23 +26,32 @@ class MessageScreen extends StatelessWidget {
           leadingWidget: GestureDetector(
             onTap: () {},
             child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(500),
-              ),
-              child: const Icon(
-                Icons.search,
-                size: 25,
+              height: context.height * .05,
+              width: context.width * .05,
+              margin: const EdgeInsets.all(8),
+              child: GestureDetector(
+                onTap: () {},
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.search,
+                    size: 25,
+                  ),
+                ),
               ),
             ),
           ),
           trailingWidgets: [
             Container(
-              height: 55,
-              width: 55,
-              padding: EdgeInsets.all(10),
+              height: context.height * .15,
+              width: context.width * .137,
+              padding: const EdgeInsets.all(8),
               child: CircularDisplayPicture(
                 radius: 30,
+                imageURL: null,
               ),
             )
           ]),
@@ -64,13 +73,8 @@ class MessageScreen extends StatelessWidget {
     return Expanded(
       flex: 4,
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(40), topRight: Radius.circular(40)),
-          color: Theme.of(context).colorScheme.secondary,
-        ),
+        //color: Colors.grey,
         child: ListView.separated(
-          padding: const EdgeInsets.only(top: 30),
           primary: false,
           shrinkWrap: false,
           itemBuilder: (context, index) {
@@ -88,6 +92,7 @@ class MessageScreen extends StatelessWidget {
                           children: [
                             CircularDisplayPicture(
                               radius: 23,
+                              imageURL: null,
                             ),
                             const Positioned(
                                 right: 0,
@@ -132,15 +137,12 @@ class MessageScreen extends StatelessWidget {
                           "2 min ago",
                           style: Theme.of(context).textTheme.labelSmall,
                         ),
-                        CircleAvatar(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
+                        const CircleAvatar(
+                          backgroundColor: Colors.green,
                           radius: 10,
                           child: Text(
                             "3",
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontSize: 10),
+                            style: TextStyle(fontSize: 10),
                           ),
                         )
                       ],
@@ -161,12 +163,12 @@ class MessageScreen extends StatelessWidget {
     );
   }
 
-  Expanded buildStorySection(BuildContext context) {
+  Widget buildStorySection(BuildContext context) {
     return Expanded(
       flex: 1,
       child: Container(
         padding: const EdgeInsets.only(left: 15, top: 24),
-        //color: Theme.of(context).colorScheme.secondary,
+        //color: Colors.red,
         width: double.infinity,
         child: ListView.builder(
           shrinkWrap: true,
@@ -182,6 +184,7 @@ class MessageScreen extends StatelessWidget {
                       Stack(
                         children: [
                           CircularDisplayPicture(
+                            imageURL: null,
                             radius: 25,
                           ),
                           Positioned(
@@ -221,6 +224,7 @@ class MessageScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       CircularDisplayPicture(
+                        imageURL: null,
                         radius: 25,
                       ),
                       const SizedBox(
