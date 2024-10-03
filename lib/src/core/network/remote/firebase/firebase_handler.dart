@@ -3,10 +3,12 @@ import 'package:enigma/src/core/network/remote/firebase/model/firebase_order_by_
 import 'package:enigma/src/core/network/remote/firebase/model/firebase_where_model.dart';
 import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseHandler {
   static FirebaseAuth _auth = FirebaseAuth.instance;
   static FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static FirebaseStorage _storage = FirebaseStorage.instance;
 
   static FirebaseAuth get auth {
     return _auth;
@@ -14,6 +16,10 @@ class FirebaseHandler {
 
   static FirebaseFirestore get fireStore {
     return _firestore;
+  }
+
+  static FirebaseStorage get storage {
+    return _storage;
   }
 
   static Future<QuerySnapshot<Map<String, dynamic>>> get(

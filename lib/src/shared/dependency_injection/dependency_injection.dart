@@ -14,6 +14,8 @@ import 'package:enigma/src/features/profile/domain/usecases/read_all_people_usec
 import 'package:enigma/src/features/profile/domain/usecases/read_all_profile_usecase.dart';
 import 'package:enigma/src/features/profile/domain/usecases/read_profile_usecase.dart';
 import 'package:enigma/src/features/profile/domain/usecases/update_profile_usecase.dart';
+import 'package:enigma/src/shared/data/repository/media_repository_impl.dart';
+import 'package:enigma/src/shared/domain/use_cases/profile_picture_usecase.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 
@@ -37,30 +39,24 @@ Future<void> setupService() async {
   });
 
   sl.registerSingleton<AuthRepositoryImpl>(AuthRepositoryImpl());
-
   sl.registerSingleton<ChangePasswordUseCase>(ChangePasswordUseCase());
-
   sl.registerSingleton<ForgotPasswordUseCase>(ForgotPasswordUseCase());
-
   sl.registerSingleton<LoginUseCase>(LoginUseCase());
-
   sl.registerSingleton<LogoutUseCase>(LogoutUseCase());
-
   sl.registerSingleton<SignupUseCase>(SignupUseCase());
 
   sl.registerSingleton<ProfileRepositoryImpl>(ProfileRepositoryImpl());
-
   sl.registerSingleton<CreateProfileUseCase>(CreateProfileUseCase());
-
   sl.registerSingleton<ReadProfileUseCase>(ReadProfileUseCase());
-
   sl.registerSingleton<ReadAllProfileUseCase>(ReadAllProfileUseCase());
 
   sl.registerSingleton<ReadAllPeopleUseCase>(ReadAllPeopleUseCase());
 
   sl.registerSingleton<UpdateProfileUseCase>(UpdateProfileUseCase());
-
   sl.registerSingleton<DeleteProfileUseCase>(DeleteProfileUseCase());
+
+  sl.registerSingleton<MediaRepositoryImpl>(MediaRepositoryImpl());
+  sl.registerSingleton<ProfilePictureUsecase>(ProfilePictureUsecase());
 
   await sl.allReady();
 }
