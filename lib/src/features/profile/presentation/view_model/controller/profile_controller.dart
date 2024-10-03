@@ -5,7 +5,7 @@ import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/features/auth/presentation/login/view/login_screen.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/domain/usecases/create_profile_usecase.dart';
-import 'package:enigma/src/features/profile/presentation/view_model/profile_generic.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/generic/profile_generic.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

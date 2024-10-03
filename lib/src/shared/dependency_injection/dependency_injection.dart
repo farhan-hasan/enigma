@@ -10,6 +10,7 @@ import 'package:enigma/src/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:enigma/src/features/profile/data/repository/profile_repository_impl.dart';
 import 'package:enigma/src/features/profile/domain/usecases/create_profile_usecase.dart';
 import 'package:enigma/src/features/profile/domain/usecases/delete_profile_usecase.dart';
+import 'package:enigma/src/features/profile/domain/usecases/read_all_people_usecase.dart';
 import 'package:enigma/src/features/profile/domain/usecases/read_all_profile_usecase.dart';
 import 'package:enigma/src/features/profile/domain/usecases/read_profile_usecase.dart';
 import 'package:enigma/src/features/profile/domain/usecases/update_profile_usecase.dart';
@@ -54,6 +55,8 @@ Future<void> setupService() async {
   sl.registerSingleton<ReadProfileUseCase>(ReadProfileUseCase());
 
   sl.registerSingleton<ReadAllProfileUseCase>(ReadAllProfileUseCase());
+
+  sl.registerSingleton<ReadAllPeopleUseCase>(ReadAllPeopleUseCase());
 
   sl.registerSingleton<UpdateProfileUseCase>(UpdateProfileUseCase());
 

@@ -5,6 +5,7 @@ import 'package:enigma/src/core/network/responses/failure_response.dart';
 import 'package:enigma/src/core/network/responses/success_response.dart';
 import 'package:enigma/src/core/utils/constants/collection_name.dart';
 import 'package:enigma/src/features/profile/data/model/profile_model.dart';
+import 'package:enigma/src/features/profile/domain/dto/filter_dto.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 
 class ProfileRemoteDataSource {
@@ -60,14 +61,15 @@ class ProfileRemoteDataSource {
     return Left(failure);
   }
 
-  Future<Either<Failure, List<ProfileModel>>> readAllProfile() async {
+  Future<Either<Failure, List<ProfileModel>>> readAllProfile(
+      {FilterDto? filter}) async {
     Failure failure;
     List<ProfileModel> allProfile = [];
     try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseHandler
-          .fireStore
-          .collection(CollectionName.profileCollection)
-          .get();
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseHandler.get(
+              collectionName: CollectionName.profileCollection,
+              where: filter?.firebaseWhereModel);
       for (QueryDocumentSnapshot q in querySnapshot.docs) {
         allProfile.add(ProfileModel.fromJson(q.data() as Map<String, dynamic>));
       }

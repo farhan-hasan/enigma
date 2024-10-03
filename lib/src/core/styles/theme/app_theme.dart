@@ -8,7 +8,8 @@ final ThemeData lightTheme = ThemeData(
   //accentColor: Color(0xFF4CAF50), // Complementing color for light theme (greenish)
   brightness: Brightness.light,
   appBarTheme: AppBarTheme(
-    backgroundColor: Color(0xffbbdefb),
+    surfaceTintColor: Colors.transparent,
+    backgroundColor: Colors.white,
     iconTheme: IconThemeData(color: Colors.black),
   ),
   buttonTheme: ButtonThemeData(
@@ -39,9 +40,9 @@ final ThemeData lightTheme = ThemeData(
   textTheme: _buildLightTextTheme(),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     elevation: 10,
-    backgroundColor: Color(0xffbbdefb), // Background color of the nav bar
-    selectedItemColor: primaryColor, // Color of the selected icon and label
-    unselectedItemColor: Colors.black54, // Color of unselected items
+    backgroundColor: Colors.white, // Background color of the nav bar
+    selectedItemColor: Colors.black, // Color of the selected icon and label
+    unselectedItemColor: Colors.grey, // Color of unselected items
     selectedLabelStyle: TextStyle(
         fontSize: 14,
         fontFamily: "Circular Std"), // Font size of the selected label
@@ -51,6 +52,15 @@ final ThemeData lightTheme = ThemeData(
     type: BottomNavigationBarType
         .fixed, // Set it to fixed to avoid shifting behavior
   ),
+  iconButtonTheme: IconButtonThemeData(
+    style: IconButton.styleFrom(
+      backgroundColor: Colors.black,
+      foregroundColor: Colors.white,
+      padding: const EdgeInsets.all(2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+      //minimumSize: Size(context.width * 0.8, context.width * 0.15),
+    ),
+  ),
 );
 
 final ThemeData darkTheme = ThemeData(
@@ -59,7 +69,8 @@ final ThemeData darkTheme = ThemeData(
   //accentColor: Color(0xFFBB86FC), // Complementing color for dark theme (purple)
   brightness: Brightness.dark,
   appBarTheme: AppBarTheme(
-    backgroundColor: primaryColor,
+    surfaceTintColor: Colors.transparent,
+    backgroundColor: Color(0xFF121212),
     iconTheme: IconThemeData(color: Colors.white),
   ),
   buttonTheme: ButtonThemeData(
@@ -90,10 +101,9 @@ final ThemeData darkTheme = ThemeData(
   textTheme: _buildDarkTextTheme(),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     elevation: 10,
-    backgroundColor: primaryColor, // Background color of the nav bar
-    selectedItemColor:
-        Color(0xffbbdefb), // Color of the selected icon and label
-    unselectedItemColor: Colors.white, // Color of unselected items
+    backgroundColor: Color(0xFF121212), // Background color of the nav bar
+    selectedItemColor: Colors.white, // Color of the selected icon and label
+    unselectedItemColor: Colors.grey, // Color of unselected items
     selectedLabelStyle: TextStyle(
         fontSize: 14,
         fontFamily: "Circular Std"), // Font size of the selected label
@@ -102,6 +112,17 @@ final ThemeData darkTheme = ThemeData(
         fontFamily: "Circular Std"), // Font size of the unselected label
     type: BottomNavigationBarType
         .fixed, // Set it to fixed to avoid shifting behavior
+  ),
+  iconButtonTheme: IconButtonThemeData(
+    style: IconButton.styleFrom(
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.black,
+      padding: const EdgeInsets.all(2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+      //minimumSize: Size(context.width * 0.8, context.width * 0.15),
+    ),
   ),
 );
 
