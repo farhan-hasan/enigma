@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
+import 'package:enigma/src/core/network/remote/firebase/firestore_collection_name.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
 import 'package:enigma/src/core/network/responses/success_response.dart';
-import 'package:enigma/src/core/utils/constants/collection_name.dart';
 import 'package:enigma/src/features/profile/data/model/profile_model.dart';
 import 'package:enigma/src/features/profile/domain/dto/filter_dto.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
@@ -68,12 +68,9 @@ class ProfileRemoteDataSource {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseHandler.get(
-              collectionName: CollectionName.profileCollection,
+              collectionName: FirestoreCollectionName.profileCollection,
               where: filter?.firebaseWhereModel);
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseHandler
-          .fireStore
-          .collection(FirestoreCollectionName.profileCollection)
-          .get();
+
       for (QueryDocumentSnapshot q in querySnapshot.docs) {
         allProfile.add(ProfileModel.fromJson(q.data() as Map<String, dynamic>));
       }
