@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
+import 'package:enigma/src/core/network/remote/firebase/firestore_collection_name.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
 import 'package:enigma/src/core/network/responses/success_response.dart';
-import 'package:enigma/src/core/utils/constants/collection_name.dart';
 import 'package:enigma/src/features/profile/data/model/profile_model.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 
@@ -14,7 +14,7 @@ class ProfileRemoteDataSource {
     Failure failure;
     try {
       await FirebaseHandler.fireStore
-          .collection(CollectionName.profileCollection)
+          .collection(FirestoreCollectionName.profileCollection)
           .doc(profileModel.uid)
           .set(profileModel.toJson());
       return Right(ProfileModel.fromJson(profileModel.toJson()));
@@ -40,7 +40,7 @@ class ProfileRemoteDataSource {
     try {
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
           await FirebaseHandler.fireStore
-              .collection(CollectionName.profileCollection)
+              .collection(FirestoreCollectionName.profileCollection)
               .doc(uid)
               .get();
       return Right(ProfileModel.fromJson(documentSnapshot.data() ?? {}));
@@ -66,7 +66,7 @@ class ProfileRemoteDataSource {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseHandler
           .fireStore
-          .collection(CollectionName.profileCollection)
+          .collection(FirestoreCollectionName.profileCollection)
           .get();
       for (QueryDocumentSnapshot q in querySnapshot.docs) {
         allProfile.add(ProfileModel.fromJson(q.data() as Map<String, dynamic>));
@@ -93,7 +93,7 @@ class ProfileRemoteDataSource {
     Failure failure;
     try {
       await FirebaseHandler.fireStore
-          .collection(CollectionName.profileCollection)
+          .collection(FirestoreCollectionName.profileCollection)
           .doc(profileModel.uid)
           .update(profileModel.toJson());
       return Right(profileModel);
@@ -119,7 +119,7 @@ class ProfileRemoteDataSource {
 
     try {
       await FirebaseHandler.fireStore
-          .collection(CollectionName.profileCollection)
+          .collection(FirestoreCollectionName.profileCollection)
           .doc(profileModel.uid)
           .delete();
       return Right(Success(message: "Profile deleted successfully"));
