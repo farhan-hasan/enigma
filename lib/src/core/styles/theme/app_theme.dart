@@ -8,10 +8,9 @@ final ThemeData lightTheme = ThemeData(
   //accentColor: Color(0xFF4CAF50), // Complementing color for light theme (greenish)
   brightness: Brightness.light,
   appBarTheme: AppBarTheme(
-    surfaceTintColor: Colors.transparent,
-    backgroundColor: Colors.white,
-    iconTheme: IconThemeData(color: Colors.black),
-  ),
+      surfaceTintColor: Colors.transparent,
+      backgroundColor: Colors.white,
+      iconTheme: IconThemeData(color: Colors.black)),
   buttonTheme: ButtonThemeData(
     buttonColor: primaryColor,
     textTheme: ButtonTextTheme.primary,

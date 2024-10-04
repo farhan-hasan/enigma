@@ -61,6 +61,20 @@ class FirebaseHandler {
           isNotEqualTo: where.isNotEqualTo,
           isNull: where.isNull,
         );
+      } else if (where.whereNotIn == null && where.whereIn == null) {
+        // debug("whereIn and whereNotIn cannot be used together");
+        ref = (ref as CollectionReference).where(
+          where.field ?? "",
+          arrayContains: where.arrayContains,
+          arrayContainsAny: where.arrayContainsAny,
+          isEqualTo: where.isEqualTo,
+          isGreaterThan: where.isGreaterThan,
+          isGreaterThanOrEqualTo: where.isGreaterThanOrEqualTo,
+          isLessThan: where.isLessThan,
+          isLessThanOrEqualTo: where.isGreaterThanOrEqualTo,
+          isNotEqualTo: where.isNotEqualTo,
+          isNull: where.isNull,
+        );
       } else {
         // debug("whereIn and whereNotIn cannot be used together");
         throw FirebaseException(

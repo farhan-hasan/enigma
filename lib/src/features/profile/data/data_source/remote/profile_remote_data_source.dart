@@ -10,15 +10,15 @@ import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 
 class ProfileRemoteDataSource {
   Future<Either<Failure, ProfileModel>> createProfile({
-    required ProfileEntity profileModel,
+    required ProfileEntity profileEntity,
   }) async {
     Failure failure;
     try {
       await FirebaseHandler.fireStore
           .collection(FirestoreCollectionName.profileCollection)
-          .doc(profileModel.uid)
-          .set(profileModel.toJson());
-      return Right(ProfileModel.fromJson(profileModel.toJson()));
+          .doc(profileEntity.uid)
+          .set(profileEntity.toJson());
+      return Right(profileEntity.toModel());
     } on FirebaseException catch (e) {
       switch (e.code) {
         case 'permission-denied':

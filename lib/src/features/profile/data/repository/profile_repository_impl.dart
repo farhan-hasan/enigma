@@ -15,7 +15,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
   Future<Either<Failure, ProfileModel>> createProfile(
       {required ProfileEntity profileEntity}) async {
     Either<Failure, ProfileModel> response = await _profileRemoteDataSource
-        .createProfile(profileModel: profileEntity);
+        .createProfile(profileEntity: profileEntity);
 
     return response;
   }
