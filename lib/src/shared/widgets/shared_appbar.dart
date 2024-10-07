@@ -7,7 +7,7 @@ class SharedAppbar extends StatelessWidget implements PreferredSizeWidget {
       this.leadingWidget,
       this.trailingWidgets});
 
-  final String title;
+  final Widget title;
   final List<Widget>? trailingWidgets;
   final Widget? leadingWidget;
 
@@ -18,7 +18,7 @@ class SharedAppbar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       centerTitle: true,
-      title: Text(title),
+      title: title,
       leading: leadingWidget ?? null,
       actions: trailingWidgets ?? null,
     );

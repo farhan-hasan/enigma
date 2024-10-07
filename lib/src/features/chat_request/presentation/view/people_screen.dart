@@ -48,7 +48,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
     ref.watch(chatRequestProvider);
     return Scaffold(
       appBar: SharedAppbar(
-          title: "People",
+          title: Text("People"),
           leadingWidget: GestureDetector(
             onTap: () {},
             child: Container(

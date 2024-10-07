@@ -22,7 +22,7 @@ class MessageScreen extends StatelessWidget {
     return Scaffold(
       //backgroundColor: Theme.of(context).colorScheme.secondary,
       appBar: SharedAppbar(
-          title: "Home",
+          title: Text("Home"),
           leadingWidget: GestureDetector(
             onTap: () {},
             child: Container(

@@ -36,8 +36,8 @@ class _ChatRequestScreenState extends ConsumerState<ChatRequestScreen> {
         ref.watch(chatRequestProvider);
     return Scaffold(
       appBar: SharedAppbar(
-        title: "Chat Requests",
-        leadingWidget: GestureDetector(
+        title: Text("Friends"),
+        leadingWidget: InkWell(
           onTap: () {
             ref.read(goRouterProvider).pop();
           },
