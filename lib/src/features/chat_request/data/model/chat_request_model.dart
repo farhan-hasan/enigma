@@ -1,42 +1,48 @@
 import 'package:enigma/src/features/chat_request/domain/entity/chat_request_entity.dart';
 
+enum Status { pending, accepted, rejected, blocked }
+
 class ChatRequestModel {
   String? senderUid;
   String? receiverUid;
-  bool? isAccepted;
+  String? status;
   DateTime? acceptedAt;
 
-  ChatRequestModel(
-      {this.senderUid, this.receiverUid, this.isAccepted, this.acceptedAt});
+  ChatRequestModel({
+    this.senderUid,
+    this.receiverUid,
+    this.status,
+    this.acceptedAt,
+  });
 
-  // fromJson method
+  // Factory constructor to create an instance from JSON data
   factory ChatRequestModel.fromJson(Map<String, dynamic> json) {
     return ChatRequestModel(
       senderUid: json['senderUid'] as String?,
       receiverUid: json['receiverUid'] as String?,
-      isAccepted: json['isAccepted'] as bool?,
+      status: json['status'] as String?,
       acceptedAt: json['acceptedAt'] != null
-          ? DateTime.parse(json['acceptedAt'] as String)
+          ? DateTime.parse(json['acceptedAt'])
           : null,
     );
   }
 
-  // toJson method
+  // Method to convert the instance into a JSON Map
   Map<String, dynamic> toJson() {
     return {
       'senderUid': senderUid,
       'receiverUid': receiverUid,
-      'isAccepted': isAccepted,
-      'acceptedAt': acceptedAt?.toIso8601String(),
+      'status': status,
+      'acceptedAt': acceptedAt?.toIso8601String(), // Convert DateTime to String
     };
   }
 
-  // toEntity method to convert ChatRequestModel to ChatRequestEntity
+  // Convert model to entity
   ChatRequestEntity toEntity() {
     return ChatRequestEntity(
       senderUid: this.senderUid,
       receiverUid: this.receiverUid,
-      isAccepted: this.isAccepted,
+      status: this.status,
       acceptedAt: this.acceptedAt,
     );
   }

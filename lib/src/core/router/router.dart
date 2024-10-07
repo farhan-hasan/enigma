@@ -1,11 +1,14 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/features/auth/presentation/auth_screen/view/auth_screen.dart';
 import 'package:enigma/src/features/auth/presentation/login/view/login_screen.dart';
 import 'package:enigma/src/features/auth/presentation/signup/view/signup_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/chat_request_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/people_screen.dart';
+import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/features/message/presentation/view/message_screen.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/controller/people_controller.dart';
 import 'package:enigma/src/features/splash/presentation/view/splash_screen.dart';
 import 'package:enigma/src/shared/view/bottom_nav_screen.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +71,14 @@ final goRouterProvider = Provider(
                 GoRoute(
                     path: "/calls",
                     builder: (context, state) {
-                      return Center(child: Text("This is calls screen"));
+                      return IconButton(
+                          onPressed: () async {
+                            await FirebaseHandler.auth.signOut();
+                            ref.invalidate(chatRequestProvider);
+                            ref.invalidate(peopleProvider);
+                            context.go(AuthScreen.route);
+                          },
+                          icon: Icon(Icons.logout));
                     }),
               ]),
               StatefulShellBranch(routes: [

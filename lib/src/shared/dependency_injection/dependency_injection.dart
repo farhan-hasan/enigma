@@ -8,7 +8,8 @@ import 'package:enigma/src/features/auth/domain/usecases/login_usecase.dart';
 import 'package:enigma/src/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:enigma/src/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:enigma/src/features/chat_request/data/repository/chat_request_repository_impl.dart';
-import 'package:enigma/src/features/chat_request/domain/usecases/fetch_chat_requests_usecase.dart';
+import 'package:enigma/src/features/chat_request/domain/usecases/fetch_chat_request_usecase.dart';
+import 'package:enigma/src/features/chat_request/domain/usecases/fetch_pending_request_usecase.dart';
 import 'package:enigma/src/features/chat_request/domain/usecases/send_chat_request_usecase.dart';
 import 'package:enigma/src/features/profile/data/repository/profile_repository_impl.dart';
 import 'package:enigma/src/features/profile/domain/usecases/create_profile_usecase.dart';
@@ -63,7 +64,9 @@ Future<void> setupService() async {
 
   sl.registerSingleton<ChatRequestRepositoryImpl>(ChatRequestRepositoryImpl());
   sl.registerSingleton<SendChatRequestUseCase>(SendChatRequestUseCase());
-  sl.registerSingleton<FetchChatRequestsUseCase>(FetchChatRequestsUseCase());
+  sl.registerSingleton<FetchPendingRequestUseCase>(
+      FetchPendingRequestUseCase());
+  sl.registerSingleton<FetchChatRequestUseCase>(FetchChatRequestUseCase());
 
   await sl.allReady();
 }

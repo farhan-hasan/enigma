@@ -32,9 +32,10 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
   void initState() {
     //todo: please implement sembast asap :'D
     String uid = FirebaseHandler.auth.currentUser?.uid ?? "";
-    WidgetsBinding.instance.addPostFrameCallback((t) {
+    WidgetsBinding.instance.addPostFrameCallback((t) async {
       ref.read(peopleProvider.notifier).readAllPeople();
-      ref.read(chatRequestProvider.notifier).fetchChatRequests(uid);
+      ref.read(chatRequestProvider.notifier).fetchPendingRequest();
+      ref.read(chatRequestProvider.notifier).fetchChatRequest();
     });
     super.initState();
   }
@@ -44,6 +45,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
     final PeopleGeneric peopleController = ref.watch(peopleProvider);
     final ChatRequestGeneric chatRequestController =
         ref.watch(chatRequestProvider);
+    ref.watch(chatRequestProvider);
     return Scaffold(
       appBar: SharedAppbar(
           title: "People",
@@ -85,17 +87,22 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
               ),
             )
           ]),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            // Chat requests
-            buildFriendsSection(context, chatRequestController),
-            // People list
-            buildPendingRequestsSection(
-                context, peopleController, chatRequestController),
-            buildPeopleSection(context, peopleController, chatRequestController)
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              // Chat requests
+              buildFriendsSection(context, chatRequestController),
+              // People list
+              buildFriendRequestsSection(
+                  context, peopleController, chatRequestController),
+              buildPendingRequestsSection(
+                  context, peopleController, chatRequestController),
+              buildDiscoverSection(
+                  context, peopleController, chatRequestController)
+            ],
+          ),
         ),
       ),
     );
@@ -130,7 +137,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
     );
   }
 
-  Widget buildPendingRequestsSection(
+  Widget buildFriendRequestsSection(
       BuildContext context,
       PeopleGeneric peopleController,
       ChatRequestGeneric chatRequestController) {
@@ -140,15 +147,15 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Pending requests"),
-          SizedBox(
+          const Text("Chat requests"),
+          const SizedBox(
             height: 20,
           ),
           Visibility(
             visible: !chatRequestController.isLoading,
-            replacement: Center(child: CircularProgressIndicator()),
+            replacement: const Center(child: CircularProgressIndicator()),
             child: ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 return Row(
@@ -164,7 +171,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                             CircularDisplayPicture(
                               radius: 23,
                               imageURL: chatRequestController
-                                  .listOfPeople[index].avatarUrl,
+                                  .listOfChatRequest[index].avatarUrl,
                             ),
                             const Positioned(
                                 right: 0,
@@ -183,7 +190,8 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              chatRequestController.listOfPeople[index].name ??
+                              chatRequestController
+                                      .listOfChatRequest[index].name ??
                                   "",
                               style: Theme.of(context)
                                   .textTheme
@@ -191,7 +199,8 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                                   ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             Text(
-                                peopleController.listOfPeople[index].createdAt
+                                chatRequestController
+                                        .listOfChatRequest[index].createdAt
                                         .toString() ??
                                     "",
                                 maxLines: 2,
@@ -209,7 +218,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                       children: [
                         IconButton(
                           onPressed: () {},
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.check,
                           ),
                           style: IconButton.styleFrom(
@@ -217,7 +226,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                         ),
                         IconButton(
                           onPressed: () {},
-                          icon: Icon(Icons.close),
+                          icon: const Icon(Icons.close),
                           style:
                               IconButton.styleFrom(backgroundColor: Colors.red),
                         ),
@@ -226,7 +235,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                   ],
                 );
               },
-              itemCount: chatRequestController.listOfPeople.length,
+              itemCount: chatRequestController.listOfChatRequest.length,
             ),
           ),
         ],
@@ -234,7 +243,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
     );
   }
 
-  Widget buildPeopleSection(
+  Widget buildPendingRequestsSection(
       BuildContext context,
       PeopleGeneric peopleController,
       ChatRequestGeneric chatRequestController) {
@@ -244,8 +253,92 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Discover"),
-          SizedBox(
+          const Text("Pending requests"),
+          const SizedBox(
+            height: 20,
+          ),
+          Visibility(
+            visible: !chatRequestController.isLoading,
+            replacement: const Center(child: CircularProgressIndicator()),
+            child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          children: [
+                            CircularDisplayPicture(
+                              radius: 23,
+                              imageURL: chatRequestController
+                                  .listOfPendingRequest[index].avatarUrl,
+                            ),
+                            const Positioned(
+                                right: 0,
+                                bottom: 0,
+                                child: Icon(
+                                  Icons.circle,
+                                  color: Colors.green,
+                                  size: 15,
+                                ))
+                          ],
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              chatRequestController
+                                      .listOfPendingRequest[index].name ??
+                                  "",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                                chatRequestController
+                                        .listOfPendingRequest[index].createdAt
+                                        .toString() ??
+                                    "",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.labelSmall)
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+              itemCount: chatRequestController.listOfPendingRequest.length,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildDiscoverSection(
+      BuildContext context,
+      PeopleGeneric peopleController,
+      ChatRequestGeneric chatRequestController) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      //color: Colors.grey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Discover"),
+          const SizedBox(
             height: 20,
           ),
           Visibility(
@@ -315,9 +408,10 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                           ref
                               .read(chatRequestProvider.notifier)
                               .sendChatRequest(
-                                  senderUid: sender, receiverUJid: receiver);
+                                  peopleController.listOfPeople[index].uid ??
+                                      "");
                         },
-                        icon: Icon(Icons.add))
+                        icon: const Icon(Icons.add))
                   ],
                 );
               },

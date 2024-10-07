@@ -4,6 +4,7 @@ import 'package:enigma/src/features/chat_request/data/data_source/remote/chat_re
 import 'package:enigma/src/features/chat_request/data/model/chat_request_model.dart';
 import 'package:enigma/src/features/chat_request/domain/entity/chat_request_entity.dart';
 import 'package:enigma/src/features/chat_request/domain/repository/chat_request_repository.dart';
+import 'package:enigma/src/features/profile/domain/dto/filter_dto.dart';
 
 class ChatRequestRepositoryImpl extends ChatRequestRepository {
   final ChatRequestRemoteDataSource _chatRequestRemoteDataSource =
@@ -20,10 +21,19 @@ class ChatRequestRepositoryImpl extends ChatRequestRepository {
   }
 
   @override
-  Future<Either<Failure, List<ChatRequestEntity>>> fetchChatRequests(
-      String uid) async {
+  Future<Either<Failure, List<ChatRequestEntity>>> fetchPendingRequest(
+      {FilterDto? filter}) async {
     Either<Failure, List<ChatRequestEntity>> response =
-        await _chatRequestRemoteDataSource.fetchChatRequests(uid);
+        await _chatRequestRemoteDataSource.fetchPendingRequest();
+
+    return response;
+  }
+
+  @override
+  Future<Either<Failure, List<ChatRequestEntity>>> fetchChatRequest(
+      {FilterDto? filter}) async {
+    Either<Failure, List<ChatRequestEntity>> response =
+        await _chatRequestRemoteDataSource.fetchChatRequest();
 
     return response;
   }

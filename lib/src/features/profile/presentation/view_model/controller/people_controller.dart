@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/network/remote/firebase/model/firebase_where_model.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
+import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/profile/domain/dto/filter_dto.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/domain/usecases/read_all_people_usecase.dart';
@@ -33,7 +34,15 @@ class PeopleController extends StateNotifier<PeopleGeneric> {
         BotToast.showText(text: left.message);
       },
       (right) {
-        state = state.update(listOfPeople: right);
+        List<ProfileEntity> people = right;
+        List<ProfileEntity> chatRequests =
+            ref.read(chatRequestProvider).listOfChatRequest;
+
+        // removing chat requests from people
+        Set<String?> chatRequestUids = chatRequests.map((e) => e.uid).toSet();
+        people.removeWhere((person) => chatRequestUids.contains(person.uid));
+
+        state = state.update(listOfPeople: people);
         BotToast.showText(text: "Read all people successfully");
         isSuccess = true;
       },

@@ -89,7 +89,7 @@ class _ChatRequestScreenState extends ConsumerState<ChatRequestScreen> {
                         CircularDisplayPicture(
                           radius: 23,
                           imageURL: chatRequestController
-                              .listOfPeople[index].avatarUrl,
+                              .listOfChatRequest[index].avatarUrl,
                         ),
                         const Positioned(
                             right: 0,
@@ -108,7 +108,8 @@ class _ChatRequestScreenState extends ConsumerState<ChatRequestScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          chatRequestController.listOfPeople[index].name ?? "",
+                          chatRequestController.listOfChatRequest[index].name ??
+                              "",
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme
@@ -116,7 +117,8 @@ class _ChatRequestScreenState extends ConsumerState<ChatRequestScreen> {
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                            chatRequestController.listOfPeople[index].createdAt
+                            chatRequestController
+                                    .listOfChatRequest[index].createdAt
                                     .toString() ??
                                 "",
                             maxLines: 2,
@@ -149,7 +151,7 @@ class _ChatRequestScreenState extends ConsumerState<ChatRequestScreen> {
               ],
             );
           },
-          itemCount: chatRequestController.listOfPeople.length,
+          itemCount: chatRequestController.listOfChatRequest.length,
           separatorBuilder: (BuildContext context, int index) {
             return const SizedBox(
               height: 30,

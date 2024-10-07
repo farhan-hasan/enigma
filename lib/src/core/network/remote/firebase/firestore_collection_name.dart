@@ -1,4 +1,4 @@
 class FirestoreCollectionName {
   static const profileCollection = 'Profile';
-  static const friendsCollection = 'Friends';
+  static const chatRequestCollection = 'ChatRequest';
 }
