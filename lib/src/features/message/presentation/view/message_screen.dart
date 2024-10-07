@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:enigma/src/core/global/global_variables.dart';
+import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
+import 'package:enigma/src/features/chat/presentation/view/chat_screen.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
@@ -14,6 +17,7 @@ class MessageScreen extends StatelessWidget {
   Map<String, dynamic> data;
   MessageEntity? messageEntity;
   static const route = "/message/:message_entity";
+
   static setRoute({required MessageEntity messageEntity}) =>
       "/message/${jsonEncode(messageEntity.toJson())}";
 
@@ -78,9 +82,15 @@ class MessageScreen extends StatelessWidget {
           primary: false,
           shrinkWrap: false,
           itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20),
+            return InkWell(
+              onTap: () {
+                container.read(goRouterProvider).push(ChatScreen.getRoute);
+              },
               child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,7 +165,7 @@ class MessageScreen extends StatelessWidget {
           itemCount: 20,
           separatorBuilder: (BuildContext context, int index) {
             return const SizedBox(
-              height: 30,
+              height: 5,
             );
           },
         ),
