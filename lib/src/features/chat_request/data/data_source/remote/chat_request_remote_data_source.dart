@@ -92,9 +92,6 @@ class ChatRequestRemoteDataSource {
         Map<String, dynamic> data = q.data() as Map<String, dynamic>;
         pendingRequests.add(ChatRequestEntity.fromJson(data));
       }
-      for (ChatRequestEntity c in pendingRequests) {
-        debug(c.receiverUid);
-      }
       return Right(pendingRequests);
     } on FirebaseException catch (e) {
       // Handle Firebase-specific errors with switch-case on the error code
