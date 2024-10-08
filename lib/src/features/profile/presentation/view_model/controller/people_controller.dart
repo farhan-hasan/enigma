@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/network/remote/firebase/model/firebase_where_model.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
+import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/profile/domain/dto/filter_dto.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
@@ -18,6 +19,7 @@ class PeopleController extends StateNotifier<PeopleGeneric> {
   PeopleController(this.ref) : super(PeopleGeneric());
   Ref ref;
   ReadAllPeopleUseCase readAllPeopleUseCase = sl.get<ReadAllPeopleUseCase>();
+
   Future<bool> readAllPeople() async {
     state = state.update(isLoading: true);
     // TODO: impement sembast and store profileEntity and call uid from the ProfileEntity
@@ -37,10 +39,25 @@ class PeopleController extends StateNotifier<PeopleGeneric> {
         List<ProfileEntity> people = right;
         List<ProfileEntity> chatRequests =
             ref.read(chatRequestProvider).listOfChatRequest;
+        List<ProfileEntity> pendingRequests =
+            ref.read(chatRequestProvider).listOfPendingRequest;
+        List<ProfileEntity> friends =
+            ref.read(chatRequestProvider).listOfFriends;
 
         // removing chat requests from people
-        Set<String?> chatRequestUids = chatRequests.map((e) => e.uid).toSet();
-        people.removeWhere((person) => chatRequestUids.contains(person.uid));
+        Set<String?> chatRequestsUIds = chatRequests.map((e) => e.uid).toSet();
+        Set<String?> pendingRequestsUIds =
+            pendingRequests.map((e) => e.uid).toSet();
+        Set<String?> friendsUIds = friends.map((e) => e.uid).toSet();
+        people.removeWhere((person) => chatRequestsUIds.contains(person.uid));
+        people
+            .removeWhere((person) => pendingRequestsUIds.contains(person.uid));
+        people.removeWhere((person) => friendsUIds.contains(person.uid));
+
+        for (ProfileEntity p in people) {
+          debug(p.name);
+        }
+        //debug(people);
 
         state = state.update(listOfPeople: people);
         BotToast.showText(text: "Read all people successfully");

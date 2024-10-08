@@ -3,7 +3,7 @@ import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/features/auth/presentation/auth_screen/view/auth_screen.dart';
 import 'package:enigma/src/features/auth/presentation/login/view/login_screen.dart';
 import 'package:enigma/src/features/auth/presentation/signup/view/signup_screen.dart';
-import 'package:enigma/src/features/chat_request/presentation/view/chat_request_screen.dart';
+import 'package:enigma/src/features/chat_request/presentation/view/friends_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/people_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
@@ -46,9 +46,9 @@ final goRouterProvider = Provider(
           },
         ),
         GoRoute(
-            path: ChatRequestScreen.route,
+            path: FriendsScreen.route,
             builder: (context, state) {
-              return ChatRequestScreen(
+              return FriendsScreen(
                 data: state.pathParameters,
               );
             }),

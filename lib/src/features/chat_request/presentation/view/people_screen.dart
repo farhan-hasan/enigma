@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
-import 'package:enigma/src/features/chat_request/presentation/view/chat_request_screen.dart';
+import 'package:enigma/src/features/chat_request/presentation/view/friends_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_generic.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
@@ -30,14 +30,17 @@ class PeopleScreen extends ConsumerStatefulWidget {
 class _PeopleScreenState extends ConsumerState<PeopleScreen> {
   @override
   void initState() {
-    //todo: please implement sembast asap :'D
-    String uid = FirebaseHandler.auth.currentUser?.uid ?? "";
-    WidgetsBinding.instance.addPostFrameCallback((t) async {
-      ref.read(peopleProvider.notifier).readAllPeople();
-      ref.read(chatRequestProvider.notifier).fetchPendingRequest();
-      ref.read(chatRequestProvider.notifier).fetchChatRequest();
-    });
+    init();
     super.initState();
+  }
+
+  init() async {
+    WidgetsBinding.instance.addPostFrameCallback((t) async {
+      await ref.read(chatRequestProvider.notifier).fetchPendingRequest();
+      await ref.read(chatRequestProvider.notifier).fetchChatRequest();
+      await ref.read(chatRequestProvider.notifier).fetchFriends();
+      await ref.read(peopleProvider.notifier).readAllPeople();
+    });
   }
 
   @override
@@ -95,10 +98,12 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
               // Chat requests
               buildFriendsSection(context, chatRequestController),
               // People list
-              buildFriendRequestsSection(
-                  context, peopleController, chatRequestController),
-              buildPendingRequestsSection(
-                  context, peopleController, chatRequestController),
+              if (chatRequestController.listOfChatRequest.isNotEmpty)
+                buildChatRequestsSection(
+                    context, peopleController, chatRequestController),
+              if (chatRequestController.listOfPendingRequest.isNotEmpty)
+                buildPendingRequestsSection(
+                    context, peopleController, chatRequestController),
               buildDiscoverSection(
                   context, peopleController, chatRequestController)
             ],
@@ -112,7 +117,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
       BuildContext context, ChatRequestGeneric chatRequestController) {
     return InkWell(
       onTap: () {
-        ref.read(goRouterProvider).push(ChatRequestScreen.route);
+        ref.read(goRouterProvider).push(FriendsScreen.route);
       },
       child: Container(
         padding: EdgeInsets.all(20),
@@ -127,7 +132,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                   .titleLarge
                   ?.copyWith(color: Colors.white),
             ),
-            Icon(
+            const Icon(
               Icons.arrow_forward_rounded,
               color: Colors.white,
             )
@@ -137,7 +142,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
     );
   }
 
-  Widget buildFriendRequestsSection(
+  Widget buildChatRequestsSection(
       BuildContext context,
       PeopleGeneric peopleController,
       ChatRequestGeneric chatRequestController) {
@@ -151,92 +156,115 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
           const SizedBox(
             height: 20,
           ),
-          Visibility(
-            visible: !chatRequestController.isLoading,
-            replacement: const Center(child: CircularProgressIndicator()),
-            child: ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Stack(
-                          children: [
-                            CircularDisplayPicture(
-                              radius: 23,
-                              imageURL: chatRequestController
-                                  .listOfChatRequest[index].avatarUrl,
-                            ),
-                            const Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Icon(
-                                  Icons.circle,
-                                  color: Colors.green,
-                                  size: 15,
-                                ))
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              chatRequestController
-                                      .listOfChatRequest[index].name ??
-                                  "",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                                chatRequestController
-                                        .listOfChatRequest[index].createdAt
-                                        .toString() ??
-                                    "",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.labelSmall)
-                          ],
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.check,
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Stack(
+                        children: [
+                          CircularDisplayPicture(
+                            radius: 23,
+                            imageURL: chatRequestController
+                                .listOfChatRequest[index].avatarUrl,
                           ),
-                          style: IconButton.styleFrom(
-                              backgroundColor: Colors.green),
+                          const Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Icon(
+                                Icons.circle,
+                                color: Colors.green,
+                                size: 15,
+                              ))
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            chatRequestController
+                                    .listOfChatRequest[index].name ??
+                                "",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                              chatRequestController
+                                      .listOfChatRequest[index].createdAt
+                                      .toString() ??
+                                  "",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelSmall)
+                        ],
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          String receiverUid = chatRequestController
+                                  .listOfChatRequest[index].uid ??
+                              "";
+                          String status = "accepted";
+                          await ref
+                              .read(chatRequestProvider.notifier)
+                              .updateRequestStatus(status, receiverUid);
+                          await ref
+                              .read(chatRequestProvider.notifier)
+                              .fetchChatRequest();
+                        },
+                        icon: const Icon(
+                          Icons.check,
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.close),
-                          style:
-                              IconButton.styleFrom(backgroundColor: Colors.red),
-                        ),
-                      ],
-                    )
-                  ],
-                );
-              },
-              itemCount: chatRequestController.listOfChatRequest.length,
-            ),
+                        style: IconButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          String receiverUid = chatRequestController
+                                  .listOfChatRequest[index].uid ??
+                              "";
+                          String status = "rejected";
+                          await ref
+                              .read(chatRequestProvider.notifier)
+                              .updateRequestStatus(status, receiverUid);
+                          await ref
+                              .read(chatRequestProvider.notifier)
+                              .fetchChatRequest();
+                          await ref
+                              .read(chatRequestProvider.notifier)
+                              .fetchFriends();
+                        },
+                        icon: const Icon(Icons.close),
+                        style: IconButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white),
+                      ),
+                    ],
+                  )
+                ],
+              );
+            },
+            itemCount: chatRequestController.listOfChatRequest.length,
           ),
         ],
       ),
@@ -257,70 +285,66 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
           const SizedBox(
             height: 20,
           ),
-          Visibility(
-            visible: !chatRequestController.isLoading,
-            replacement: const Center(child: CircularProgressIndicator()),
-            child: ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Stack(
-                          children: [
-                            CircularDisplayPicture(
-                              radius: 23,
-                              imageURL: chatRequestController
-                                  .listOfPendingRequest[index].avatarUrl,
-                            ),
-                            const Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Icon(
-                                  Icons.circle,
-                                  color: Colors.green,
-                                  size: 15,
-                                ))
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Stack(
+                        children: [
+                          CircularDisplayPicture(
+                            radius: 23,
+                            imageURL: chatRequestController
+                                .listOfPendingRequest[index].avatarUrl,
+                          ),
+                          const Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Icon(
+                                Icons.circle,
+                                color: Colors.green,
+                                size: 15,
+                              ))
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            chatRequestController
+                                    .listOfPendingRequest[index].name ??
+                                "",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
                               chatRequestController
-                                      .listOfPendingRequest[index].name ??
+                                      .listOfPendingRequest[index].createdAt
+                                      .toString() ??
                                   "",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                                chatRequestController
-                                        .listOfPendingRequest[index].createdAt
-                                        .toString() ??
-                                    "",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.labelSmall)
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
-              itemCount: chatRequestController.listOfPendingRequest.length,
-            ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelSmall)
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+            itemCount: chatRequestController.listOfPendingRequest.length,
           ),
         ],
       ),
@@ -341,82 +365,88 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
           const SizedBox(
             height: 20,
           ),
-          Visibility(
-            visible: !peopleController.isLoading,
-            replacement: Center(child: CircularProgressIndicator()),
-            child: ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Stack(
-                          children: [
-                            CircularDisplayPicture(
-                              radius: 23,
-                              imageURL: peopleController
-                                  .listOfPeople[index].avatarUrl,
-                            ),
-                            const Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Icon(
-                                  Icons.circle,
-                                  color: Colors.green,
-                                  size: 15,
-                                ))
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              peopleController.listOfPeople[index].name ?? "",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                                peopleController.listOfPeople[index].createdAt
-                                        .toString() ??
-                                    "",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.labelSmall)
-                          ],
-                        ),
-                      ],
+          ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Stack(
+                        children: [
+                          CircularDisplayPicture(
+                            radius: 23,
+                            imageURL:
+                                peopleController.listOfPeople[index].avatarUrl,
+                          ),
+                          const Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Icon(
+                                Icons.circle,
+                                color: Colors.green,
+                                size: 15,
+                              ))
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            peopleController.listOfPeople[index].name ?? "",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                              peopleController.listOfPeople[index].createdAt
+                                      .toString() ??
+                                  "",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelSmall)
+                        ],
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  Visibility(
+                    visible: !chatRequestController.isSendChatRequestLoading,
+                    replacement:
+                        const Center(child: CircularProgressIndicator()),
+                    child: IconButton(
+                      onPressed: () async {
+                        // todo: implement sembast for sender uid
+                        String sender =
+                            FirebaseHandler.auth.currentUser?.uid ?? "";
+                        String receiver =
+                            peopleController.listOfPeople[index].uid ?? "";
+                        await ref
+                            .read(chatRequestProvider.notifier)
+                            .sendChatRequest(
+                                peopleController.listOfPeople[index].uid ?? "");
+                        await ref
+                            .read(chatRequestProvider.notifier)
+                            .fetchPendingRequest();
+
+                        await ref.read(peopleProvider.notifier).readAllPeople();
+                      },
+                      icon: const Icon(Icons.add),
                     ),
-                    const Spacer(),
-                    IconButton(
-                        onPressed: () {
-                          // todo: implement sembast for sender uid
-                          String sender =
-                              FirebaseHandler.auth.currentUser?.uid ?? "";
-                          String receiver =
-                              peopleController.listOfPeople[index].uid ?? "";
-                          ref
-                              .read(chatRequestProvider.notifier)
-                              .sendChatRequest(
-                                  peopleController.listOfPeople[index].uid ??
-                                      "");
-                        },
-                        icon: const Icon(Icons.add))
-                  ],
-                );
-              },
-              itemCount: peopleController.listOfPeople.length,
-            ),
+                  )
+                ],
+              );
+            },
+            itemCount: peopleController.listOfPeople.length,
           ),
         ],
       ),
