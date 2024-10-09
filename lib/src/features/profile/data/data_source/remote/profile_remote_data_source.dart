@@ -18,7 +18,7 @@ class ProfileRemoteDataSource {
           .collection(FirestoreCollectionName.profileCollection)
           .doc(profileEntity.uid)
           .set(profileEntity.toJson());
-      return Right(ProfileModel.fromJson(profileEntity.toJson()));
+      return Right(profileEntity.toModel());
     } on FirebaseException catch (e) {
       switch (e.code) {
         case 'permission-denied':

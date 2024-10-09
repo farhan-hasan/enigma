@@ -3,9 +3,11 @@ import 'package:enigma/src/features/auth/presentation/auth_screen/view/auth_scre
 import 'package:enigma/src/features/auth/presentation/login/view/login_screen.dart';
 import 'package:enigma/src/features/auth/presentation/signup/view/signup_screen.dart';
 import 'package:enigma/src/features/chat/presentation/view/chat_screen.dart';
+import 'package:enigma/src/features/chat_request/presentation/view/friends_screen.dart';
+import 'package:enigma/src/features/chat_request/presentation/view/people_screen.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/features/message/presentation/view/message_screen.dart';
-import 'package:enigma/src/features/profile/presentation/view/people_screen.dart';
+import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
 import 'package:enigma/src/features/splash/presentation/view/splash_screen.dart';
 import 'package:enigma/src/shared/view/bottom_nav_screen.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,12 @@ final goRouterProvider = Provider(
           path: SplashScreen.route,
           builder: (context, state) {
             return const SplashScreen();
+          },
+        ),
+        GoRoute(
+          path: ProfileScreen.route,
+          builder: (context, state) {
+            return const ProfileScreen();
           },
         ),
         GoRoute(
@@ -48,6 +56,13 @@ final goRouterProvider = Provider(
             return ChatScreen();
           },
         ),
+        GoRoute(
+            path: FriendsScreen.route,
+            builder: (context, state) {
+              return FriendsScreen(
+                data: state.pathParameters,
+              );
+            }),
         StatefulShellRoute.indexedStack(
             branches: [
               StatefulShellBranch(
@@ -72,10 +87,11 @@ final goRouterProvider = Provider(
               ]),
               StatefulShellBranch(routes: [
                 GoRoute(
-                    path: "/people",
-                    builder: (context, state) {
-                      return PeopleScreen(data: state.pathParameters);
-                    }),
+                  path: "/people",
+                  builder: (context, state) {
+                    return PeopleScreen(data: state.pathParameters);
+                  },
+                ),
               ]),
               StatefulShellBranch(routes: [
                 GoRoute(

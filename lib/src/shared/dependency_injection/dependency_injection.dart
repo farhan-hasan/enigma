@@ -10,6 +10,13 @@ import 'package:enigma/src/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:enigma/src/features/chat/data/repository/chat_repository_impl.dart';
 import 'package:enigma/src/features/chat/domain/usecases/add_chat_usecase.dart';
 import 'package:enigma/src/features/chat/domain/usecases/get_chat_usecase.dart';
+import 'package:enigma/src/features/chat_request/data/repository/chat_request_repository_impl.dart';
+import 'package:enigma/src/features/chat_request/domain/usecases/accept_chat_request_usecase.dart';
+import 'package:enigma/src/features/chat_request/domain/usecases/fetch_chat_request_usecase.dart';
+import 'package:enigma/src/features/chat_request/domain/usecases/fetch_friends_usecase.dart';
+import 'package:enigma/src/features/chat_request/domain/usecases/fetch_pending_request_usecase.dart';
+import 'package:enigma/src/features/chat_request/domain/usecases/remove_friend_usecase.dart';
+import 'package:enigma/src/features/chat_request/domain/usecases/send_chat_request_usecase.dart';
 import 'package:enigma/src/features/profile/data/repository/profile_repository_impl.dart';
 import 'package:enigma/src/features/profile/domain/usecases/create_profile_usecase.dart';
 import 'package:enigma/src/features/profile/domain/usecases/delete_profile_usecase.dart';
@@ -64,6 +71,15 @@ Future<void> setupService() async {
   sl.registerSingleton<ChatRepositoryImpl>(ChatRepositoryImpl());
   sl.registerSingleton<AddChatUsecase>(AddChatUsecase());
   sl.registerSingleton<GetChatUsecase>(GetChatUsecase());
+
+  sl.registerSingleton<ChatRequestRepositoryImpl>(ChatRequestRepositoryImpl());
+  sl.registerSingleton<SendChatRequestUseCase>(SendChatRequestUseCase());
+  sl.registerSingleton<FetchPendingRequestUseCase>(
+      FetchPendingRequestUseCase());
+  sl.registerSingleton<FetchChatRequestUseCase>(FetchChatRequestUseCase());
+  sl.registerSingleton<AcceptChatRequestUseCase>(AcceptChatRequestUseCase());
+  sl.registerSingleton<FetchFriendsUseCase>(FetchFriendsUseCase());
+  sl.registerSingleton<RemoveFriendUseCase>(RemoveFriendUseCase());
 
   await sl.allReady();
 }

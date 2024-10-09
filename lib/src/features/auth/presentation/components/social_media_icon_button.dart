@@ -19,6 +19,8 @@ class SocialMediaIconButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(context.height * 0.025),
       ),
       child: IconButton(
+        style: IconButton.styleFrom(
+            backgroundColor: Theme.of(context).primaryColor),
         onPressed: onPressed,
         icon: Image.asset(iconSource),
       ),

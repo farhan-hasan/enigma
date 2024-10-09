@@ -1,15 +1,18 @@
 import 'dart:convert';
 
+import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/global/global_variables.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat/presentation/view/chat_screen.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
+import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MessageScreen extends StatelessWidget {
+class MessageScreen extends ConsumerStatefulWidget {
   MessageScreen({super.key, required this.data}) {
     messageEntity = MessageEntity.fromJson(jsonDecode(data["message_entity"]));
   }
@@ -17,16 +20,20 @@ class MessageScreen extends StatelessWidget {
   Map<String, dynamic> data;
   MessageEntity? messageEntity;
   static const route = "/message/:message_entity";
-
   static setRoute({required MessageEntity messageEntity}) =>
       "/message/${jsonEncode(messageEntity.toJson())}";
 
+  @override
+  ConsumerState<MessageScreen> createState() => _MessageScreenState();
+}
+
+class _MessageScreenState extends ConsumerState<MessageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       //backgroundColor: Theme.of(context).colorScheme.secondary,
       appBar: SharedAppbar(
-          title: "Home",
+          title: Text("Home"),
           leadingWidget: GestureDetector(
             onTap: () {},
             child: Container(
@@ -49,13 +56,18 @@ class MessageScreen extends StatelessWidget {
             ),
           ),
           trailingWidgets: [
-            Container(
-              height: context.height * .15,
-              width: context.width * .137,
-              padding: const EdgeInsets.all(8),
-              child: CircularDisplayPicture(
-                radius: 30,
-                imageURL: null,
+            GestureDetector(
+              onTap: () {
+                ref.read(goRouterProvider).go(ProfileScreen.route);
+              },
+              child: Container(
+                height: context.height * .15,
+                width: context.width * .137,
+                padding: const EdgeInsets.all(8),
+                child: CircularDisplayPicture(
+                  radius: 30,
+                  imageURL: null,
+                ),
               ),
             )
           ]),
