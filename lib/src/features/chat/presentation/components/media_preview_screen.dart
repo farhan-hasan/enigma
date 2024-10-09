@@ -17,6 +17,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
       body: Column(
         children: [
           Image(image: FileImage(widget.file)),
+          SizedBox(),
         ],
       ),
     );
