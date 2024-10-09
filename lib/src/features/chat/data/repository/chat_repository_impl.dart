@@ -18,10 +18,19 @@ class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  Future<Either<Failure, List<ChatModel>>> getChat(
-      {required String roomID}) async {
-    Either<Failure, List<ChatModel>> response =
-        await _chatRemoteDataSource.getChat(roomID: roomID);
+  Future<Stream<List<ChatModel>>> getChat(
+      {required String myUid, required String friendUid}) async {
+    Stream<List<ChatModel>> response =
+        await _chatRemoteDataSource.getChat(myUid: myUid, friendUid: friendUid);
+
     return response;
   }
+
+// @override
+// Future<Either<Failure, List<ChatModel>>> getChat(
+//     {required String roomID}) async {
+//   Either<Failure, List<ChatModel>> response =
+//       await _chatRemoteDataSource.getChat(roomID: roomID);
+//   return response;
+// }
 }

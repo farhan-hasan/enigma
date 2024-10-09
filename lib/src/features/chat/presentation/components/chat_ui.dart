@@ -40,6 +40,21 @@ class ChatUI extends StatelessWidget {
                       softWrap: true,
                       textAlign: TextAlign.justify,
                     ),
+                    if (chat[index].mediaLink != null)
+                      if (chat[index].type == MediaType.image)
+                        GestureDetector(
+                          onTap: () {},
+                          child: Image(
+                            image: NetworkImage("${chat[index].mediaLink}"),
+                            fit: BoxFit.fill,
+                          ),
+                        )
+                      else if (chat[index].type == MediaType.video)
+                        const Text("There is video. Will add later on")
+                      else if (chat[index].type == MediaType.voice)
+                        const Text("There is file. Will add later on")
+                      else if (chat[index].type == MediaType.file)
+                        const Text("There is file. Will add later on"),
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(

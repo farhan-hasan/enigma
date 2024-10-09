@@ -1,6 +1,7 @@
 import 'package:enigma/src/features/chat/data/model/chat_model.dart';
 
 enum MediaType {
+  text,
   image,
   video,
   file,
@@ -49,7 +50,7 @@ class ChatEntity {
       'content': content,
       'timestamp': timestamp?.toIso8601String(),
       'mediaLink': mediaLink,
-      'type': type?.index,
+      'type': type?.name,
     };
   }
 

@@ -6,5 +6,6 @@ import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 
 abstract class ChatRepository {
   Future<Either<Failure, Success>> addChat({required ChatEntity chatEntity});
-  Future<Either<Failure, List<ChatModel>>> getChat({required String roomID});
+  Future<Stream<List<ChatModel>>> getChat(
+      {required String myUid, required String friendUid});
 }

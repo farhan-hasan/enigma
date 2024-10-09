@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:enigma/src/core/network/remote/firebase/storage_directory_name.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
 import 'package:file_picker/file_picker.dart';
@@ -8,14 +9,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-class ChatScreenBottomBar extends ConsumerWidget {
-  ChatScreenBottomBar({super.key});
+class ChatScreenBottomBar extends ConsumerStatefulWidget {
+  const ChatScreenBottomBar({super.key});
 
+  @override
+  ConsumerState<ChatScreenBottomBar> createState() =>
+      _ChatScreenBottomBarState();
+}
+
+class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
   final ValueNotifier<TextEditingController> messageTextController =
       ValueNotifier(TextEditingController());
 
-  File? image;
-  List<File> documents = [];
+  File? file;
+  String? url;
 
   void _showOptions(BuildContext context) {
     showBottomSheet(
@@ -97,7 +104,8 @@ class ChatScreenBottomBar extends ConsumerWidget {
     ImagePicker imagePicker = ImagePicker();
     XFile? getImage = await imagePicker.pickImage(source: ImageSource.camera);
     if (getImage != null) {
-      image = File(getImage.path);
+      file = File(getImage.path);
+      if (file != null) {}
     } else {
       return;
     }
@@ -106,17 +114,17 @@ class ChatScreenBottomBar extends ConsumerWidget {
 
   void _pickDocuments(List<String> extensions) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
+      allowMultiple: false,
       allowedExtensions: extensions,
       type: FileType.custom,
     );
     if (result != null) {
-      documents = result.paths.map((path) => File(path!)).toList();
+      file = File(result.paths.first!);
     }
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final chatController = ref.watch(chatProvider);
     return Align(
       alignment: Alignment.bottomCenter,
@@ -179,19 +187,34 @@ class ChatScreenBottomBar extends ConsumerWidget {
                   return IconButton(
                     onPressed: () async {
                       Uuid uuid = const Uuid();
+                      if (file != null) {
+                        // debug(file!.path.split("/").last);
+                        url =
+                            await ref.read(chatProvider.notifier).addImageMedia(
+                                  file: file!,
+                                  directory:
+                                      StorageDirectoryName.CHAT_MEDIA_DIRECTORY,
+                                  fileName: file!.path.split("/").last,
+                                );
+                        file = null;
+                        // BotToast.showText(text: "Success: $url");
+                      }
                       if (messageTextController.value.text.trim().isNotEmpty) {
                         ChatEntity chatEntity = ChatEntity(
                           id: uuid.v4(),
                           content: messageTextController.value.text.trim(),
-                          type: null,
-                          mediaLink: null,
+                          type: url != null ? MediaType.image : MediaType.text,
+                          mediaLink: url,
                           timestamp: DateTime.now(),
                           receiver: "Y51bMMMKXAT1AQs0vPutTfVCkTB2",
                           sender: "SjKB4wFCutQyMOmrJUhXlX3eo5l1",
                         );
+                        // print(chatEntity.toJson());
                         await ref
                             .read(chatProvider.notifier)
                             .addChat(chatEntity);
+                        messageTextController.value.clear();
+                        // debug("Success message");
                       }
                     },
                     icon: Icon(

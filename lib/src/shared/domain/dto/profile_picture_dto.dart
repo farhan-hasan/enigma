@@ -1,8 +1,13 @@
 import 'dart:io';
 
-class ProfilePictureDto {
+class ImageMediaDto {
   File file;
-  String uid;
+  String directory;
+  String fileName;
 
-  ProfilePictureDto({required this.file, required this.uid});
+  ImageMediaDto({
+    required this.file,
+    required this.directory,
+    required this.fileName,
+  });
 }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:enigma/src/core/network/remote/firebase/document_finder.dart';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/network/remote/firebase/firestore_collection_name.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
@@ -14,15 +15,11 @@ class ChatRemoteDataSource {
     Failure failure;
     try {
       String roomID = HashGenerator.idHashing(
-        uid1: chatEntity.sender ?? "",
-        uid2: chatEntity.receiver ?? "",
+        myUid: chatEntity.sender ?? "",
+        friendUid: chatEntity.receiver ?? "",
       );
-      DocumentSnapshot<Map<String, dynamic>> ref = await FirebaseHandler
-          .fireStore
-          .collection(FirestoreCollectionName.chatCollection)
-          .doc(roomID)
-          .get();
-      if (ref.exists) {
+      bool doesExist = await DocumentFinder.checkExistence(roomID: roomID);
+      if (doesExist) {
         await FirebaseHandler.fireStore
             .collection(FirestoreCollectionName.chatCollection)
             .doc(roomID)
@@ -31,8 +28,8 @@ class ChatRemoteDataSource {
             .set(chatEntity.toJson());
       } else {
         roomID = HashGenerator.idHashing(
-          uid1: chatEntity.receiver ?? "",
-          uid2: chatEntity.sender ?? "",
+          myUid: chatEntity.receiver ?? "",
+          friendUid: chatEntity.sender ?? "",
         );
         await FirebaseHandler.fireStore
             .collection(FirestoreCollectionName.chatCollection)
@@ -58,29 +55,35 @@ class ChatRemoteDataSource {
     return Left(failure);
   }
 
-  Stream<Either<Failure, List<ChatModel>>> getChat(
-      {required String roomID}) async* {
+  Future<Stream<List<ChatModel>>> getChat(
+      {required String myUid, required String friendUid}) async {
     Failure failure;
     try {
-      List<ChatModel> messages = [];
-      DocumentSnapshot<Map<String, dynamic>> ref = await FirebaseHandler
-          .fireStore
+      String roomID = HashGenerator.idHashing(
+        myUid: myUid,
+        friendUid: friendUid,
+      );
+      bool doesExist = await DocumentFinder.checkExistence(roomID: roomID);
+
+      if (!doesExist) {
+        roomID = HashGenerator.idHashing(
+          myUid: friendUid,
+          friendUid: myUid,
+        );
+      }
+
+      Stream<List<ChatModel>> querySnapshot = FirebaseHandler.fireStore
           .collection(FirestoreCollectionName.chatCollection)
           .doc(roomID)
-          .get();
-      if (ref.exists) {
-        Stream<QuerySnapshot<Map<String, dynamic>>> querySnapshot =
-            FirebaseHandler.fireStore
-                .collection(FirestoreCollectionName.chatCollection)
-                .doc(roomID)
-                .collection(FirestoreCollectionName.messageCollection)
-                .snapshots();
-
-        /// TODO: Return stream and listen from stream builder no need to go through all layers
-      }
-      // await FirebaseHandler.fireStore
-      //     .collection(FirestoreCollectionName.profileCollection);
-      yield Right(messages);
+          .collection(FirestoreCollectionName.messageCollection)
+          .snapshots()
+          .map((documentList) {
+        return documentList.docs
+            .map((r) => ChatModel.fromJson(r.data()))
+            .toList();
+      });
+      // debug("From Remote Data Source: ${querySnapshot.runtimeType}");
+      return querySnapshot;
     } on FirebaseException catch (e) {
       switch (e.code) {
         case 'permission-denied':
@@ -94,6 +97,6 @@ class ChatRemoteDataSource {
           break;
       }
     }
-    yield Left(failure);
+    return Stream.value([]);
   }
 }

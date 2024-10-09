@@ -57,8 +57,7 @@ class ChatModel {
         mediaLink: mediaLink,
         /*type: MediaType.values
           .firstWhereOrNull((e) => e.toString().split(".").last == type),*/
-        type: MediaType.values
-            .firstWhere((e) => e.toString().split(".").last == type));
+        type: MediaType.values.byName(type ?? "text"));
   }
 
   // fromEntity method to create ChatModel from ChatEntity

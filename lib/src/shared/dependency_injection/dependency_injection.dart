@@ -59,7 +59,7 @@ Future<void> setupService() async {
   sl.registerSingleton<DeleteProfileUseCase>(DeleteProfileUseCase());
 
   sl.registerSingleton<MediaRepositoryImpl>(MediaRepositoryImpl());
-  sl.registerSingleton<ProfilePictureUsecase>(ProfilePictureUsecase());
+  sl.registerSingleton<ImageMediaUsecase>(ImageMediaUsecase());
 
   sl.registerSingleton<ChatRepositoryImpl>(ChatRepositoryImpl());
   sl.registerSingleton<AddChatUsecase>(AddChatUsecase());

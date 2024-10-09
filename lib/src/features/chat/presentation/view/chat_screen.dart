@@ -1,4 +1,5 @@
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
+import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_screen_bottom_bar.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_ui.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
@@ -19,7 +20,7 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    final chatController = ref.watch(chatProvider);
+    // final chatController = ref.watch(chatProvider);
     return Scaffold(
         appBar: AppBar(
           titleSpacing: -context.width * 0.04,
@@ -53,9 +54,39 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         body: Column(
           children: [
             Expanded(
-              child: ChatUI(chat: chatController.chats),
+              child: FutureBuilder<Stream<List<ChatEntity>>>(
+                  future: ref.read(chatProvider.notifier).getChat(
+                        myUid: "SjKB4wFCutQyMOmrJUhXlX3eo5l1",
+                        friendUid: "Y51bMMMKXAT1AQs0vPutTfVCkTB2",
+                      ),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return StreamBuilder<List<ChatEntity>>(
+                        stream: snapshot.data,
+                        builder: (context, chatShot) {
+                          // debug("From Chat Screen ${chatShot.data}");
+                          if (chatShot.hasData) {
+                            return ChatUI(chat: chatShot.data ?? []);
+                          } else {
+                            return const Center(
+                                child: Text('No messages found'));
+                          }
+
+                          // if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          //   return const Center(
+                          //       child: Text('No messages found'));
+                          // } else {
+                          //   return ChatUI(chat: snapshot.data!);
+                          // }
+                        },
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  }),
             ),
-            ChatScreenBottomBar(),
+
+            const ChatScreenBottomBar(),
 
             // ChatUI(textMessage: textMessage)
           ],
