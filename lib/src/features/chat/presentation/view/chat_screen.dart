@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
@@ -6,6 +8,7 @@ import 'package:enigma/src/features/chat/presentation/components/chat_ui.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -64,9 +67,31 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             CircleAvatar(
               radius: context.width * 0.05,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              child: Icon(
-                Icons.video_camera_front_outlined,
-                color: Theme.of(context).canvasColor,
+              child: InkWell(
+                onTap: () async {
+                  if (Platform.isAndroid) {
+                    await FlutterBluePlus
+                        .turnOn(); // Request the user to turn on Bluetooth
+                  }
+
+                  FlutterBluePlus.startScan(
+                    timeout: Duration(seconds: 15),
+                    // Filter by device name (optional)
+                  );
+
+                  FlutterBluePlus.onScanResults.listen((results) {
+                    if (results.isNotEmpty) {
+                      ScanResult r = results.last;
+
+                      print(
+                          '${r.device.remoteId}: "${r.device.advName}" found!');
+                    }
+                  }, onError: (e) => print(e));
+                },
+                child: Icon(
+                  Icons.video_camera_front_outlined,
+                  color: Theme.of(context).canvasColor,
+                ),
               ),
             ),
           ],

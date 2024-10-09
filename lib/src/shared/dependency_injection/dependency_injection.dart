@@ -27,11 +27,18 @@ import 'package:enigma/src/features/profile/domain/usecases/update_profile_useca
 import 'package:enigma/src/shared/data/repository/media_repository_impl.dart';
 import 'package:enigma/src/shared/domain/use_cases/profile_picture_usecase.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get_it/get_it.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final sl = GetIt.I;
 
 Future<void> setupService() async {
+  PermissionStatus locationPermission = await Permission.location.request();
+  PermissionStatus bleScan = await Permission.bluetoothScan.request();
+  PermissionStatus bleConnect = await Permission.bluetoothConnect.request();
+  FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

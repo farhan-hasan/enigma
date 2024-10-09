@@ -105,7 +105,7 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
     ImagePicker imagePicker = ImagePicker();
     XFile? getImage = await imagePicker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 1,
+      imageQuality: 20,
     );
     if (getImage != null) {
       file.value = File(getImage.path);
