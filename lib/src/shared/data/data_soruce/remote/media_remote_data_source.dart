@@ -2,20 +2,19 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
-import 'package:enigma/src/core/network/remote/firebase/storage_directory_name.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
 import 'package:enigma/src/core/network/responses/success_response.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class MediaRemoteDataSource {
-  Future<Either<Failure, Success>> addProfileImage({
+  Future<Either<Failure, Success>> addMediaImage({
     required File file,
-    required String uid,
+    required String directory,
+    required String fileName,
   }) async {
     Failure failure;
     Reference storageRef = FirebaseHandler.storage.ref();
-    Reference profileDirectory =
-        storageRef.child(StorageDirectoryName.PROFILE_DIRECTORY).child(uid);
+    Reference profileDirectory = storageRef.child(directory).child(fileName);
     try {
       String profileImageUrl;
       await profileDirectory.putFile(file);

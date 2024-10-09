@@ -8,11 +8,14 @@ import 'package:enigma/src/shared/domain/repository/media_repository.dart';
 
 class MediaRepositoryImpl extends MediaRepository {
   final MediaRemoteDataSource _mediaRemoteDataSource = MediaRemoteDataSource();
+
   @override
-  Future<Either<Failure, Success>> addProfileImage(
-      {required File file, required String uid}) async {
-    Either<Failure, Success> response =
-        await _mediaRemoteDataSource.addProfileImage(file: file, uid: uid);
+  Future<Either<Failure, Success>> addMediaImage(
+      {required File file,
+      required String directory,
+      required String fileName}) async {
+    Either<Failure, Success> response = await _mediaRemoteDataSource
+        .addMediaImage(file: file, directory: directory, fileName: fileName);
     return response;
   }
 }

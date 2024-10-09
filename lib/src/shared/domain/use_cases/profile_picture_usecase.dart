@@ -7,15 +7,16 @@ import 'package:enigma/src/shared/domain/dto/profile_picture_dto.dart';
 import 'package:enigma/src/shared/domain/repository/media_repository.dart';
 import 'package:enigma/src/shared/domain/use_cases/base_use_case.dart';
 
-class ProfilePictureUsecase
-    extends UseCase<Either<Failure, Success>, ProfilePictureDto> {
+class ImageMediaUsecase
+    extends UseCase<Either<Failure, Success>, ImageMediaDto> {
   final MediaRepository _mediaRepository = sl.get<MediaRepositoryImpl>();
 
   @override
-  Future<Either<Failure, Success>> call(ProfilePictureDto params) async {
-    return await _mediaRepository.addProfileImage(
+  Future<Either<Failure, Success>> call(ImageMediaDto params) async {
+    return await _mediaRepository.addMediaImage(
       file: params.file,
-      uid: params.uid,
+      directory: params.directory,
+      fileName: params.fileName,
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:enigma/src/features/auth/presentation/auth_screen/view/auth_screen.dart';
 import 'package:enigma/src/features/auth/presentation/login/view/login_screen.dart';
 import 'package:enigma/src/features/auth/presentation/signup/view/signup_screen.dart';
+import 'package:enigma/src/features/chat/presentation/view/chat_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/friends_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/people_screen.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
@@ -47,6 +48,12 @@ final goRouterProvider = Provider(
           path: SignupScreen.route,
           builder: (context, state) {
             return SignupScreen();
+          },
+        ),
+        GoRoute(
+          path: ChatScreen.route,
+          builder: (context, state) {
+            return ChatScreen();
           },
         ),
         GoRoute(

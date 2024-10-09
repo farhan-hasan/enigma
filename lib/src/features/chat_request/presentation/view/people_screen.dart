@@ -429,7 +429,9 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                             .sendChatRequest(
                                 peopleController.listOfPeople[index].uid ?? "");
                       },
-                      icon: const Icon(Icons.add),
+                      icon: const Icon(
+                        Icons.add,
+                      ),
                     ),
                   )
                 ],

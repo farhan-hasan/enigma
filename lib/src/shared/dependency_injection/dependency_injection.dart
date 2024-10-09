@@ -7,6 +7,9 @@ import 'package:enigma/src/features/auth/domain/usecases/forgot_password_usecase
 import 'package:enigma/src/features/auth/domain/usecases/login_usecase.dart';
 import 'package:enigma/src/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:enigma/src/features/auth/domain/usecases/signup_usecase.dart';
+import 'package:enigma/src/features/chat/data/repository/chat_repository_impl.dart';
+import 'package:enigma/src/features/chat/domain/usecases/add_chat_usecase.dart';
+import 'package:enigma/src/features/chat/domain/usecases/get_chat_usecase.dart';
 import 'package:enigma/src/features/chat_request/data/repository/chat_request_repository_impl.dart';
 import 'package:enigma/src/features/chat_request/domain/usecases/accept_chat_request_usecase.dart';
 import 'package:enigma/src/features/chat_request/domain/usecases/fetch_chat_request_usecase.dart';
@@ -63,7 +66,11 @@ Future<void> setupService() async {
   sl.registerSingleton<DeleteProfileUseCase>(DeleteProfileUseCase());
 
   sl.registerSingleton<MediaRepositoryImpl>(MediaRepositoryImpl());
-  sl.registerSingleton<ProfilePictureUsecase>(ProfilePictureUsecase());
+  sl.registerSingleton<ImageMediaUsecase>(ImageMediaUsecase());
+
+  sl.registerSingleton<ChatRepositoryImpl>(ChatRepositoryImpl());
+  sl.registerSingleton<AddChatUsecase>(AddChatUsecase());
+  sl.registerSingleton<GetChatUsecase>(GetChatUsecase());
 
   sl.registerSingleton<ChatRequestRepositoryImpl>(ChatRequestRepositoryImpl());
   sl.registerSingleton<SendChatRequestUseCase>(SendChatRequestUseCase());
