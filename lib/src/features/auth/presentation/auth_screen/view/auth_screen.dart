@@ -37,66 +37,68 @@ class AuthScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Text(
-              'Connect friends easily & quickly',
-              style: Theme.of(context).textTheme.displayLarge,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Our chat app is the perfect way to stay connected with friends and family.',
-                style: Theme.of(context).textTheme.titleLarge,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                'Connect friends easily & quickly',
+                style: Theme.of(context).textTheme.displayLarge,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SocialMediaIconButton(
-                    iconSource: IconsPath.facebookIcon,
-                    onPressed: () {},
-                  ),
-                  SocialMediaIconButton(
-                    iconSource: IconsPath.googleIcon,
-                    onPressed: () {},
-                  ),
-                  SocialMediaIconButton(
-                    iconSource: IconsPath.appleLightIcon,
-                    onPressed: () {},
-                  )
-                ],
-              ),
-            ),
-            OrWidget(
-                //color: Theme.of(context).splashColor,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Our chat app is the perfect way to stay connected with friends and family.',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomElevatedButton(
-                buttonName: "Sign Up with Mail",
-                onPressed: () {
-                  context.push(SignupScreen.setRoute());
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SocialMediaIconButton(
+                      iconSource: IconsPath.facebookIcon,
+                      onPressed: () {},
+                    ),
+                    SocialMediaIconButton(
+                      iconSource: IconsPath.googleIcon,
+                      onPressed: () {},
+                    ),
+                    SocialMediaIconButton(
+                      iconSource: IconsPath.appleLightIcon,
+                      onPressed: () {},
+                    )
+                  ],
+                ),
+              ),
+              OrWidget(
+                  //color: Theme.of(context).splashColor,
+                  ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomElevatedButton(
+                  buttonName: "Sign Up with Mail",
+                  onPressed: () {
+                    context.push(SignupScreen.setRoute());
+                  },
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  context.push(LoginScreen.setRoute());
                 },
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                context.push(LoginScreen.setRoute());
-              },
-              child: RichText(
-                text: TextSpan(children: [
-                  TextSpan(text: "Existing account?"),
-                  TextSpan(text: "  Log in")
-                ], style: Theme.of(context).textTheme.bodySmall),
-              ),
-            )
-          ],
+                child: RichText(
+                  text: TextSpan(children: [
+                    TextSpan(text: "Existing account?"),
+                    TextSpan(text: "  Log in")
+                  ], style: Theme.of(context).textTheme.bodySmall),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

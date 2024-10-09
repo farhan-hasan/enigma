@@ -1,5 +1,5 @@
-import 'package:enigma/src/core/database/local/shared_preference/shared_preference_keys.dart';
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_manager.dart';
+import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/constants/icons_path.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/core/utils/validators/validator.dart';
@@ -9,6 +9,7 @@ import 'package:enigma/src/features/auth/presentation/components/or_widget.dart'
 import 'package:enigma/src/features/auth/presentation/components/social_media_icon_button.dart';
 import 'package:enigma/src/features/auth/presentation/login/view_model/login_controller.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
+import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -32,10 +33,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    WidgetsBinding.instance.addPostFrameCallback((t) {
-      preferenceManager.insertValue<bool>(
-          key: SharedPreferenceKeys.AUTH_STATE, data: true);
-    });
+    WidgetsBinding.instance.addPostFrameCallback((t) {});
     super.initState();
   }
 
@@ -43,9 +41,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final loginController = ref.watch(loginProvider);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+      appBar: SharedAppbar(
+        leadingWidget: InkWell(
+          onTap: () {
+            ref.read(goRouterProvider).pop();
+          },
+          child: Container(
+            height: context.height * .05,
+            width: context.width * .05,
+            margin: const EdgeInsets.all(8),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.arrow_back_outlined,
+                size: 25,
+              ),
+            ),
+          ),
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -80,7 +96,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         onPressed: () {},
                       ),
                       SocialMediaIconButton(
-                        iconSource: IconsPath.appleDarkIcon,
+                        iconSource: IconsPath.appleLightIcon,
                         onPressed: () {},
                       )
                     ],

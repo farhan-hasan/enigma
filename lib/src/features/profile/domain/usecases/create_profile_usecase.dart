@@ -17,14 +17,3 @@ class CreateProfileUseCase
     return response.map((profileModel) => profileModel.toEntity());
   }
 }
-
-/*
-class ChangePasswordUsecase extends UseCase<Either<Failure, Success>, String> {
-  final AuthRepository _authRepository = sl.get<AuthRepositoryImpl>();
-  @override
-  Future<Either<Failure, Success>> call(String params) async {
-    return await _authRepository.changePassword(password: params);
-  }
-}
-
-*/

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
@@ -10,9 +12,9 @@ class SembastDbConfig {
   }
 
   Future<Database> _openDatabase() async {
-    final appDirectory = await getApplicationDocumentsDirectory();
-    final dbPath = "${appDirectory.path}/enigma.db";
-    final database = await databaseFactoryIo.openDatabase(dbPath);
+    final Directory appDirectory = await getApplicationDocumentsDirectory();
+    final String dbPath = "${appDirectory.path}/enigma.db";
+    final Database database = await databaseFactoryIo.openDatabase(dbPath);
     return database;
   }
 }

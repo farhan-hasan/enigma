@@ -27,7 +27,7 @@ class BottomNavScreen extends StatelessWidget {
               BottomNavigationBarItem(
                   icon: Icon(Icons.phone_in_talk_outlined), label: "Calls"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline_rounded), label: "Contacts"),
+                  icon: Icon(Icons.person_outline_rounded), label: "People"),
               BottomNavigationBarItem(
                   icon: Icon(Icons.settings_outlined), label: "Settings"),
             ]),
