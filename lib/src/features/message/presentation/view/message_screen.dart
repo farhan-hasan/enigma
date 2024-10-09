@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/global/global_variables.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';

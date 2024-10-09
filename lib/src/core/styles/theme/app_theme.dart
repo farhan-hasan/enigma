@@ -55,7 +55,7 @@ final ThemeData lightTheme = ThemeData(
   iconButtonTheme: IconButtonThemeData(
     style: IconButton.styleFrom(
       /// Markdown -> Commented BG Color of ICON
-      // backgroundColor: Colors.black,
+      backgroundColor: Colors.black,
       foregroundColor: Colors.white,
       padding: const EdgeInsets.all(2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
@@ -117,7 +117,7 @@ final ThemeData darkTheme = ThemeData(
   ),
   iconButtonTheme: IconButtonThemeData(
     style: IconButton.styleFrom(
-      // backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       foregroundColor: Colors.black,
       padding: const EdgeInsets.all(2),
       shape: RoundedRectangleBorder(
