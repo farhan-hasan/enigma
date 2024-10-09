@@ -54,20 +54,9 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
           title: Text("People"),
           leadingWidget: GestureDetector(
             onTap: () {},
-            child: Container(
-              height: context.height * .05,
-              width: context.width * .05,
-              margin: const EdgeInsets.all(8),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.search,
-                  size: 25,
-                ),
-              ),
+            child: const Icon(
+              Icons.search,
+              size: 25,
             ),
           ),
           trailingWidgets: [
@@ -77,15 +66,9 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                 width: context.width * .1,
                 height: context.width * .1,
                 margin: const EdgeInsets.all(8),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: const Icon(
-                    Icons.person_add_outlined,
-                    size: 25,
-                  ),
+                child: const Icon(
+                  Icons.person_add_outlined,
+                  size: 25,
                 ),
               ),
             )

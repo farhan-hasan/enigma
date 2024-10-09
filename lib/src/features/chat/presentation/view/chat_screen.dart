@@ -1,8 +1,10 @@
+import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_screen_bottom_bar.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_ui.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
+import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,8 +24,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     // final chatController = ref.watch(chatProvider);
     return Scaffold(
-        appBar: AppBar(
+        appBar: SharedAppbar(
           titleSpacing: -context.width * 0.04,
+          leadingWidget: InkWell(
+            onTap: () {
+              ref.read(goRouterProvider).pop();
+            },
+            child: const Icon(
+              Icons.arrow_back_outlined,
+              size: 25,
+            ),
+          ),
           title: ListTile(
             leading: CircleAvatar(
               radius: context.width * 0.05,
@@ -38,16 +49,25 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
+          trailingWidgets: [
+            CircleAvatar(
+              radius: context.width * 0.05,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              child: Icon(
                 Icons.call_outlined,
+                color: Theme.of(context).canvasColor,
               ),
             ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.video_camera_front_outlined),
+            const SizedBox(
+              width: 5,
+            ),
+            CircleAvatar(
+              radius: context.width * 0.05,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              child: Icon(
+                Icons.video_camera_front_outlined,
+                color: Theme.of(context).canvasColor,
+              ),
             ),
           ],
         ),

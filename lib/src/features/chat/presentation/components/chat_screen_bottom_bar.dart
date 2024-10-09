@@ -132,33 +132,42 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            IconButton(
-              onPressed: () => _showOptions(context),
-              icon: Icon(
-                Icons.attach_file,
-                color: Theme.of(context).primaryColor,
+            GestureDetector(
+              onTap: () => _showOptions(context),
+              child: CircleAvatar(
+                //radius: context.width * 0.05,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                child: Icon(
+                  Icons.attach_file,
+                  color: Theme.of(context).canvasColor,
+                ),
               ),
             ),
             Expanded(
               child: TextFormField(
                 controller: messageTextController.value,
                 decoration: InputDecoration(
-                  filled: true,
-                  fillColor:
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.3),
-                  hintText: "Write your message",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  suffixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.file_copy_outlined,
-                      color: Theme.of(context).colorScheme.primary,
+                    filled: true,
+                    fillColor: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withOpacity(0.3),
+                    hintText: "Write your message",
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                  ),
-                ),
+                    suffixIcon: GestureDetector(
+                      onTap: () {},
+                      child: CircleAvatar(
+                        //radius: context.width * 0.05,
+                        backgroundColor: Colors.transparent,
+                        child: Icon(
+                          Icons.file_copy_outlined,
+                          color: Theme.of(context).canvasColor,
+                        ),
+                      ),
+                    )),
               ),
             ),
             ValueListenableBuilder(
@@ -167,20 +176,28 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                 if (value.text.trim().isEmpty) {
                   return Row(
                     children: [
-                      IconButton(
-                        onPressed: _pickCameraImage,
-                        icon: Icon(
-                          Icons.camera_alt_outlined,
-                          color: Theme.of(context).colorScheme.primary,
+                      GestureDetector(
+                        onTap: () => _pickCameraImage(),
+                        child: CircleAvatar(
+                          //radius: context.width * 0.05,
+                          backgroundColor: Colors.transparent,
+                          child: Icon(
+                            Icons.camera_alt_outlined,
+                            color: Theme.of(context).canvasColor,
+                          ),
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.mic_none_outlined,
-                          color: Theme.of(context).colorScheme.primary,
+                      GestureDetector(
+                        onTap: () => _pickCameraImage(),
+                        child: CircleAvatar(
+                          //radius: context.width * 0.05,
+                          backgroundColor: Colors.transparent,
+                          child: Icon(
+                            Icons.mic_none_outlined,
+                            color: Theme.of(context).canvasColor,
+                          ),
                         ),
-                      )
+                      ),
                     ],
                   );
                 } else {

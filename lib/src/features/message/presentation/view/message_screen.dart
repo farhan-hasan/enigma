@@ -41,15 +41,9 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
               margin: const EdgeInsets.all(8),
               child: GestureDetector(
                 onTap: () {},
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.search,
-                    size: 25,
-                  ),
+                child: const Icon(
+                  Icons.search,
+                  size: 25,
                 ),
               ),
             ),
@@ -70,46 +64,41 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
               ),
             )
           ]),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            // Story section
-            buildStorySection(context),
-            // Chat section
-            buildChatSection(context)
-          ],
+          children: [buildStorySection(context), buildChatSection(context)],
         ),
       ),
     );
   }
 
   Widget buildChatSection(BuildContext context) {
-    return Expanded(
-      flex: 4,
-      child: Container(
-        //color: Colors.grey,
-        child: ListView.separated(
-          primary: false,
-          shrinkWrap: false,
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () {
-                container.read(goRouterProvider).push(ChatScreen.getRoute);
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Stack(
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap: () {
+            container.read(goRouterProvider).push(ChatScreen.getRoute);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 10,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  flex: 5,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: Stack(
                           children: [
                             CircularDisplayPicture(
                               radius: 23,
@@ -125,11 +114,11 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                                 ))
                           ],
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        SizedBox(
-                          width: context.width / 1.7,
+                      ),
+                      Flexible(
+                        flex: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -148,125 +137,124 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                             ],
                           ),
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        "2 min ago",
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                      const CircleAvatar(
+                        backgroundColor: Colors.green,
+                        radius: 10,
+                        child: Text(
+                          "3",
+                          style: TextStyle(fontSize: 10),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+      itemCount: 20,
+      separatorBuilder: (BuildContext context, int index) {
+        return const SizedBox(
+          height: 5,
+        );
+      },
+    );
+  }
+
+  Widget buildStorySection(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 15),
+      //color: Colors.red,
+      height: context.height * .15,
+      width: double.infinity,
+      child: ListView.builder(
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: SizedBox(
+                width: 70,
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        CircularDisplayPicture(
+                          imageURL: null,
+                          radius: 25,
+                        ),
+                        Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(500)),
+                              child: const Icon(
+                                Icons.add_circle_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ))
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          "2 min ago",
-                          style: Theme.of(context).textTheme.labelSmall,
-                        ),
-                        const CircleAvatar(
-                          backgroundColor: Colors.green,
-                          radius: 10,
-                          child: Text(
-                            "3",
-                            style: TextStyle(fontSize: 10),
-                          ),
-                        )
-                      ],
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text(
+                      "Alex Linderson",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      //style: customLightTheme.primaryTextTheme.labelLarge,
                     )
                   ],
                 ),
               ),
             );
-          },
-          itemCount: 20,
-          separatorBuilder: (BuildContext context, int index) {
-            return const SizedBox(
-              height: 5,
+          } else {
+            return Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: SizedBox(
+                width: 70,
+                child: Column(
+                  children: [
+                    CircularDisplayPicture(
+                      imageURL: null,
+                      radius: 25,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text(
+                      "Alex Linderson",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      //style: customLightTheme.primaryTextTheme.labelLarge,
+                    )
+                  ],
+                ),
+              ),
             );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget buildStorySection(BuildContext context) {
-    return Expanded(
-      flex: 1,
-      child: Container(
-        padding: const EdgeInsets.only(left: 15, top: 24),
-        //color: Colors.red,
-        width: double.infinity,
-        child: ListView.builder(
-          shrinkWrap: true,
-          primary: false,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: SizedBox(
-                  width: 70,
-                  child: Column(
-                    children: [
-                      Stack(
-                        children: [
-                          CircularDisplayPicture(
-                            imageURL: null,
-                            radius: 25,
-                          ),
-                          Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(500)),
-                                child: const Icon(
-                                  Icons.add_circle_rounded,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ))
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        "Alex Linderson",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        //style: customLightTheme.primaryTextTheme.labelLarge,
-                      )
-                    ],
-                  ),
-                ),
-              );
-            } else {
-              return Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: SizedBox(
-                  width: 70,
-                  child: Column(
-                    children: [
-                      CircularDisplayPicture(
-                        imageURL: null,
-                        radius: 25,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        "Alex Linderson",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        //style: customLightTheme.primaryTextTheme.labelLarge,
-                      )
-                    ],
-                  ),
-                ),
-              );
-            }
-          },
-          itemCount: 30,
-          scrollDirection: Axis.horizontal,
-        ),
+          }
+        },
+        itemCount: 30,
+        scrollDirection: Axis.horizontal,
       ),
     );
   }

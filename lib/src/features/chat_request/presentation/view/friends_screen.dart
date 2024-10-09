@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:enigma/src/core/router/router.dart';
-import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat_request/domain/entity/chat_request_entity.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_generic.dart';
@@ -45,20 +44,9 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
           onTap: () {
             ref.read(goRouterProvider).pop();
           },
-          child: Container(
-            height: context.height * .05,
-            width: context.width * .05,
-            margin: const EdgeInsets.all(8),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.arrow_back_outlined,
-                size: 25,
-              ),
-            ),
+          child: const Icon(
+            Icons.arrow_back_outlined,
+            size: 25,
           ),
         ),
       ),
