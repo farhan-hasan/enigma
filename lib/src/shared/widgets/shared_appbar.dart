@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 
 class SharedAppbar extends StatelessWidget implements PreferredSizeWidget {
   const SharedAppbar(
-      {super.key,
-      required this.title,
-      this.leadingWidget,
-      this.trailingWidgets});
+      {super.key, this.title, this.leadingWidget, this.trailingWidgets});
 
-  final Widget title;
+  final Widget? title;
   final List<Widget>? trailingWidgets;
   final Widget? leadingWidget;
 
@@ -18,7 +15,7 @@ class SharedAppbar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       centerTitle: true,
-      title: title,
+      title: title ?? null,
       leading: leadingWidget ?? null,
       actions: trailingWidgets ?? null,
     );

@@ -121,7 +121,10 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
       },
       child: Container(
         padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(color: Colors.black),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          //border: Border.all(color: Colors.grey),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -130,11 +133,11 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
-                  ?.copyWith(color: Colors.white),
+                  ?.copyWith(color: Theme.of(context).canvasColor),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_forward_rounded,
-              color: Colors.white,
+              color: Theme.of(context).canvasColor,
             )
           ],
         ),
@@ -227,9 +230,6 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                           await ref
                               .read(chatRequestProvider.notifier)
                               .updateRequestStatus(status, receiverUid);
-                          await ref
-                              .read(chatRequestProvider.notifier)
-                              .fetchChatRequest();
                         },
                         icon: const Icon(
                           Icons.check,
@@ -247,12 +247,6 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                           await ref
                               .read(chatRequestProvider.notifier)
                               .updateRequestStatus(status, receiverUid);
-                          await ref
-                              .read(chatRequestProvider.notifier)
-                              .fetchChatRequest();
-                          await ref
-                              .read(chatRequestProvider.notifier)
-                              .fetchFriends();
                         },
                         icon: const Icon(Icons.close),
                         style: IconButton.styleFrom(
@@ -434,11 +428,6 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                             .read(chatRequestProvider.notifier)
                             .sendChatRequest(
                                 peopleController.listOfPeople[index].uid ?? "");
-                        await ref
-                            .read(chatRequestProvider.notifier)
-                            .fetchPendingRequest();
-
-                        await ref.read(peopleProvider.notifier).readAllPeople();
                       },
                       icon: const Icon(Icons.add),
                     ),

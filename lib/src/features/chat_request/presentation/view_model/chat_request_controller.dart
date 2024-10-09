@@ -17,6 +17,7 @@ import 'package:enigma/src/features/chat_request/presentation/view_model/chat_re
 import 'package:enigma/src/features/profile/domain/dto/filter_dto.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/domain/usecases/read_all_people_usecase.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/controller/people_controller.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -52,8 +53,10 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
         await sendChatRequestUseCase.call(params);
     response.fold((left) {
       BotToast.showText(text: left.message);
-    }, (right) {
+    }, (right) async {
       BotToast.showText(text: "Chat request sent Successfully");
+      await ref.read(chatRequestProvider.notifier).fetchPendingRequest();
+      await ref.read(peopleProvider.notifier).readAllPeople();
     });
     state = state.update(isSendChatRequestLoading: false);
     debug("state = ${state.isSendChatRequestLoading}");
@@ -72,8 +75,10 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
         await acceptChatRequestUseCase.call(params);
     response.fold((left) {
       BotToast.showText(text: left.message);
-    }, (right) {
+    }, (right) async {
       BotToast.showText(text: right.message);
+      await ref.read(chatRequestProvider.notifier).fetchChatRequest();
+      await ref.read(chatRequestProvider.notifier).fetchFriends();
     });
     state = state.update(isUpdateRequestStatusLoading: false);
   }

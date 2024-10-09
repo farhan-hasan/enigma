@@ -5,17 +5,18 @@ const Color primaryColor = Color(0xFF36618E);
 final ThemeData lightTheme = ThemeData(
   primaryColor: primaryColor,
   scaffoldBackgroundColor: Colors.white,
+  canvasColor: Color(0xFF121212),
   //accentColor: Color(0xFF4CAF50), // Complementing color for light theme (greenish)
   brightness: Brightness.light,
-  appBarTheme: AppBarTheme(
+  appBarTheme: const AppBarTheme(
       surfaceTintColor: Colors.transparent,
       backgroundColor: Colors.white,
       iconTheme: IconThemeData(color: Colors.black)),
-  buttonTheme: ButtonThemeData(
+  buttonTheme: const ButtonThemeData(
     buttonColor: primaryColor,
     textTheme: ButtonTextTheme.primary,
   ),
-  colorScheme: ColorScheme.light(
+  colorScheme: const ColorScheme.light(
     primary: Color(0xFF36618E),
     secondary: Color(0xffbbdefb),
   ),
@@ -65,6 +66,7 @@ final ThemeData lightTheme = ThemeData(
 final ThemeData darkTheme = ThemeData(
   primaryColor: Color(0xffbbdefb),
   scaffoldBackgroundColor: Color(0xFF121212),
+  canvasColor: Colors.white,
   //accentColor: Color(0xFFBB86FC), // Complementing color for dark theme (purple)
   brightness: Brightness.dark,
   appBarTheme: AppBarTheme(

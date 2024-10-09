@@ -1,5 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dartz/dartz.dart';
+import 'package:enigma/src/core/database/local/shared_preference/shared_preference_keys.dart';
+import 'package:enigma/src/core/database/local/shared_preference/shared_preference_manager.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/features/auth/domain/dto/login_dto.dart';
@@ -19,6 +21,7 @@ class LoginController extends StateNotifier<LoginGeneric> {
   Ref ref;
 
   LoginUseCase loginUseCase = sl.get<LoginUseCase>();
+  final SharedPreferenceManager preferenceManager = sl.get();
 
   Future<bool> login({required String email, required String password}) async {
     state = state.update(isLoading: true);
@@ -31,6 +34,8 @@ class LoginController extends StateNotifier<LoginGeneric> {
       },
       (right) {
         BotToast.showText(text: "Welcome to Enigma");
+        preferenceManager.insertValue<bool>(
+            key: SharedPreferenceKeys.AUTH_STATE, data: true);
         isSuccess = true;
         ref.read(goRouterProvider).go(
               MessageScreen.setRoute(

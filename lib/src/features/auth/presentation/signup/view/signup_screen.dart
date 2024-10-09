@@ -1,3 +1,4 @@
+import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/core/utils/validators/validator.dart';
 import 'package:enigma/src/features/auth/presentation/components/custom_elevated_button.dart';
@@ -5,6 +6,7 @@ import 'package:enigma/src/features/auth/presentation/components/custom_form_fie
 import 'package:enigma/src/features/auth/presentation/signup/view_model/signup_controller.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
+import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,9 +30,27 @@ class SignupScreen extends ConsumerWidget {
     final signupController = ref.watch(signUpProvider);
     final profileController = ref.watch(profileProvider);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+      appBar: SharedAppbar(
+        leadingWidget: InkWell(
+          onTap: () {
+            ref.read(goRouterProvider).pop();
+          },
+          child: Container(
+            height: context.height * .05,
+            width: context.width * .05,
+            margin: const EdgeInsets.all(8),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.arrow_back_outlined,
+                size: 25,
+              ),
+            ),
+          ),
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(

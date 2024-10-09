@@ -1,5 +1,7 @@
 import 'package:enigma/src/features/chat_request/data/model/chat_request_model.dart';
 
+enum Status { pending, accepted, rejected, blocked }
+
 class ChatRequestEntity {
   String? senderUid;
   String? receiverUid;
