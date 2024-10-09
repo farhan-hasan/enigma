@@ -3,15 +3,18 @@ import 'dart:convert';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
+import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/friends_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_generic.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view_model/controller/people_controller.dart';
 import 'package:enigma/src/features/profile/presentation/view_model/generic/people_generic.dart';
+import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PeopleScreen extends ConsumerStatefulWidget {
@@ -338,7 +341,23 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Discover"),
+          // Temporary inkwell for discovery testing
+          InkWell(
+              onTap: () {
+                Set<String> macs = {};
+                print("Tapped");
+                sl.get<FlutterReactiveBle>().scanForDevices(
+                    withServices: [],
+                    scanMode: ScanMode.balanced).listen((device) {
+                  debug("name, id : ${device.name} , ${device.id}");
+                  debug("total device : ${macs.length}");
+                  debug(device.toString());
+                  macs.add(device.id);
+                }, onError: (e) {
+                  debug(e.toString());
+                });
+              },
+              child: const Text("Discover")),
           const SizedBox(
             height: 20,
           ),
