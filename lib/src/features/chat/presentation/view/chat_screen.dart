@@ -85,7 +85,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     }
                   }),
             ),
-
             const ChatScreenBottomBar(),
 
             // ChatUI(textMessage: textMessage)
