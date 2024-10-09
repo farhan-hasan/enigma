@@ -21,7 +21,8 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
   final ValueNotifier<TextEditingController> messageTextController =
       ValueNotifier(TextEditingController());
 
-  File? file;
+  final ValueNotifier<File?> file = ValueNotifier(null);
+
   String? url;
 
   void _showOptions(BuildContext context) {
@@ -102,10 +103,13 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
 
   void _pickCameraImage() async {
     ImagePicker imagePicker = ImagePicker();
-    XFile? getImage = await imagePicker.pickImage(source: ImageSource.camera);
+    XFile? getImage = await imagePicker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 1,
+    );
     if (getImage != null) {
-      file = File(getImage.path);
-      if (file != null) {}
+      file.value = File(getImage.path);
+      if (file.value != null) {}
     } else {
       return;
     }
@@ -118,8 +122,9 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
       allowedExtensions: extensions,
       type: FileType.custom,
     );
+
     if (result != null) {
-      file = File(result.paths.first!);
+      file.value = File(result.paths.first!);
     }
   }
 
@@ -130,7 +135,7 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
       alignment: Alignment.bottomCenter,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
+        child: Column(
           children: [
             GestureDetector(
               onTap: () => _showOptions(context),
@@ -209,38 +214,123 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                         url =
                             await ref.read(chatProvider.notifier).addImageMedia(
                                   file: file!,
-                                  directory:
-                                      StorageDirectoryName.CHAT_MEDIA_DIRECTORY,
-                                  fileName: file!.path.split("/").last,
-                                );
-                        file = null;
-                        // BotToast.showText(text: "Success: $url");
-                      }
-                      if (messageTextController.value.text.trim().isNotEmpty) {
-                        ChatEntity chatEntity = ChatEntity(
-                          id: uuid.v4(),
-                          content: messageTextController.value.text.trim(),
-                          type: url != null ? MediaType.image : MediaType.text,
-                          mediaLink: url,
-                          timestamp: DateTime.now(),
-                          receiver: "Y51bMMMKXAT1AQs0vPutTfVCkTB2",
-                          sender: "SjKB4wFCutQyMOmrJUhXlX3eo5l1",
-                        );
-                        // print(chatEntity.toJson());
-                        await ref
-                            .read(chatProvider.notifier)
-                            .addChat(chatEntity);
-                        messageTextController.value.clear();
-                        // debug("Success message");
-                      }
-                    },
-                    icon: Icon(
-                      Icons.send,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+            ValueListenableBuilder(
+              valueListenable: file,
+              builder: (context, value, child) {
+                if (value != null) {
+                  return SizedBox(
+                    height: 100,
+                    width: 100,
+                    child: Image(image: FileImage(file.value!)),
                   );
+                } else {
+                  return const SizedBox.shrink();
                 }
               },
+            ),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () => _showOptions(context),
+                  icon: Icon(
+                    Icons.attach_file,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                Expanded(
+                  child: TextFormField(
+                    controller: messageTextController.value,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.3),
+                      hintText: "Write your message",
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.file_copy_outlined,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: messageTextController.value,
+                  builder: (context, value, child) {
+                    if (value.text.trim().isEmpty) {
+                      return Row(
+                        children: [
+                          IconButton(
+                            onPressed: _pickCameraImage,
+                            icon: Icon(
+                              Icons.camera_alt_outlined,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.mic_none_outlined,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          )
+                        ],
+                      );
+                    } else {
+                      return IconButton(
+                        onPressed: () async {
+                          Uuid uuid = const Uuid();
+                          if (file.value != null) {
+                            // debug(file!.path.split("/").last);
+                            url = await ref
+                                .read(chatProvider.notifier)
+                                .addImageMedia(
+                                  file: file.value!,
+                                  directory:
+                                      StorageDirectoryName.CHAT_MEDIA_DIRECTORY,
+                                  fileName: file.value!.path.split("/").last,
+                                );
+                            file.value = null;
+                            // BotToast.showText(text: "Success: $url");
+                          }
+                          if (messageTextController.value.text
+                              .trim()
+                              .isNotEmpty) {
+                            ChatEntity chatEntity = ChatEntity(
+                              id: uuid.v4(),
+                              content: messageTextController.value.text.trim(),
+                              type: url != null
+                                  ? MediaType.image
+                                  : MediaType.text,
+                              mediaLink: url,
+                              timestamp: DateTime.now(),
+                              receiver: "Y51bMMMKXAT1AQs0vPutTfVCkTB2",
+                              sender: "SjKB4wFCutQyMOmrJUhXlX3eo5l1",
+                            );
+                            // print(chatEntity.toJson());
+                            await ref
+                                .read(chatProvider.notifier)
+                                .addChat(chatEntity);
+                            messageTextController.value.clear();
+                            // debug("Success message");
+                          }
+                        },
+                        icon: Icon(
+                          Icons.send,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
           ],
         ),
