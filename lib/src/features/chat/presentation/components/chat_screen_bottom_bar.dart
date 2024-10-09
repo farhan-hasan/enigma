@@ -137,83 +137,6 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            GestureDetector(
-              onTap: () => _showOptions(context),
-              child: CircleAvatar(
-                //radius: context.width * 0.05,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                child: Icon(
-                  Icons.attach_file,
-                  color: Theme.of(context).canvasColor,
-                ),
-              ),
-            ),
-            Expanded(
-              child: TextFormField(
-                controller: messageTextController.value,
-                decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Theme.of(context)
-                        .colorScheme
-                        .secondary
-                        .withOpacity(0.3),
-                    hintText: "Write your message",
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    suffixIcon: GestureDetector(
-                      onTap: () {},
-                      child: CircleAvatar(
-                        //radius: context.width * 0.05,
-                        backgroundColor: Colors.transparent,
-                        child: Icon(
-                          Icons.file_copy_outlined,
-                          color: Theme.of(context).canvasColor,
-                        ),
-                      ),
-                    )),
-              ),
-            ),
-            ValueListenableBuilder(
-              valueListenable: messageTextController.value,
-              builder: (context, value, child) {
-                if (value.text.trim().isEmpty) {
-                  return Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => _pickCameraImage(),
-                        child: CircleAvatar(
-                          //radius: context.width * 0.05,
-                          backgroundColor: Colors.transparent,
-                          child: Icon(
-                            Icons.camera_alt_outlined,
-                            color: Theme.of(context).canvasColor,
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => _pickCameraImage(),
-                        child: CircleAvatar(
-                          //radius: context.width * 0.05,
-                          backgroundColor: Colors.transparent,
-                          child: Icon(
-                            Icons.mic_none_outlined,
-                            color: Theme.of(context).canvasColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                } else {
-                  return IconButton(
-                    onPressed: () async {
-                      Uuid uuid = const Uuid();
-                      if (file != null) {
-                        // debug(file!.path.split("/").last);
-                        url =
-                            await ref.read(chatProvider.notifier).addImageMedia(
-                                  file: file!,
             ValueListenableBuilder(
               valueListenable: file,
               builder: (context, value, child) {
@@ -230,11 +153,15 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
             ),
             Row(
               children: [
-                IconButton(
-                  onPressed: () => _showOptions(context),
-                  icon: Icon(
-                    Icons.attach_file,
-                    color: Theme.of(context).primaryColor,
+                GestureDetector(
+                  onTap: () => _showOptions(context),
+                  child: CircleAvatar(
+                    //radius: context.width * 0.05,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    child: Icon(
+                      Icons.attach_file,
+                      color: Theme.of(context).canvasColor,
+                    ),
                   ),
                 ),
                 Expanded(
@@ -251,11 +178,15 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                         borderSide: BorderSide.none,
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      suffixIcon: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.file_copy_outlined,
-                          color: Theme.of(context).colorScheme.primary,
+                      suffixIcon: GestureDetector(
+                        onTap: () {},
+                        child: CircleAvatar(
+                          //radius: context.width * 0.05,
+                          backgroundColor: Colors.transparent,
+                          child: Icon(
+                            Icons.file_copy_outlined,
+                            color: Theme.of(context).canvasColor,
+                          ),
                         ),
                       ),
                     ),
@@ -267,25 +198,33 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                     if (value.text.trim().isEmpty) {
                       return Row(
                         children: [
-                          IconButton(
-                            onPressed: _pickCameraImage,
-                            icon: Icon(
-                              Icons.camera_alt_outlined,
-                              color: Theme.of(context).colorScheme.primary,
+                          GestureDetector(
+                            onTap: () => _pickCameraImage(),
+                            child: CircleAvatar(
+                              //radius: context.width * 0.05,
+                              backgroundColor: Colors.transparent,
+                              child: Icon(
+                                Icons.camera_alt_outlined,
+                                color: Theme.of(context).canvasColor,
+                              ),
                             ),
                           ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.mic_none_outlined,
-                              color: Theme.of(context).colorScheme.primary,
+                          GestureDetector(
+                            onTap: () => _pickCameraImage(),
+                            child: CircleAvatar(
+                              //radius: context.width * 0.05,
+                              backgroundColor: Colors.transparent,
+                              child: Icon(
+                                Icons.mic_none_outlined,
+                                color: Theme.of(context).canvasColor,
+                              ),
                             ),
-                          )
+                          ),
                         ],
                       );
                     } else {
-                      return IconButton(
-                        onPressed: () async {
+                      return GestureDetector(
+                        onTap: () async {
                           Uuid uuid = const Uuid();
                           if (file.value != null) {
                             // debug(file!.path.split("/").last);
@@ -322,9 +261,13 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                             // debug("Success message");
                           }
                         },
-                        icon: Icon(
-                          Icons.send,
-                          color: Theme.of(context).colorScheme.primary,
+                        child: CircleAvatar(
+                          //radius: context.width * 0.05,
+                          backgroundColor: Colors.transparent,
+                          child: Icon(
+                            Icons.send,
+                            color: Theme.of(context).canvasColor,
+                          ),
                         ),
                       );
                     }
