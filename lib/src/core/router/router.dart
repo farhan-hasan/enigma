@@ -1,4 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/auth/presentation/auth_screen/view/auth_screen.dart';
 import 'package:enigma/src/features/auth/presentation/login/view/login_screen.dart';
 import 'package:enigma/src/features/auth/presentation/signup/view/signup_screen.dart';
@@ -53,7 +54,10 @@ final goRouterProvider = Provider(
         GoRoute(
           path: ChatScreen.route,
           builder: (context, state) {
-            return ChatScreen();
+            debug("path parameter : ${state.pathParameters}");
+            return ChatScreen(
+              data: state.pathParameters["chat_id"] ?? "",
+            );
           },
         ),
         GoRoute(

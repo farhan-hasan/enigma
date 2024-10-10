@@ -60,7 +60,9 @@ dependencies:
   audioplayers: ^6.1.0
   video_player: ^2.9.2
   uuid: ^4.5.1
-  
+  flutter_blue_plus: ^1.33.4
+  flutter_ble_peripheral:
+
 
 dev_dependencies:
   flutter_test:

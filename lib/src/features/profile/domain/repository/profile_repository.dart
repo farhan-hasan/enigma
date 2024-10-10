@@ -9,7 +9,7 @@ abstract class ProfileRepository {
   Future<Either<Failure, ProfileModel>> createProfile(
       {required ProfileEntity profileEntity});
 
-  Future<Either<Failure, ProfileModel>> readProfile({required String uid});
+  Future<Either<Failure, ProfileEntity>> readProfile({required String uid});
 
   Future<Either<Failure, List<ProfileModel>>> readAllProfile(
       {FilterDto? filter});

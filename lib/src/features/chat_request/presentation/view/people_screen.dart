@@ -12,6 +12,7 @@ import 'package:enigma/src/features/profile/presentation/view_model/generic/peop
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PeopleScreen extends ConsumerStatefulWidget {
@@ -38,9 +39,13 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
     WidgetsBinding.instance.addPostFrameCallback((t) async {
       await ref.read(chatRequestProvider.notifier).fetchPendingRequest();
       await ref.read(chatRequestProvider.notifier).fetchChatRequest();
-      await ref.read(chatRequestProvider.notifier).fetchFriends();
       await ref.read(peopleProvider.notifier).readAllPeople();
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -49,6 +54,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
     final ChatRequestGeneric chatRequestController =
         ref.watch(chatRequestProvider);
     ref.watch(chatRequestProvider);
+
     return Scaffold(
       appBar: SharedAppbar(
           title: Text("People"),
@@ -332,6 +338,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
       BuildContext context,
       PeopleGeneric peopleController,
       ChatRequestGeneric chatRequestController) {
+    Set<BluetoothDevice> devices = {};
     return Container(
       padding: const EdgeInsets.all(20),
       //color: Colors.grey,
