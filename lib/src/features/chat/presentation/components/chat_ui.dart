@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
@@ -17,6 +18,11 @@ class ChatUI extends StatelessWidget {
       child: ListView.builder(
         itemCount: chat.length,
         itemBuilder: (context, index) {
+          chat.sort(
+            (a, b) => DateTime.parse(a.timestamp.toString()).compareTo(
+              DateTime.parse(b.timestamp.toString()),
+            ),
+          );
           if (chat[index].sender == FirebaseHandler.auth.currentUser!.uid) {
             return Align(
               alignment: Alignment.centerRight,
@@ -44,9 +50,13 @@ class ChatUI extends StatelessWidget {
                       if (chat[index].type == MediaType.image)
                         GestureDetector(
                           onTap: () {},
-                          child: Image(
-                            image: NetworkImage("${chat[index].mediaLink}"),
-                            fit: BoxFit.fill,
+                          child: CachedNetworkImage(
+                            imageUrl: chat[index].mediaLink!,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.image),
                           ),
                         )
                       else if (chat[index].type == MediaType.video)
@@ -95,9 +105,16 @@ class ChatUI extends StatelessWidget {
                     ),
                     if (chat[index].mediaLink != null)
                       if (chat[index].type == MediaType.image)
-                        Image(
-                          image: NetworkImage("${chat[index].mediaLink}"),
-                          fit: BoxFit.fill,
+                        GestureDetector(
+                          onTap: () {},
+                          child: CachedNetworkImage(
+                            imageUrl: chat[index].mediaLink!,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.image),
+                          ),
                         )
                       else if (chat[index].type == MediaType.video)
                         const Text("There is video. Will add later on")

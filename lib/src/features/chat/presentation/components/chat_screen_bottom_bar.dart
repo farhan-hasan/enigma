@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:enigma/src/core/network/remote/firebase/storage_directory_name.dart';
+import 'package:enigma/src/core/utils/chat_utils/chat_utils.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -41,14 +41,14 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
           children: [
             filesOption(
               title: "Camera",
-              onTap: _pickCameraImage,
+              onTap: () {},
               icon: Icons.camera,
             ),
             filesOption(
               title: "Documents",
               subtitle: "Share your files",
-              onTap: () {
-                _pickDocuments(const [
+              onTap: () async {
+                file.value = await ChatUtils.pickDocuments(const [
                   'pdf',
                   'doc',
                   'docx',
@@ -72,21 +72,24 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
             filesOption(
               title: "Media",
               subtitle: "Share photos and videos",
-              onTap: () {
-                _pickDocuments(const [
-                  'jpg',
-                  'jpeg',
-                  'png',
-                  'svg',
-                  'gif',
-                  'webp',
-                  'mp4',
-                  'avi',
-                  'mov',
-                  'mkv',
-                  'flv',
-                  'wmv',
-                ]);
+              onTap: () async {
+                file.value = await ChatUtils.pickImage(
+                  imageSource: ImageSource.gallery,
+                );
+                // pickDocuments(const [
+                //   'jpg',
+                //   'jpeg',
+                //   'png',
+                //   'svg',
+                //   'gif',
+                //   'webp',
+                //   'mp4',
+                //   'avi',
+                //   'mov',
+                //   'mkv',
+                //   'flv',
+                //   'wmv',
+                // ]);
               },
               icon: Icons.perm_media_outlined,
             ),
@@ -106,33 +109,6 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
         );
       },
     );
-  }
-
-  void _pickCameraImage() async {
-    ImagePicker imagePicker = ImagePicker();
-    XFile? getImage = await imagePicker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 1,
-    );
-    if (getImage != null) {
-      file.value = File(getImage.path);
-      if (file.value != null) {}
-    } else {
-      return;
-    }
-    return;
-  }
-
-  void _pickDocuments(List<String> extensions) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      allowedExtensions: extensions,
-      type: FileType.custom,
-    );
-
-    if (result != null) {
-      file.value = File(result.paths.first!);
-    }
   }
 
   @override
@@ -206,7 +182,11 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                       return Row(
                         children: [
                           GestureDetector(
-                            onTap: () => _pickCameraImage(),
+                            onTap: () async {
+                              file.value = await ChatUtils.pickImage(
+                                imageSource: ImageSource.camera,
+                              );
+                            },
                             child: CircleAvatar(
                               //radius: context.width * 0.05,
                               backgroundColor: Colors.transparent,
@@ -217,7 +197,7 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => _pickCameraImage(),
+                            onTap: () async {},
                             child: CircleAvatar(
                               //radius: context.width * 0.05,
                               backgroundColor: Colors.transparent,
