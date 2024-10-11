@@ -35,7 +35,7 @@ class ProfileRemoteDataSource {
     return Left(failure);
   }
 
-  Future<Either<Failure, ProfileModel>> readProfile(
+  Future<Either<Failure, ProfileEntity>> readProfile(
       {required String uid}) async {
     Failure failure;
     try {
@@ -44,7 +44,7 @@ class ProfileRemoteDataSource {
               .collection(FirestoreCollectionName.profileCollection)
               .doc(uid)
               .get();
-      return Right(ProfileModel.fromJson(documentSnapshot.data() ?? {}));
+      return Right(ProfileEntity.fromJson(documentSnapshot.data() ?? {}));
     } on FirebaseException catch (e) {
       switch (e.code) {
         case 'permission-denied':

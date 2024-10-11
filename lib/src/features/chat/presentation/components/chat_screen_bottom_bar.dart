@@ -10,7 +10,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatScreenBottomBar extends ConsumerStatefulWidget {
-  const ChatScreenBottomBar({super.key});
+  const ChatScreenBottomBar({
+    super.key,
+    required this.sender,
+    required this.receiver,
+  });
+
+  final String sender;
+  final String receiver;
 
   @override
   ConsumerState<ChatScreenBottomBar> createState() =>
@@ -230,8 +237,8 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                                   : MediaType.text,
                               mediaLink: url,
                               timestamp: DateTime.now(),
-                              receiver: "Y51bMMMKXAT1AQs0vPutTfVCkTB2",
-                              sender: "SjKB4wFCutQyMOmrJUhXlX3eo5l1",
+                              receiver: widget.receiver,
+                              sender: widget.sender,
                             );
                             // print(chatEntity.toJson());
                             await ref

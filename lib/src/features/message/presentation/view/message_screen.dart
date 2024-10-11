@@ -1,9 +1,10 @@
 import 'dart:convert';
 
-import 'package:enigma/src/core/global/global_variables.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat/presentation/view/chat_screen.dart';
+import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
+import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_generic.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
@@ -28,11 +29,19 @@ class MessageScreen extends ConsumerStatefulWidget {
 
 class _MessageScreenState extends ConsumerState<MessageScreen> {
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((t) async {
+      await ref.read(chatRequestProvider.notifier).fetchFriends();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       //backgroundColor: Theme.of(context).colorScheme.secondary,
       appBar: SharedAppbar(
-          title: Text("Home"),
+          title: const Text("Home"),
           leadingWidget: GestureDetector(
             onTap: () {},
             child: Container(
@@ -74,13 +83,19 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   }
 
   Widget buildChatSection(BuildContext context) {
+    final ChatRequestGeneric chatRequestController =
+        ref.watch(chatRequestProvider);
     return ListView.separated(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
-            container.read(goRouterProvider).push(ChatScreen.getRoute);
+            ref.read(goRouterProvider).push(
+                  ChatScreen.setRoute(
+                      chatId:
+                          chatRequestController.listOfFriends[index].uid ?? ""),
+                );
           },
           child: Container(
             padding: const EdgeInsets.symmetric(
@@ -102,14 +117,20 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                           children: [
                             CircularDisplayPicture(
                               radius: 23,
-                              imageURL: null,
+                              imageURL: chatRequestController
+                                      .listOfFriends[index].avatarUrl ??
+                                  "",
                             ),
-                            const Positioned(
+                            Positioned(
                                 right: 0,
                                 bottom: 0,
                                 child: Icon(
                                   Icons.circle,
-                                  color: Colors.green,
+                                  color: (chatRequestController
+                                              .listOfFriends[index].isActive ??
+                                          false)
+                                      ? Colors.green
+                                      : Colors.transparent,
                                   size: 15,
                                 ))
                           ],
@@ -123,7 +144,9 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Text Linderson",
+                                chatRequestController
+                                        .listOfFriends[index].name ??
+                                    "",
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge
@@ -148,7 +171,10 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        "2 min ago",
+                        // todo: handle last seen / active now in firebase
+                        chatRequestController.listOfFriends[index].lastSeen
+                                .toString() ??
+                            "",
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                       const CircleAvatar(
@@ -167,7 +193,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           ),
         );
       },
-      itemCount: 20,
+      itemCount: chatRequestController.listOfFriends.length,
       separatorBuilder: (BuildContext context, int index) {
         return const SizedBox(
           height: 5,

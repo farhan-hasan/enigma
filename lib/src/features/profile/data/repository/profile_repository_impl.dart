@@ -29,9 +29,9 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, ProfileModel>> readProfile(
+  Future<Either<Failure, ProfileEntity>> readProfile(
       {required String uid}) async {
-    Either<Failure, ProfileModel> response =
+    Either<Failure, ProfileEntity> response =
         await _profileRemoteDataSource.readProfile(uid: uid);
     return response;
   }

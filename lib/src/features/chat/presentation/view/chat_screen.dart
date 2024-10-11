@@ -1,30 +1,42 @@
+import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_screen_bottom_bar.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_ui.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
-import 'package:enigma/src/features/chat/presentation/view/test_ble.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/generic/profile_generic.dart';
+import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  const ChatScreen({super.key});
+  ChatScreen({super.key, required this.data});
 
-  static const String route = "/chat";
+  static const String route = "/chat/:chat_id";
+  String data;
 
-  static get getRoute => '/chat';
+  static setRoute({required String chatId}) => "/chat/$chatId";
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
+  final String userUid = FirebaseHandler.auth.currentUser?.uid ?? "";
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((t) async {
+      await ref.read(profileProvider.notifier).readProfile(widget.data);
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final chatController = ref.watch(chatProvider);
+    ProfileGeneric profileController = ref.watch(profileProvider);
     return Scaffold(
         appBar: SharedAppbar(
           titleSpacing: -context.width * 0.04,
@@ -38,31 +50,28 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
           ),
           title: ListTile(
-            leading: CircleAvatar(
-              radius: context.width * 0.05,
-              backgroundColor: Colors.red,
+            leading: CircularDisplayPicture(
+              radius: 23,
+              imageURL: profileController.profileEntity?.avatarUrl ?? null,
             ),
             title: Text(
-              "Text Flinders",
+              profileController.profileEntity?.name ?? "",
               style: Theme.of(context).textTheme.titleLarge,
             ),
             subtitle: Text(
-              "Active Now",
+              (profileController.profileEntity?.isActive ?? false)
+                  ? "Active Now"
+                  : "",
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
           trailingWidgets: [
-            InkWell(
-              onTap: () {
-                context.push(TestBle.getRoute());
-              },
-              child: CircleAvatar(
-                radius: context.width * 0.05,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                child: Icon(
-                  Icons.call_outlined,
-                  color: Theme.of(context).canvasColor,
-                ),
+            CircleAvatar(
+              radius: context.width * 0.05,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              child: Icon(
+                Icons.call_outlined,
+                color: Theme.of(context).canvasColor,
               ),
             ),
             const SizedBox(
@@ -83,8 +92,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             Expanded(
               child: FutureBuilder<Stream<List<ChatEntity>>>(
                   future: ref.read(chatProvider.notifier).getChat(
-                        myUid: "SjKB4wFCutQyMOmrJUhXlX3eo5l1",
-                        friendUid: "Y51bMMMKXAT1AQs0vPutTfVCkTB2",
+                        myUid: userUid,
+                        friendUid: profileController.profileEntity?.uid ?? "",
                       ),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
@@ -112,8 +121,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     }
                   }),
             ),
-            const ChatScreenBottomBar(),
-
+            ChatScreenBottomBar(
+              sender: userUid,
+              receiver: profileController.profileEntity?.uid ?? "",
+            ),
             // ChatUI(textMessage: textMessage)
           ],
         ));
