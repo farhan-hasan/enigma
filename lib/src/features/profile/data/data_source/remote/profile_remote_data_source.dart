@@ -91,15 +91,15 @@ class ProfileRemoteDataSource {
     return Left(failure);
   }
 
-  Future<Either<Failure, ProfileModel>> updateProfile(
-      {required ProfileModel profileModel}) async {
+  Future<Either<Failure, ProfileEntity>> updateProfile(
+      {required ProfileEntity profileEntity}) async {
     Failure failure;
     try {
       await FirebaseHandler.fireStore
           .collection(FirestoreCollectionName.profileCollection)
-          .doc(profileModel.uid)
-          .update(profileModel.toJson());
-      return Right(profileModel);
+          .doc(profileEntity.uid)
+          .update(profileEntity.toJson());
+      return Right(profileEntity);
     } on FirebaseException catch (e) {
       switch (e.code) {
         case 'permission-denied':

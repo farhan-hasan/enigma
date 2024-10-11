@@ -1,16 +1,26 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:enigma/src/core/database/local/shared_preference/shared_preference_keys.dart';
+import 'package:enigma/src/core/database/local/shared_preference/shared_preference_manager.dart';
 import 'package:enigma/src/core/router/router.dart';
+import 'package:enigma/src/core/utils/chat_utils/chat_utils.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
+import 'package:enigma/src/core/utils/logger/logger.dart';
+import 'package:enigma/src/features/chat/presentation/components/chat_screen_bottom_bar.dart';
 import 'package:enigma/src/features/chat/presentation/view/chat_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_generic.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
+import 'package:enigma/src/features/story/presentation/view/story_preview_screen.dart';
+import 'package:enigma/src/features/story/presentation/view_model/story_controller.dart';
+import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MessageScreen extends ConsumerStatefulWidget {
   MessageScreen({super.key, required this.data}) {
@@ -28,10 +38,17 @@ class MessageScreen extends ConsumerStatefulWidget {
 }
 
 class _MessageScreenState extends ConsumerState<MessageScreen> {
+  File? imageFile;
+  SharedPreferenceManager sharedPreferenceManager =
+      sl.get<SharedPreferenceManager>();
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((t) async {
       await ref.read(chatRequestProvider.notifier).fetchFriends();
+      await ref.read(storyProvider.notifier).getStories(
+          uid: sharedPreferenceManager.getValue(
+              key: SharedPreferenceKeys.USER_UID));
     });
     super.initState();
   }
@@ -82,6 +99,11 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     );
   }
 
+  String getLastSeen(DateTime lastSeen) {
+    Duration difference = DateTime.now().difference(lastSeen);
+    return "${difference.inMinutes.toString()} mins ago";
+  }
+
   Widget buildChatSection(BuildContext context) {
     final ChatRequestGeneric chatRequestController =
         ref.watch(chatRequestProvider);
@@ -119,7 +141,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                               radius: 23,
                               imageURL: chatRequestController
                                       .listOfFriends[index].avatarUrl ??
-                                  "",
+                                  null,
                             ),
                             Positioned(
                                 right: 0,
@@ -171,20 +193,20 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        // todo: handle last seen / active now in firebase
-                        chatRequestController.listOfFriends[index].lastSeen
-                                .toString() ??
-                            "",
+                        getLastSeen(chatRequestController
+                                .listOfFriends[index].lastSeen ??
+                            DateTime.now()),
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
-                      const CircleAvatar(
-                        backgroundColor: Colors.green,
-                        radius: 10,
-                        child: Text(
-                          "3",
-                          style: TextStyle(fontSize: 10),
-                        ),
-                      )
+                      //todo : add when message is fixed
+                      // const CircleAvatar(
+                      //   backgroundColor: Colors.green,
+                      //   radius: 10,
+                      //   child: Text(
+                      //     "3",
+                      //     style: TextStyle(fontSize: 10),
+                      //   ),
+                      // )
                     ],
                   ),
                 )
@@ -202,6 +224,47 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     );
   }
 
+  void _showOptions(BuildContext context) {
+    showBottomSheet(
+      context: context,
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            filesOption(
+              title: "Camera",
+              subtitle: "Share a picture",
+              onTap: () async {
+                imageFile = await ChatUtils.pickImage(
+                  imageSource: ImageSource.camera,
+                );
+
+                if (imageFile != null) {
+                  // String? imageFileString = await imageFile?.readAsString();
+                  // ref.read(goRouterProvider).push(StoryPreviewScreen.setRoute(
+                  //     media: imageFileString ?? ""));
+
+                  ref
+                      .read(goRouterProvider)
+                      .push(StoryPreviewScreen.route, extra: imageFile);
+                }
+
+                debug(imageFile?.path ?? "");
+              },
+              icon: Icons.camera,
+            ),
+            filesOption(
+              title: "Video",
+              subtitle: "Share a video clip",
+              onTap: () {},
+              icon: Icons.video_camera_front_outlined,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget buildStorySection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 15),
@@ -211,69 +274,85 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
       child: ListView.builder(
         itemBuilder: (context, index) {
           if (index == 0) {
-            return Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: SizedBox(
-                width: 70,
-                child: Column(
-                  children: [
-                    Stack(
-                      children: [
-                        CircularDisplayPicture(
-                          imageURL: null,
-                          radius: 25,
-                        ),
-                        Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(500)),
-                              child: const Icon(
-                                Icons.add_circle_rounded,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ))
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      "Alex Linderson",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      //style: customLightTheme.primaryTextTheme.labelLarge,
-                    )
-                  ],
+            return InkWell(
+              onTap: () {
+                //ref.read(goRouterProvider).push(StoryScreen.route);
+                _showOptions(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: SizedBox(
+                  width: 70,
+                  child: Column(
+                    children: [
+                      Stack(
+                        children: [
+                          CircularDisplayPicture(
+                            imageURL: null,
+                            radius: 25,
+                          ),
+                          Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(500)),
+                                child: const Icon(
+                                  Icons.add_circle_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ))
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        "Alex Linderson",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        //style: customLightTheme.primaryTextTheme.labelLarge,
+                      )
+                    ],
+                  ),
                 ),
               ),
             );
           } else {
-            return Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: SizedBox(
-                width: 70,
-                child: Column(
-                  children: [
-                    CircularDisplayPicture(
-                      imageURL: null,
-                      radius: 25,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      "Alex Linderson",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      //style: customLightTheme.primaryTextTheme.labelLarge,
-                    )
-                  ],
+            return InkWell(
+              onTap: () {
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => StoryPreviewScreen(
+                //               imageFile: imageFile ?? File(""),
+                //             )));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: SizedBox(
+                  width: 70,
+                  child: Column(
+                    children: [
+                      CircularDisplayPicture(
+                        imageURL: null,
+                        radius: 25,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        "Alex Linderson",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        //style: customLightTheme.primaryTextTheme.labelLarge,
+                      )
+                    ],
+                  ),
                 ),
               ),
             );
