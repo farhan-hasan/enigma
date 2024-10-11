@@ -4,9 +4,11 @@ import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_screen_bottom_bar.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_ui.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
+import 'package:enigma/src/features/chat/presentation/view/test_ble.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
@@ -50,12 +52,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
           ),
           trailingWidgets: [
-            CircleAvatar(
-              radius: context.width * 0.05,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              child: Icon(
-                Icons.call_outlined,
-                color: Theme.of(context).canvasColor,
+            InkWell(
+              onTap: () {
+                context.push(TestBle.getRoute());
+              },
+              child: CircleAvatar(
+                radius: context.width * 0.05,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                child: Icon(
+                  Icons.call_outlined,
+                  color: Theme.of(context).canvasColor,
+                ),
               ),
             ),
             const SizedBox(
