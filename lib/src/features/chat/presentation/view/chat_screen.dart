@@ -121,8 +121,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     }
                   }),
             ),
-            const ChatScreenBottomBar(),
-
+            ChatScreenBottomBar(
+              sender: userUid,
+              receiver: profileController.profileEntity?.uid ?? "",
+            ),
             // ChatUI(textMessage: textMessage)
           ],
         ));
