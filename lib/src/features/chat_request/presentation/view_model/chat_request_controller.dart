@@ -171,13 +171,13 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
 
     Either<Failure, List<ChatRequestEntity>> response =
         await fetchFriendsUseCase.call(params);
-    debug("checking fetch friends");
+    // debug("checking fetch friends");
     response.fold((left) {
       BotToast.showText(text: left.message);
     }, (right) {
-      debug("isSuccess = true");
+      // debug("isSuccess = true");
       for (ChatRequestEntity c in right) {
-        debug("sender = ${c.senderUid}, receiver = ${c.receiverUid}");
+        // debug("sender = ${c.senderUid}, receiver = ${c.receiverUid}");
       }
       listOfFriends = right;
       isSuccess = true;
@@ -208,7 +208,7 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
           BotToast.showText(text: left.message);
         }, (right) {
           for (ProfileEntity r in right) {
-            debug("name = ${r.name}");
+            // debug("name = ${r.name}");
           }
           state = state.update(listOfFriends: right);
           BotToast.showText(text: "Fetched friends successfully");

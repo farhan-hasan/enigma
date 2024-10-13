@@ -76,6 +76,8 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                 file.value = await ChatUtils.pickImage(
                   imageSource: ImageSource.gallery,
                 );
+                messageTextController.value.text =
+                    await ChatUtils.textRecognition(file.value!);
                 // pickDocuments(const [
                 //   'jpg',
                 //   'jpeg',
@@ -150,6 +152,7 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                 Expanded(
                   child: TextFormField(
                     controller: messageTextController.value,
+                    maxLines: null,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Theme.of(context)
@@ -161,8 +164,11 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                         borderSide: BorderSide.none,
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      suffixIcon: GestureDetector(
-                        onTap: () {},
+                      suffixIcon: InkWell(
+                        onTap: () async {
+                          print("Clicked");
+                          await ChatUtils.textRecognition(file.value!);
+                        },
                         child: CircleAvatar(
                           //radius: context.width * 0.05,
                           backgroundColor: Colors.transparent,
@@ -186,6 +192,8 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                               file.value = await ChatUtils.pickImage(
                                 imageSource: ImageSource.camera,
                               );
+                              messageTextController.value.text =
+                                  await ChatUtils.textRecognition(file.value!);
                             },
                             child: CircleAvatar(
                               //radius: context.width * 0.05,
@@ -214,7 +222,8 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                         onTap: () async {
                           Uuid uuid = const Uuid();
                           if (file.value != null) {
-                            // debug(file!.path.split("/").last);
+                            // debug(file!.path.split("/").last)
+
                             url = await ref
                                 .read(chatProvider.notifier)
                                 .addImageMedia(
