@@ -40,7 +40,9 @@ final goRouterProvider = Provider(
         GoRoute(
           path: StoryScreen.route,
           builder: (context, state) {
-            return const StoryScreen();
+            return StoryScreen(
+              data: state.pathParameters["index"] ?? "0",
+            );
           },
         ),
         GoRoute(

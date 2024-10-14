@@ -12,6 +12,7 @@ import 'package:enigma/src/features/chat/presentation/view-model/chat_controller
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
+import 'package:enigma/src/features/story/presentation/view_model/story_controller.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:enigma/src/shared/domain/use_cases/base_use_case.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,6 +50,7 @@ class LogoutController extends StateNotifier<LogoutGeneric> {
         ref.invalidate(profileProvider);
         ref.invalidate(chatRequestProvider);
         ref.invalidate(chatProvider);
+        ref.invalidate(storyProvider);
         ref.read(goRouterProvider).go(AuthScreen.route);
       },
     );

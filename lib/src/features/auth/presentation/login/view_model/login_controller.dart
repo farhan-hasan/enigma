@@ -47,6 +47,8 @@ class LoginController extends StateNotifier<LoginGeneric> {
             ref.read(profileProvider).profileEntity ?? ProfileEntity();
         userProfile.isActive = true;
         await ref.read(profileProvider.notifier).updateProfile(userProfile);
+        preferenceManager.insertValue<String>(
+            key: SharedPreferenceKeys.USER_NAME, data: userProfile.name ?? "");
         isSuccess = true;
 
         ref.read(goRouterProvider).go(

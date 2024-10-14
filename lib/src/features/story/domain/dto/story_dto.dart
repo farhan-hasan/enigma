@@ -1,8 +1,9 @@
 import 'package:enigma/src/features/story/domain/entity/story_entity.dart';
+import 'package:enigma/src/features/story/domain/entity/user_story_entity.dart';
 
 class StoryDto {
-  String uid;
+  UserStoryEntity userStoryEntity;
   StoryEntity storyEntity;
 
-  StoryDto({required this.uid, required this.storyEntity});
+  StoryDto({required this.userStoryEntity, required this.storyEntity});
 }

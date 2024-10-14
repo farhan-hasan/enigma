@@ -18,7 +18,6 @@ import 'package:enigma/src/features/profile/domain/dto/filter_dto.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/domain/usecases/read_all_people_usecase.dart';
 import 'package:enigma/src/features/profile/presentation/view_model/controller/people_controller.dart';
-import 'package:enigma/src/features/story/domain/entity/story_entity.dart';
 import 'package:enigma/src/features/story/presentation/view_model/story_controller.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -196,18 +195,11 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
         await fetchAllFriendsProfileData(allUid);
 
         {
-          // todo: start from here
+          ref.read(storyProvider).update(friendsStories: []);
           for (String id in allUid) {
             await ref.read(storyProvider.notifier).getStories(uid: id);
           }
-          List<List<StoryEntity>> listOfFriendsStories =
-              ref.read(storyProvider).listOfFriendsStories;
-          debug("finally");
-          for (List<StoryEntity> f in listOfFriendsStories) {
-            for (StoryEntity l in f) {
-              print(l.content);
-            }
-          }
+          debug("friends stories: ${ref.read(storyProvider).friendsStories}");
         }
       } else {
         state = state.update(listOfFriends: []);

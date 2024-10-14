@@ -2,13 +2,16 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:dartz/dartz.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
 import 'package:enigma/src/core/network/responses/success_response.dart';
-import 'package:enigma/src/core/utils/logger/logger.dart';
+import 'package:enigma/src/features/story/domain/dto/story_dto.dart';
 import 'package:enigma/src/features/story/domain/entity/story_entity.dart';
+import 'package:enigma/src/features/story/domain/entity/user_story_entity.dart';
 import 'package:enigma/src/features/story/domain/usecase/add_story_usecase.dart';
 import 'package:enigma/src/features/story/domain/usecase/get_stories_usecase.dart';
 import 'package:enigma/src/features/story/presentation/view_model/story_generic.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/utils/logger/logger.dart';
 
 final storyProvider = StateNotifierProvider<StoryController, StoryGeneric>(
   (ref) => StoryController(ref),
@@ -21,8 +24,13 @@ class StoryController extends StateNotifier<StoryGeneric> {
   AddStoryUseCase addStoryUseCase = sl.get<AddStoryUseCase>();
   GetStoriesUseCase getStoriesUseCase = sl.get<GetStoriesUseCase>();
 
-  addStory({required StoryEntity storyEntity}) async {
-    Either<Failure, Success> response = await addStoryUseCase.call(storyEntity);
+  addStory(
+      {required StoryEntity storyEntity,
+      required UserStoryEntity userStoryEntity}) async {
+    StoryDto params =
+        StoryDto(userStoryEntity: userStoryEntity, storyEntity: storyEntity);
+
+    Either<Failure, Success> response = await addStoryUseCase.call(params);
     response.fold((left) {
       BotToast.showText(text: left.message);
     }, (right) {
@@ -30,24 +38,34 @@ class StoryController extends StateNotifier<StoryGeneric> {
     });
   }
 
-  getStories({required uid}) async {
-    List<List<StoryEntity>> listOfFriendsStories = state.listOfFriendsStories
-        .map((innerList) => innerList.toList())
-        .toList(); // Convert to mutable
-    Either<Failure, List<StoryEntity>> response =
+  getStories({required uid, isMyStory = false}) async {
+    List<UserStoryEntity> stories =
+        List<UserStoryEntity>.from(state.friendsStories);
+    UserStoryEntity myStory = UserStoryEntity();
+    Either<Failure, UserStoryEntity> response =
         await getStoriesUseCase.call(uid);
     response.fold((left) {
       BotToast.showText(text: left.message);
     }, (right) {
       BotToast.showText(text: "Fetched stories successfully");
-      listOfFriendsStories.add(right);
-      debug("uid: $uid");
-      for (var f in listOfFriendsStories) {
-        for (var l in f) {
-          debug(l.toString());
+      if (isMyStory) {
+        debug("for ${right.name}, stories: ${right.toString()}");
+        if ((right.storyList ?? []).isNotEmpty || right.name != null) {
+          myStory = right;
         }
+        state = state.update(myStory: myStory);
+      } else {
+        debug("for ${right.name}, stories: ${right.toString()}");
+        if ((right.storyList ?? []).isNotEmpty || right.name != null) {
+          int index = stories.indexWhere((story) => story.uid == right.uid);
+          if (index != -1) {
+            stories[index] = right; // Update with new values
+          } else {
+            stories.add(right);
+          }
+        }
+        state = state.update(friendsStories: stories);
       }
-      state = state.update(listOfFriendsStories: listOfFriendsStories);
     });
   }
 }

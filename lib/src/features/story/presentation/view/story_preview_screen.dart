@@ -8,6 +8,7 @@ import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
 import 'package:enigma/src/features/story/domain/entity/story_entity.dart';
+import 'package:enigma/src/features/story/domain/entity/user_story_entity.dart';
 import 'package:enigma/src/features/story/presentation/view_model/story_controller.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:flutter/material.dart';
@@ -83,6 +84,12 @@ class _StoryPreviewScreenState extends ConsumerState<StoryPreviewScreen> {
                               );
                       String uid = sharedPreferenceManager.getValue(
                           key: SharedPreferenceKeys.USER_UID);
+                      String userName = sharedPreferenceManager.getValue(
+                          key: SharedPreferenceKeys.USER_NAME);
+
+                      UserStoryEntity userStoryEntity =
+                          UserStoryEntity(uid: uid, name: userName);
+
                       StoryEntity storyEntity = StoryEntity(
                         id: uuid.v4(),
                         uid: uid,
@@ -96,9 +103,9 @@ class _StoryPreviewScreenState extends ConsumerState<StoryPreviewScreen> {
                         storyEntity.content = storyCaptionTEC.text.trim();
                       }
 
-                      await ref
-                          .read(storyProvider.notifier)
-                          .addStory(storyEntity: storyEntity);
+                      await ref.read(storyProvider.notifier).addStory(
+                          storyEntity: storyEntity,
+                          userStoryEntity: userStoryEntity);
 
                       ref.read(goRouterProvider).pop();
                     },
