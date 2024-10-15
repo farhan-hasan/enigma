@@ -172,9 +172,14 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
 
     Either<Failure, List<ChatRequestEntity>> response =
         await fetchFriendsUseCase.call(params);
+    // debug("checking fetch friends");
     response.fold((left) {
       BotToast.showText(text: left.message);
     }, (right) {
+      // debug("isSuccess = true");
+      for (ChatRequestEntity c in right) {
+        // debug("sender = ${c.senderUid}, receiver = ${c.receiverUid}");
+      }
       for (ChatRequestEntity c in right) {}
       listOfFriends = right;
       isSuccess = true;
