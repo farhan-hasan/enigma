@@ -243,7 +243,9 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
               filesOption(
                 title: "My Story",
                 subtitle: "View my story",
-                onTap: () async {},
+                onTap: () async {
+                  ref.read(goRouterProvider).push(StoryScreen.setRoute(-1));
+                },
                 icon: Icons.image,
               ),
             filesOption(

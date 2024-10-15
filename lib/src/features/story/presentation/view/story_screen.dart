@@ -30,15 +30,26 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
   @override
   void initState() {
     _currentStoryIndex = int.tryParse(widget.data) ?? 0;
-    _stories = ref.read(storyProvider).friendsStories;
-    _startProgress(
-        ref.read(storyProvider).friendsStories[_currentStoryIndex].storyList ??
-            []);
+    debug(_currentStoryIndex);
+
+    if (_currentStoryIndex == -1) {
+      _currentStoryIndex = 0;
+      _stories.add((ref.read(storyProvider).myStory ?? UserStoryEntity()));
+      _startProgress(_stories[_currentStory.value].storyList ?? []);
+    } else {
+      _stories = ref.read(storyProvider).friendsStories;
+      _startProgress(ref
+              .read(storyProvider)
+              .friendsStories[_currentStoryIndex]
+              .storyList ??
+          []);
+    }
+
     super.initState();
   }
 
   void _startProgress(List<StoryEntity> storyList) {
-    _timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       _progress.value += 0.02;
       if (_progress.value >= 1.0) {
         _goToNextStory(storyList);
@@ -52,10 +63,11 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
       _currentStoryIndex++;
       _progress.value = 0.0;
       _pageController.nextPage(
-          duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-      _startProgress(_stories[_currentStoryIndex].storyList ?? []);
+          duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+      //_startProgress(_stories[_currentStoryIndex].storyList ?? []);
     } else {
       // Story ended
+
       ref.read(goRouterProvider).pop(); // Close popup
     }
   }
@@ -74,7 +86,9 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
       }
       // Close popup
       else {
-        ref.read(goRouterProvider).pop();
+        if (mounted) {
+          ref.read(goRouterProvider).pop();
+        }
       }
     }
   }
@@ -85,8 +99,8 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
       _currentStoryIndex--;
       _progress.value = 0.0;
       _pageController.previousPage(
-          duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-      _startProgress(storyList);
+          duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+      //_startProgress(storyList);
     }
   }
 
@@ -101,6 +115,8 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
       if (_currentStoryIndex > 0) {
         _goToPreviousFriendsStory(
             _stories[_currentStoryIndex - 1].storyList ?? []);
+      } else {
+        _startProgress(storyList);
       }
     }
   }
@@ -115,8 +131,6 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
   @override
   Widget build(BuildContext context) {
     StoryGeneric storyController = ref.watch(storyProvider);
-    debug(storyController.friendsStories.length);
-    debug("currentStoryIndex: $_currentStoryIndex");
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -127,11 +141,8 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
             itemCount: storyController.friendsStories.length,
             onPageChanged: (index) {
               _currentStoryIndex = index;
-              debug("current story index: $_currentStoryIndex");
               _progress.value = 0.0;
-              _startProgress(storyController
-                      .friendsStories[_currentStoryIndex].storyList ??
-                  []);
+              _startProgress(_stories[_currentStoryIndex].storyList ?? []);
             },
             itemBuilder: (context, index) {
               index = _currentStoryIndex;
@@ -140,13 +151,11 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                 onTapDown: (details) {
                   if (details.globalPosition.dx <
                       MediaQuery.of(context).size.width / 2) {
-                    _goToPreviousStory(storyController
-                            .friendsStories[_currentStoryIndex].storyList ??
-                        []);
+                    _goToPreviousStory(
+                        _stories[_currentStoryIndex].storyList ?? []);
                   } else {
-                    _goToNextStory(storyController
-                            .friendsStories[_currentStoryIndex].storyList ??
-                        []);
+                    _goToNextStory(
+                        _stories[_currentStoryIndex].storyList ?? []);
                   }
                 },
                 child: ValueListenableBuilder(
@@ -155,13 +164,13 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                       Align(
                         alignment: Alignment.topLeft,
                         child: Container(
-                          padding: EdgeInsets.all(20),
-                          margin: EdgeInsets.only(top: 70),
+                          padding: const EdgeInsets.all(20),
+                          margin: const EdgeInsets.only(top: 70),
                           width: double.infinity,
                           child: Text(
                             maxLines: 5,
                             overflow: TextOverflow.ellipsis,
-                            storyController.friendsStories[index].name ?? "",
+                            _stories[index].name ?? "",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge
@@ -172,8 +181,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                         ),
                       ),
                       Image.network(
-                        storyController.friendsStories[index].storyList?[value]
-                                .mediaLink ??
+                        _stories[index].storyList?[value].mediaLink ??
                             "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI",
                         fit: BoxFit.contain,
                         width: double.infinity,
@@ -182,8 +190,8 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Container(
-                          padding: EdgeInsets.all(20),
-                          margin: EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(20),
+                          margin: const EdgeInsets.all(10),
                           width: double.infinity,
                           decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
@@ -192,10 +200,8 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                             child: Text(
                               maxLines: 5,
                               overflow: TextOverflow.ellipsis,
-                              storyController.friendsStories[index]
-                                      .storyList?[value].content ??
-                                  "No Captionaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                              style: TextStyle(color: Colors.white),
+                              _stories[index].storyList?[value].content ?? "",
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                         ),
