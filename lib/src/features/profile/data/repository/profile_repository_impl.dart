@@ -37,10 +37,10 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, ProfileModel>> updateProfile(
+  Future<Either<Failure, ProfileEntity>> updateProfile(
       {required ProfileEntity profileEntity}) async {
-    Either<Failure, ProfileModel> response = await _profileRemoteDataSource
-        .updateProfile(profileModel: profileEntity.toModel());
+    Either<Failure, ProfileEntity> response = await _profileRemoteDataSource
+        .updateProfile(profileEntity: profileEntity);
     return response;
   }
 

@@ -358,9 +358,6 @@ class ChatRequestRemoteDataSource {
           }
         }
       }
-      for (var p in friends) {
-        // debug("${p.senderUid}, ${p.receiverUid}, ${p.status}");
-      }
 
       return Right(friends);
     } on FirebaseException catch (e) {

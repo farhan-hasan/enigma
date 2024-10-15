@@ -18,6 +18,7 @@ import 'package:enigma/src/features/profile/domain/dto/filter_dto.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/domain/usecases/read_all_people_usecase.dart';
 import 'package:enigma/src/features/profile/presentation/view_model/controller/people_controller.dart';
+import 'package:enigma/src/features/story/presentation/view_model/story_controller.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -179,6 +180,7 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
       for (ChatRequestEntity c in right) {
         // debug("sender = ${c.senderUid}, receiver = ${c.receiverUid}");
       }
+      for (ChatRequestEntity c in right) {}
       listOfFriends = right;
       isSuccess = true;
     });
@@ -195,30 +197,37 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
             allUid.add(f.receiverUid ?? "");
           }
         }
+        await fetchAllFriendsProfileData(allUid);
 
-        FirebaseWhereModel whereModel = FirebaseWhereModel(
-          field: "uid",
-          whereIn: allUid.toList(),
-        );
-        FilterDto params = FilterDto(firebaseWhereModel: whereModel);
-        Either<Failure, List<ProfileEntity>> response =
-            await readAllPeopleUseCase.call(params);
-
-        response.fold((left) {
-          BotToast.showText(text: left.message);
-        }, (right) {
-          for (ProfileEntity r in right) {
-            // debug("name = ${r.name}");
+        {
+          ref.read(storyProvider).update(friendsStories: []);
+          for (String id in allUid) {
+            await ref.read(storyProvider.notifier).getStories(uid: id);
           }
-          state = state.update(listOfFriends: right);
-          BotToast.showText(text: "Fetched friends successfully");
-        });
+          debug("friends stories: ${ref.read(storyProvider).friendsStories}");
+        }
       } else {
         state = state.update(listOfFriends: []);
       }
     }
 
     state = state.update(isFriendsLoading: false);
+  }
+
+  Future<void> fetchAllFriendsProfileData(Set<String> allUid) async {
+    FirebaseWhereModel whereModel = FirebaseWhereModel(
+      field: "uid",
+      whereIn: allUid.toList(),
+    );
+    FilterDto params = FilterDto(firebaseWhereModel: whereModel);
+    Either<Failure, List<ProfileEntity>> response =
+        await readAllPeopleUseCase.call(params);
+    response.fold((left) {
+      BotToast.showText(text: left.message);
+    }, (right) {
+      state = state.update(listOfFriends: right);
+      BotToast.showText(text: "Fetched friends successfully");
+    });
   }
 
   removeFriend(String friendUid) async {

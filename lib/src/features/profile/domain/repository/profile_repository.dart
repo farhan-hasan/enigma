@@ -14,7 +14,7 @@ abstract class ProfileRepository {
   Future<Either<Failure, List<ProfileModel>>> readAllProfile(
       {FilterDto? filter});
 
-  Future<Either<Failure, ProfileModel>> updateProfile(
+  Future<Either<Failure, ProfileEntity>> updateProfile(
       {required ProfileEntity profileEntity});
 
   Future<Either<Failure, Success>> deleteProfile(

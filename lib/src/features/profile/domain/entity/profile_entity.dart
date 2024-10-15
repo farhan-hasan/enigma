@@ -1,4 +1,5 @@
 import 'package:enigma/src/features/profile/data/model/profile_model.dart';
+import 'package:enigma/src/features/story/domain/entity/story_entity.dart';
 
 class ProfileEntity {
   String? uid;
@@ -10,6 +11,7 @@ class ProfileEntity {
   DateTime? updatedAt;
   DateTime? lastSeen;
   bool? isActive;
+  List<StoryEntity>? listOfStories;
 
   ProfileEntity({
     this.uid,
@@ -21,6 +23,7 @@ class ProfileEntity {
     this.updatedAt,
     this.lastSeen,
     this.isActive,
+    this.listOfStories,
   });
 
   // Method to convert a ProfileEntity instance to a JSON object
