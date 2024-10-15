@@ -86,7 +86,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           trailingWidgets: [
             GestureDetector(
               onTap: () {
-                ref.read(goRouterProvider).go(ProfileScreen.route);
+                ref.read(goRouterProvider).push(ProfileScreen.route);
               },
               child: Container(
                 height: context.height * .15,
@@ -194,8 +194,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                                     .titleLarge
                                     ?.copyWith(fontWeight: FontWeight.bold),
                               ),
-                              Text(
-                                  "How are you doing today?asdsadasdasdsadsadasdaasdasdasdsaddddddddsssssssssssssssssssssss",
+                              Text("How are you doing today?",
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context).textTheme.labelSmall)
@@ -220,7 +219,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                                     .listOfFriends[index].lastSeen ??
                                 DateTime.now()),
                         style: Theme.of(context).textTheme.labelSmall,
-                      ),
+                      )
                       //todo : add when message is fixed
                       // const CircleAvatar(
                       //   backgroundColor: Colors.green,

@@ -100,18 +100,20 @@ class ChatUI extends StatelessWidget {
                 ),
                 // width: context.width * .8,
                 decoration: BoxDecoration(
-                  color:
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                  color: chat[index].type == MediaType.voice
+                      ? Colors.transparent
+                      : Theme.of(context).colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "${chat[index].content}",
-                      softWrap: true,
-                      textAlign: TextAlign.justify,
-                    ),
+                    if (chat[index].content != null)
+                      Text(
+                        "${chat[index].content}",
+                        softWrap: true,
+                        textAlign: TextAlign.justify,
+                      ),
                     if (chat[index].mediaLink != null)
                       if (chat[index].type == MediaType.image)
                         GestureDetector(
