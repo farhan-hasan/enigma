@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:bot_toast/bot_toast.dart';
+import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/auth/presentation/auth_screen/view/auth_screen.dart';
 import 'package:enigma/src/features/auth/presentation/login/view/login_screen.dart';
 import 'package:enigma/src/features/auth/presentation/signup/view/signup_screen.dart';
@@ -9,11 +12,14 @@ import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/features/message/presentation/view/message_screen.dart';
 import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
 import 'package:enigma/src/features/splash/presentation/view/splash_screen.dart';
+import 'package:enigma/src/features/story/presentation/view/story_preview_screen.dart';
+import 'package:enigma/src/features/story/presentation/view/story_screen.dart';
 import 'package:enigma/src/shared/view/bottom_nav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+final rootNavigatorKey = GlobalKey<NavigatorState>();
 final goRouterProvider = Provider(
   (ref) {
     return GoRouter(
@@ -30,6 +36,24 @@ final goRouterProvider = Provider(
           path: ProfileScreen.route,
           builder: (context, state) {
             return const ProfileScreen();
+          },
+        ),
+        GoRoute(
+          path: StoryScreen.route,
+          builder: (context, state) {
+            return StoryScreen(
+              data: state.pathParameters["index"] ?? "0",
+            );
+          },
+        ),
+        GoRoute(
+          path: StoryPreviewScreen.route,
+          builder: (context, state) {
+            debug("path parameter : ${state.pathParameters}");
+            File? mediaFile = state.extra as File?;
+            return StoryPreviewScreen(
+              mediaFile: mediaFile ?? File(""),
+            );
           },
         ),
         GoRoute(
@@ -53,7 +77,10 @@ final goRouterProvider = Provider(
         GoRoute(
           path: ChatScreen.route,
           builder: (context, state) {
-            return ChatScreen();
+            debug("path parameter : ${state.pathParameters}");
+            return ChatScreen(
+              data: state.pathParameters["chat_id"] ?? "",
+            );
           },
         ),
         GoRoute(

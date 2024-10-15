@@ -78,12 +78,16 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
                         imageURL: chatRequestController
                             .listOfFriends[index].avatarUrl,
                       ),
-                      const Positioned(
+                      Positioned(
                           right: 0,
                           bottom: 0,
                           child: Icon(
                             Icons.circle,
-                            color: Colors.green,
+                            color: (chatRequestController
+                                        .listOfFriends[index].isActive ??
+                                    false)
+                                ? Colors.green
+                                : Colors.transparent,
                             size: 15,
                           ))
                     ],
@@ -117,7 +121,6 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
                 popupMenuEntryList: [
                   PopupMenuItem<String>(
                     onTap: () async {
-                      print('Selected: Remove');
                       await ref.read(chatRequestProvider.notifier).removeFriend(
                           chatRequestController.listOfFriends[index].uid ?? "");
                       await ref
@@ -130,7 +133,6 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
                   ),
                   PopupMenuItem<String>(
                     onTap: () async {
-                      print('Selected: Block');
                       await ref
                           .read(chatRequestProvider.notifier)
                           .updateRequestStatus(

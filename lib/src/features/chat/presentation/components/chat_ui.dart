@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
+import 'package:enigma/src/features/chat/presentation/components/voice_message_view.dart';
 import 'package:flutter/material.dart';
 
 class ChatUI extends StatelessWidget {
@@ -15,8 +17,14 @@ class ChatUI extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView.builder(
+        reverse: true,
         itemCount: chat.length,
         itemBuilder: (context, index) {
+          chat.sort(
+            (b, a) => DateTime.parse(a.timestamp.toString()).compareTo(
+              DateTime.parse(b.timestamp.toString()),
+            ),
+          );
           if (chat[index].sender == FirebaseHandler.auth.currentUser!.uid) {
             return Align(
               alignment: Alignment.centerRight,
@@ -28,31 +36,41 @@ class ChatUI extends StatelessWidget {
                   left: context.width * 0.2,
                 ),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  color: chat[index].type == MediaType.voice
+                      ? Colors.transparent
+                      : Theme.of(context).colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      "${chat[index].content}",
-                      softWrap: true,
-                      textAlign: TextAlign.justify,
-                    ),
+                    if (chat[index].content != null)
+                      Text(
+                        "${chat[index].content}",
+                        softWrap: true,
+                        textAlign: TextAlign.justify,
+                      ),
                     if (chat[index].mediaLink != null)
                       if (chat[index].type == MediaType.image)
                         GestureDetector(
                           onTap: () {},
-                          child: Image(
-                            image: NetworkImage("${chat[index].mediaLink}"),
-                            fit: BoxFit.fill,
+                          child: CachedNetworkImage(
+                            imageUrl: chat[index].mediaLink!,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.image),
                           ),
                         )
                       else if (chat[index].type == MediaType.video)
                         const Text("There is video. Will add later on")
                       else if (chat[index].type == MediaType.voice)
-                        const Text("There is file. Will add later on")
+                        VoiceMessageViewWidget(
+                          url: chat[index].mediaLink ?? "",
+                          isFile: false,
+                        )
                       else if (chat[index].type == MediaType.file)
                         const Text("There is file. Will add later on"),
                     Align(
@@ -82,27 +100,40 @@ class ChatUI extends StatelessWidget {
                 ),
                 // width: context.width * .8,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: chat[index].type == MediaType.voice
+                      ? Colors.transparent
+                      : Theme.of(context).colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "${chat[index].content}",
-                      softWrap: true,
-                      textAlign: TextAlign.justify,
-                    ),
+                    if (chat[index].content != null)
+                      Text(
+                        "${chat[index].content}",
+                        softWrap: true,
+                        textAlign: TextAlign.justify,
+                      ),
                     if (chat[index].mediaLink != null)
                       if (chat[index].type == MediaType.image)
-                        Image(
-                          image: NetworkImage("${chat[index].mediaLink}"),
-                          fit: BoxFit.fill,
+                        GestureDetector(
+                          onTap: () {},
+                          child: CachedNetworkImage(
+                            imageUrl: chat[index].mediaLink!,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.image),
+                          ),
                         )
                       else if (chat[index].type == MediaType.video)
                         const Text("There is video. Will add later on")
                       else if (chat[index].type == MediaType.voice)
-                        const Text("There is file. Will add later on")
+                        VoiceMessageViewWidget(
+                          url: chat[index].mediaLink ?? "",
+                          isFile: false,
+                        )
                       else if (chat[index].type == MediaType.file)
                         const Text("There is file. Will add later on"),
                     Align(

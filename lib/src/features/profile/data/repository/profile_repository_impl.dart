@@ -29,18 +29,18 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, ProfileModel>> readProfile(
+  Future<Either<Failure, ProfileEntity>> readProfile(
       {required String uid}) async {
-    Either<Failure, ProfileModel> response =
+    Either<Failure, ProfileEntity> response =
         await _profileRemoteDataSource.readProfile(uid: uid);
     return response;
   }
 
   @override
-  Future<Either<Failure, ProfileModel>> updateProfile(
+  Future<Either<Failure, ProfileEntity>> updateProfile(
       {required ProfileEntity profileEntity}) async {
-    Either<Failure, ProfileModel> response = await _profileRemoteDataSource
-        .updateProfile(profileModel: profileEntity.toModel());
+    Either<Failure, ProfileEntity> response = await _profileRemoteDataSource
+        .updateProfile(profileEntity: profileEntity);
     return response;
   }
 

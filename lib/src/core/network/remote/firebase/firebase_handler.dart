@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enigma/src/core/network/remote/firebase/model/firebase_order_by_model.dart';
 import 'package:enigma/src/core/network/remote/firebase/model/firebase_where_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseHandler {
   static FirebaseAuth _auth = FirebaseAuth.instance;
   static FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static FirebaseStorage _storage = FirebaseStorage.instance;
+  static FirebaseMessaging _message = FirebaseMessaging.instance;
 
   static FirebaseAuth get auth {
     return _auth;
@@ -19,6 +21,10 @@ class FirebaseHandler {
 
   static FirebaseStorage get storage {
     return _storage;
+  }
+
+  static FirebaseMessaging get fcm {
+    return _message;
   }
 
   static Future<QuerySnapshot<Map<String, dynamic>>> get(

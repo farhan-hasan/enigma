@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
-import 'package:enigma/src/features/profile/data/model/profile_model.dart';
 import 'package:enigma/src/features/profile/data/repository/profile_repository_impl.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/domain/repository/profile_repository.dart';
@@ -13,8 +12,8 @@ class UpdateProfileUseCase
 
   @override
   Future<Either<Failure, ProfileEntity>> call(ProfileEntity params) async {
-    Either<Failure, ProfileModel> response =
+    Either<Failure, ProfileEntity> response =
         await _profileRepository.updateProfile(profileEntity: params);
-    return response.map((profileModel) => profileModel.toEntity());
+    return response;
   }
 }

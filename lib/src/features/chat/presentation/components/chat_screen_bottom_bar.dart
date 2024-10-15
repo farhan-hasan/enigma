@@ -1,16 +1,28 @@
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:enigma/src/core/network/remote/firebase/storage_directory_name.dart';
+import 'package:enigma/src/core/utils/chat_utils/chat_utils.dart';
+import 'package:enigma/src/core/utils/extension/context_extension.dart';
+import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
+import 'package:enigma/src/features/chat/presentation/components/voice_message_view.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:record/record.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatScreenBottomBar extends ConsumerStatefulWidget {
-  const ChatScreenBottomBar({super.key});
+  const ChatScreenBottomBar({
+    super.key,
+    required this.sender,
+    required this.receiver,
+  });
+
+  final String sender;
+  final String receiver;
 
   @override
   ConsumerState<ChatScreenBottomBar> createState() =>
@@ -20,10 +32,16 @@ class ChatScreenBottomBar extends ConsumerStatefulWidget {
 class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
   final ValueNotifier<TextEditingController> messageTextController =
       ValueNotifier(TextEditingController());
-
-  final ValueNotifier<File?> file = ValueNotifier(null);
-
+  final ValueNotifier<File?> imageFile = ValueNotifier(null);
+  final ValueNotifier<File?> audioFile = ValueNotifier(null);
+  final ValueNotifier<bool> isRecording = ValueNotifier(false);
+  final ValueNotifier<bool> isPlaying = ValueNotifier(false);
   String? url;
+
+  final record = AudioRecorder();
+  final AudioPlayer audioPlayer = AudioPlayer();
+  String? path;
+  Duration? audioDuration;
 
   void _showOptions(BuildContext context) {
     showBottomSheet(
@@ -34,26 +52,13 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
           children: [
             filesOption(
               title: "Camera",
-              onTap: _pickCameraImage,
+              onTap: () {},
               icon: Icons.camera,
             ),
             filesOption(
               title: "Documents",
               subtitle: "Share your files",
-              onTap: () {
-                _pickDocuments(const [
-                  'pdf',
-                  'doc',
-                  'docx',
-                  'xls',
-                  'xlsx',
-                  'ppt',
-                  'pptx',
-                  'rar',
-                  'zip',
-                  'csv'
-                ]);
-              },
+              onTap: () async {},
               icon: Icons.insert_drive_file_sharp,
             ),
             filesOption(
@@ -65,21 +70,12 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
             filesOption(
               title: "Media",
               subtitle: "Share photos and videos",
-              onTap: () {
-                _pickDocuments(const [
-                  'jpg',
-                  'jpeg',
-                  'png',
-                  'svg',
-                  'gif',
-                  'webp',
-                  'mp4',
-                  'avi',
-                  'mov',
-                  'mkv',
-                  'flv',
-                  'wmv',
-                ]);
+              onTap: () async {
+                imageFile.value = await ChatUtils.pickImage(
+                  imageSource: ImageSource.gallery,
+                );
+                messageTextController.value.text =
+                    await ChatUtils.textRecognition(imageFile.value!);
               },
               icon: Icons.perm_media_outlined,
             ),
@@ -101,50 +97,99 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
     );
   }
 
-  void _pickCameraImage() async {
-    ImagePicker imagePicker = ImagePicker();
-    XFile? getImage = await imagePicker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 1,
-    );
-    if (getImage != null) {
-      file.value = File(getImage.path);
-      if (file.value != null) {}
-    } else {
-      return;
-    }
-    return;
-  }
-
-  void _pickDocuments(List<String> extensions) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      allowedExtensions: extensions,
-      type: FileType.custom,
-    );
-
-    if (result != null) {
-      file.value = File(result.paths.first!);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final chatController = ref.watch(chatProvider);
+    // final chatController = ref.watch(chatProvider);
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         child: Column(
           children: [
             ValueListenableBuilder(
-              valueListenable: file,
+              valueListenable: imageFile,
               builder: (context, value, child) {
                 if (value != null) {
-                  return SizedBox(
-                    height: 100,
-                    width: 100,
-                    child: Image(image: FileImage(file.value!)),
+                  return Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      SizedBox(
+                        height: context.height * 0.1,
+                        width: context.width * 0.2,
+                        child: Image(image: FileImage(imageFile.value!)),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          imageFile.value = null;
+                          messageTextController.value.clear();
+                          // messageTextController.value.dispose();
+                        },
+                        child: const Icon(Icons.cancel),
+                      ),
+                    ],
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              },
+            ),
+            ValueListenableBuilder(
+              valueListenable: isRecording,
+              builder: (context, value, child) {
+                if (value) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.mic),
+                      Text(
+                        "Say Something",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ],
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              },
+            ),
+            ValueListenableBuilder(
+              valueListenable: audioFile,
+              builder: (context, value, child) {
+                if (value != null) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      VoiceMessageViewWidget(
+                        url: audioFile.value?.path ?? "",
+                        isFile: true,
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          url = await ref
+                              .read(chatProvider.notifier)
+                              .addImageMedia(
+                                file: audioFile.value!,
+                                directory:
+                                    StorageDirectoryName.CHAT_MEDIA_DIRECTORY,
+                                fileName: const Uuid().v4(),
+                              );
+                          ChatEntity chatEntity = ChatEntity(
+                            id: const Uuid().v4(),
+                            type: MediaType.voice,
+                            mediaLink: url,
+                            timestamp: DateTime.now(),
+                            sender: widget.sender,
+                            receiver: widget.receiver,
+                          );
+                          await ref
+                              .read(chatProvider.notifier)
+                              .addChat(chatEntity);
+                          audioFile.value = null;
+                        },
+                        icon: const Icon(Icons.send),
+                      ),
+                    ],
                   );
                 } else {
                   return const SizedBox.shrink();
@@ -167,6 +212,7 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                 Expanded(
                   child: TextFormField(
                     controller: messageTextController.value,
+                    maxLines: null,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Theme.of(context)
@@ -179,7 +225,6 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       suffixIcon: GestureDetector(
-                        onTap: () {},
                         child: CircleAvatar(
                           //radius: context.width * 0.05,
                           backgroundColor: Colors.transparent,
@@ -195,11 +240,18 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                 ValueListenableBuilder(
                   valueListenable: messageTextController.value,
                   builder: (context, value, child) {
-                    if (value.text.trim().isEmpty) {
+                    if (value.text.trim().isEmpty && imageFile.value == null) {
                       return Row(
                         children: [
                           GestureDetector(
-                            onTap: () => _pickCameraImage(),
+                            onTap: () async {
+                              imageFile.value = await ChatUtils.pickImage(
+                                imageSource: ImageSource.camera,
+                              );
+                              messageTextController.value.text =
+                                  await ChatUtils.textRecognition(
+                                      imageFile.value!);
+                            },
                             child: CircleAvatar(
                               //radius: context.width * 0.05,
                               backgroundColor: Colors.transparent,
@@ -210,9 +262,19 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => _pickCameraImage(),
+                            onLongPressStart: (details) {
+                              audioFile.value = null;
+                              isRecording.value = true;
+                              ChatUtils.startRecord(record);
+                            },
+                            onLongPressEnd: (details) async {
+                              path = await record.stop();
+                              if (path != null) {
+                                audioFile.value = File(path!);
+                              }
+                              isRecording.value = false;
+                            },
                             child: CircleAvatar(
-                              //radius: context.width * 0.05,
                               backgroundColor: Colors.transparent,
                               child: Icon(
                                 Icons.mic_none_outlined,
@@ -226,22 +288,21 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                       return GestureDetector(
                         onTap: () async {
                           Uuid uuid = const Uuid();
-                          if (file.value != null) {
-                            // debug(file!.path.split("/").last);
+                          if (imageFile.value != null) {
                             url = await ref
                                 .read(chatProvider.notifier)
                                 .addImageMedia(
-                                  file: file.value!,
+                                  file: imageFile.value!,
                                   directory:
                                       StorageDirectoryName.CHAT_MEDIA_DIRECTORY,
-                                  fileName: file.value!.path.split("/").last,
+                                  fileName:
+                                      imageFile.value!.path.split("/").last,
                                 );
-                            file.value = null;
-                            // BotToast.showText(text: "Success: $url");
                           }
                           if (messageTextController.value.text
-                              .trim()
-                              .isNotEmpty) {
+                                  .trim()
+                                  .isNotEmpty ||
+                              imageFile.value != null) {
                             ChatEntity chatEntity = ChatEntity(
                               id: uuid.v4(),
                               content: messageTextController.value.text.trim(),
@@ -250,19 +311,18 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                                   : MediaType.text,
                               mediaLink: url,
                               timestamp: DateTime.now(),
-                              receiver: "Y51bMMMKXAT1AQs0vPutTfVCkTB2",
-                              sender: "SjKB4wFCutQyMOmrJUhXlX3eo5l1",
+                              receiver: widget.receiver,
+                              sender: widget.sender,
                             );
-                            // print(chatEntity.toJson());
                             await ref
                                 .read(chatProvider.notifier)
                                 .addChat(chatEntity);
                             messageTextController.value.clear();
-                            // debug("Success message");
+                            debug("Success message");
+                            imageFile.value = null;
                           }
                         },
                         child: CircleAvatar(
-                          //radius: context.width * 0.05,
                           backgroundColor: Colors.transparent,
                           child: Icon(
                             Icons.send,
