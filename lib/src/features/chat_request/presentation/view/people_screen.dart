@@ -404,7 +404,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                               onPressed: () {
                                 ref
                                     .read(chatRequestProvider.notifier)
-                                    .sendChatRequest(profileEntity.uid ?? "");
+                                    .sendChatRequest(profileEntity);
                                 ref.read(goRouterProvider).pop();
                               },
                             ),
@@ -493,7 +493,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                         await ref
                             .read(chatRequestProvider.notifier)
                             .sendChatRequest(
-                                peopleController.listOfPeople[index].uid ?? "");
+                                peopleController.listOfPeople[index]);
                       },
                       icon: const Icon(
                         Icons.add,
