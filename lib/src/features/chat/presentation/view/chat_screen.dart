@@ -77,12 +77,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             const SizedBox(
               width: 5,
             ),
-            CircleAvatar(
-              radius: context.width * 0.05,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              child: Icon(
-                Icons.video_camera_front_outlined,
-                color: Theme.of(context).canvasColor,
+            InkWell(
+              onTap: () {
+                // context.push(NFCTesting.setRoute);
+              },
+              child: CircleAvatar(
+                radius: context.width * 0.05,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                child: Icon(
+                  Icons.video_camera_front_outlined,
+                  color: Theme.of(context).canvasColor,
+                ),
               ),
             ),
           ],
