@@ -27,8 +27,10 @@ import 'package:enigma/src/features/profile/domain/usecases/update_profile_useca
 import 'package:enigma/src/features/story/data/repository/story_repository_impl.dart';
 import 'package:enigma/src/features/story/domain/usecase/add_story_usecase.dart';
 import 'package:enigma/src/features/story/domain/usecase/get_stories_usecase.dart';
+import 'package:enigma/src/shared/data/repository/fcm_repository_impl.dart';
 import 'package:enigma/src/shared/data/repository/media_repository_impl.dart';
 import 'package:enigma/src/shared/domain/use_cases/profile_picture_usecase.dart';
+import 'package:enigma/src/shared/domain/use_cases/send_push_message_usecase.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 
@@ -86,6 +88,9 @@ Future<void> setupService() async {
   sl.registerSingleton<StoryRepositoryImpl>(StoryRepositoryImpl());
   sl.registerSingleton<AddStoryUseCase>(AddStoryUseCase());
   sl.registerSingleton<GetStoriesUseCase>(GetStoriesUseCase());
+
+  sl.registerSingleton<FCMRepositoryImpl>(FCMRepositoryImpl());
+  sl.registerSingleton<SendPushMessageUsecase>(SendPushMessageUsecase());
 
   await sl.allReady();
 }
