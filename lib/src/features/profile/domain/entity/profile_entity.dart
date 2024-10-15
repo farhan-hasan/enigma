@@ -12,6 +12,7 @@ class ProfileEntity {
   DateTime? lastSeen;
   bool? isActive;
   List<StoryEntity>? listOfStories;
+  String? deviceToken;
 
   ProfileEntity({
     this.uid,
@@ -24,6 +25,7 @@ class ProfileEntity {
     this.lastSeen,
     this.isActive,
     this.listOfStories,
+    this.deviceToken,
   });
 
   // Method to convert a ProfileEntity instance to a JSON object
@@ -38,6 +40,7 @@ class ProfileEntity {
       'updatedAt': updatedAt?.toIso8601String(),
       'lastSeen': lastSeen?.toIso8601String(),
       'isActive': isActive,
+      'deviceToken': deviceToken,
     };
   }
 
@@ -58,6 +61,7 @@ class ProfileEntity {
       lastSeen:
           json['lastSeen'] != null ? DateTime.tryParse(json['lastSeen']) : null,
       isActive: json['isActive'],
+      deviceToken: json['deviceToken'],
     );
   }
 
@@ -73,6 +77,7 @@ class ProfileEntity {
       updatedAt: updatedAt,
       lastSeen: lastSeen,
       isActive: isActive,
+      deviceToken: deviceToken,
     );
   }
 }
