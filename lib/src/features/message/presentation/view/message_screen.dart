@@ -48,13 +48,17 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((t) async {
-      await ref.read(chatRequestProvider.notifier).fetchFriends();
-      await ref.read(storyProvider.notifier).getStories(
-          uid: sharedPreferenceManager.getValue(
-              key: SharedPreferenceKeys.USER_UID),
-          isMyStory: true);
+      init();
     });
     super.initState();
+  }
+
+  init() async {
+    await ref.read(chatRequestProvider.notifier).fetchFriends();
+    await ref.read(storyProvider.notifier).getStories(
+        uid: sharedPreferenceManager.getValue(
+            key: SharedPreferenceKeys.USER_UID),
+        isMyStory: true);
   }
 
   @override
@@ -95,14 +99,22 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
               ),
             )
           ]),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            buildStorySection(context, storyController),
-            buildChatSection(context)
-          ],
-        ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await init();
+        },
+        child: Stack(children: [
+          SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                buildStorySection(context, storyController),
+                buildChatSection(context)
+              ],
+            ),
+          ),
+          //ListView()
+        ]),
       ),
     );
   }
@@ -201,9 +213,12 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        getLastSeen(chatRequestController
-                                .listOfFriends[index].lastSeen ??
-                            DateTime.now()),
+                        (chatRequestController.listOfFriends[index].isActive ??
+                                false)
+                            ? ""
+                            : getLastSeen(chatRequestController
+                                    .listOfFriends[index].lastSeen ??
+                                DateTime.now()),
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                       //todo : add when message is fixed

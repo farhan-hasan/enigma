@@ -9,3 +9,6 @@ void main() async {
   await setupService();
   runApp(UncontrolledProviderScope(container: container, child: const App()));
 }
+
+// TODO:
+// 1. Implement streams for story, last seen, chat request, pending request, people etc.

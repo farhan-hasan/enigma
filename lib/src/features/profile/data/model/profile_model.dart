@@ -10,6 +10,7 @@ class ProfileModel {
   DateTime? updatedAt;
   DateTime? lastSeen;
   bool? isActive;
+  String? deviceToken;
 
   ProfileModel({
     this.uid,
@@ -21,6 +22,7 @@ class ProfileModel {
     this.updatedAt,
     this.lastSeen,
     this.isActive,
+    this.deviceToken,
   });
 
   // Factory method to create a ProfileModel instance from a JSON object
@@ -40,6 +42,7 @@ class ProfileModel {
       lastSeen:
           json['lastSeen'] != null ? DateTime.tryParse(json['lastSeen']) : null,
       isActive: json['isActive'],
+      deviceToken: json['deviceToken'],
     );
   }
 
@@ -55,6 +58,7 @@ class ProfileModel {
       'updatedAt': updatedAt?.toIso8601String(),
       'lastSeen': lastSeen?.toIso8601String(),
       'isActive': isActive,
+      'deviceToken': deviceToken,
     };
   }
 
@@ -84,6 +88,7 @@ class ProfileModel {
       updatedAt: updatedAt,
       lastSeen: lastSeen,
       isActive: isActive,
+      deviceToken: deviceToken,
     );
   }
 
@@ -99,6 +104,7 @@ class ProfileModel {
       updatedAt: entity.updatedAt,
       lastSeen: entity.lastSeen,
       isActive: entity.isActive,
+      deviceToken: entity.deviceToken,
     );
   }
 

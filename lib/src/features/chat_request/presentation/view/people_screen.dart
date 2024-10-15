@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:enigma/src/core/barcode/barcode_scanner.dart';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
+import 'package:enigma/src/core/notification/local_notification/local_notification_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/friends_screen.dart';
@@ -12,7 +14,6 @@ import 'package:enigma/src/features/profile/presentation/view_model/generic/peop
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PeopleScreen extends ConsumerStatefulWidget {
@@ -29,6 +30,7 @@ class PeopleScreen extends ConsumerStatefulWidget {
 }
 
 class _PeopleScreenState extends ConsumerState<PeopleScreen> {
+  String _scanBarcode = 'Unknown';
   @override
   void initState() {
     init();
@@ -79,24 +81,34 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
               ),
             )
           ]),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              // Chat requests
-              buildFriendsSection(context, chatRequestController),
-              // People list
-              if (chatRequestController.listOfChatRequest.isNotEmpty)
-                buildChatRequestsSection(
-                    context, peopleController, chatRequestController),
-              if (chatRequestController.listOfPendingRequest.isNotEmpty)
-                buildPendingRequestsSection(
-                    context, peopleController, chatRequestController),
-              buildDiscoverSection(
-                  context, peopleController, chatRequestController)
-            ],
-          ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          init();
+        },
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    // Chat requests
+                    buildFriendsSection(context, chatRequestController),
+                    // People list
+                    if (chatRequestController.listOfChatRequest.isNotEmpty)
+                      buildChatRequestsSection(
+                          context, peopleController, chatRequestController),
+                    if (chatRequestController.listOfPendingRequest.isNotEmpty)
+                      buildPendingRequestsSection(
+                          context, peopleController, chatRequestController),
+                    buildDiscoverSection(
+                        context, peopleController, chatRequestController)
+                  ],
+                ),
+              ),
+            ),
+            //ListView(), // todo: refresh indicator. will handle later
+          ],
         ),
       ),
     );
@@ -272,59 +284,61 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        children: [
-                          CircularDisplayPicture(
-                            radius: 23,
-                            imageURL: chatRequestController
-                                .listOfPendingRequest[index].avatarUrl,
-                          ),
-                          const Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: Icon(
-                                Icons.circle,
-                                color: Colors.green,
-                                size: 15,
-                              ))
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
+              return InkWell(
+                onTap: () {
+                  LocalNotificationHandler.showLocalNotification(
+                      chatRequestController.listOfPendingRequest[index].name ??
+                          "",
+                      "Tapped on ${chatRequestController.listOfPendingRequest[index].name ?? ""}");
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      children: [
+                        CircularDisplayPicture(
+                          radius: 23,
+                          imageURL: chatRequestController
+                              .listOfPendingRequest[index].avatarUrl,
+                        ),
+                        const Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Icon(
+                              Icons.circle,
+                              color: Colors.green,
+                              size: 15,
+                            ))
+                      ],
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          chatRequestController
+                                  .listOfPendingRequest[index].name ??
+                              "",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
                             chatRequestController
-                                    .listOfPendingRequest[index].name ??
+                                    .listOfPendingRequest[index].createdAt
+                                    .toString() ??
                                 "",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                              chatRequestController
-                                      .listOfPendingRequest[index].createdAt
-                                      .toString() ??
-                                  "",
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.labelSmall)
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.labelSmall)
+                      ],
+                    ),
+                  ],
+                ),
               );
             },
             itemCount: chatRequestController.listOfPendingRequest.length,
@@ -338,14 +352,76 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
       BuildContext context,
       PeopleGeneric peopleController,
       ChatRequestGeneric chatRequestController) {
-    Set<BluetoothDevice> devices = {};
     return Container(
       padding: const EdgeInsets.all(20),
       //color: Colors.grey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Discover"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("Discover"),
+              InkWell(
+                  onTap: () async {
+                    ProfileEntity profileEntity;
+                    String scanDetails;
+                    scanDetails = await BarcodeScanner.scanBarcodeNormal();
+                    profileEntity =
+                        ProfileEntity.fromJson(jsonDecode(scanDetails));
+
+                    showDialog<void>(
+                      context: context,
+                      barrierDismissible: false, // user must tap button!
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Send Chat Request'),
+                          content: SingleChildScrollView(
+                              child: Container(
+                            child: Column(
+                              children: [
+                                CircularDisplayPicture(
+                                  radius: 23,
+                                  imageURL: profileEntity.avatarUrl,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  profileEntity.name ?? "",
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text("Send chat request?"),
+                              ],
+                            ),
+                          )),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('Yes'),
+                              onPressed: () {
+                                ref
+                                    .read(chatRequestProvider.notifier)
+                                    .sendChatRequest(profileEntity.uid ?? "");
+                                ref.read(goRouterProvider).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: const Text('No'),
+                              onPressed: () {
+                                ref.read(goRouterProvider).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: const Icon(Icons.qr_code_scanner))
+            ],
+          ),
           const SizedBox(
             height: 20,
           ),
