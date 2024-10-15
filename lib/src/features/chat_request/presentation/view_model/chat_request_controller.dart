@@ -18,8 +18,11 @@ import 'package:enigma/src/features/profile/domain/dto/filter_dto.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/domain/usecases/read_all_people_usecase.dart';
 import 'package:enigma/src/features/profile/presentation/view_model/controller/people_controller.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
 import 'package:enigma/src/features/story/presentation/view_model/story_controller.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
+import 'package:enigma/src/shared/domain/dto/fcm_dto.dart';
+import 'package:enigma/src/shared/domain/use_cases/send_push_message_usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final chatRequestProvider =
@@ -42,20 +45,30 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
 
   FetchFriendsUseCase fetchFriendsUseCase = sl.get<FetchFriendsUseCase>();
   RemoveFriendUseCase removeFriendUseCase = sl.get<RemoveFriendUseCase>();
+  SendPushMessageUsecase sendPushMessageUseCase =
+      sl.get<SendPushMessageUsecase>();
 
-  sendChatRequest(String receiverUid) async {
+  sendChatRequest(ProfileEntity profileEntity) async {
     state = state.update(isSendChatRequestLoading: true);
     debug("state = ${state.isSendChatRequestLoading}");
     //todo: implement local storage for uid
     String senderUid = FirebaseHandler.auth.currentUser?.uid ?? "";
     ChatRequestEntity params = ChatRequestEntity(
-        senderUid: senderUid, receiverUid: receiverUid, status: "pending");
+        senderUid: senderUid,
+        receiverUid: profileEntity.uid,
+        status: "pending");
     Either<Failure, ChatRequestEntity> response =
         await sendChatRequestUseCase.call(params);
     response.fold((left) {
       BotToast.showText(text: left.message);
     }, (right) async {
       BotToast.showText(text: "Chat request sent Successfully");
+      ProfileEntity? user = ref.read(profileProvider).profileEntity;
+      FCMDto params = FCMDto(
+          recipientToken: profileEntity.deviceToken ?? "",
+          title: "Chat Request Received",
+          body: "A new chat request received from ${user?.name}");
+      sendPushMessageUseCase.call(params);
       await ref.read(chatRequestProvider.notifier).fetchPendingRequest();
       await ref.read(peopleProvider.notifier).readAllPeople();
     });
