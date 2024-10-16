@@ -29,7 +29,6 @@ class StoryController extends StateNotifier<StoryGeneric> {
       required UserStoryEntity userStoryEntity}) async {
     StoryDto params =
         StoryDto(userStoryEntity: userStoryEntity, storyEntity: storyEntity);
-
     Either<Failure, Success> response = await addStoryUseCase.call(params);
     response.fold((left) {
       BotToast.showText(text: left.message);
@@ -49,13 +48,11 @@ class StoryController extends StateNotifier<StoryGeneric> {
     }, (right) {
       BotToast.showText(text: "Fetched stories successfully");
       if (isMyStory) {
-        debug("for ${right.name}, stories: ${right.toString()}");
         if ((right.storyList ?? []).isNotEmpty || right.name != null) {
           myStory = right;
         }
         state = state.update(myStory: myStory);
       } else {
-        debug("for ${right.name}, stories: ${right.toString()}");
         if ((right.storyList ?? []).isNotEmpty || right.name != null) {
           int index = stories.indexWhere((story) => story.uid == right.uid);
           if (index != -1) {
@@ -67,5 +64,13 @@ class StoryController extends StateNotifier<StoryGeneric> {
         state = state.update(friendsStories: stories);
       }
     });
+  }
+
+  fetchAllFriendsStories(Set<String> friendsUids) async {
+    state = state.update(friendsStories: []);
+    for (String id in friendsUids) {
+      await getStories(uid: id);
+    }
+    debug("friends stories: ${state.friendsStories}");
   }
 }

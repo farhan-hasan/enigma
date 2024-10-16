@@ -36,6 +36,8 @@ import 'package:enigma/src/shared/domain/use_cases/send_push_message_usecase.dar
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../features/auth/domain/usecases/change_email_usecase.dart';
+
 final sl = GetIt.I;
 
 Future<void> setupService() async {
@@ -60,6 +62,7 @@ Future<void> setupService() async {
   sl.registerSingleton<LoginUseCase>(LoginUseCase());
   sl.registerSingleton<LogoutUseCase>(LogoutUseCase());
   sl.registerSingleton<SignupUseCase>(SignupUseCase());
+  sl.registerSingleton<ChangeEmailUseCase>(ChangeEmailUseCase());
 
   sl.registerSingleton<ProfileRepositoryImpl>(ProfileRepositoryImpl());
   sl.registerSingleton<CreateProfileUseCase>(CreateProfileUseCase());

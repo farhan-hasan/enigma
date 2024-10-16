@@ -21,9 +21,9 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, List<ProfileModel>>> readAllProfile(
+  Future<Either<Failure, List<ProfileEntity>>> readAllProfile(
       {FilterDto? filter}) async {
-    Either<Failure, List<ProfileModel>> response =
+    Either<Failure, List<ProfileEntity>> response =
         await _profileRemoteDataSource.readAllProfile(filter: filter);
     return response;
   }

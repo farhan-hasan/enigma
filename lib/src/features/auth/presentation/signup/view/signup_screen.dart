@@ -111,15 +111,48 @@ class SignupScreen extends ConsumerWidget {
                                   password: passwordController.text.trim(),
                                 );
                         if (uid.isNotEmpty) {
-                          ProfileEntity profileEntity = ProfileEntity(
-                            uid: uid,
-                            name: nameController.text.trim(),
-                            email: emailController.text.trim(),
-                            createdAt: DateTime.now(),
+                          showDialog<void>(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: const SingleChildScrollView(
+                                    child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                      size: 50,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "A verification email has been sent to your email. please verify the email from the link.",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                )),
+                                actions: [
+                                  TextButton(
+                                    child: const Text('Ok'),
+                                    onPressed: () async {
+                                      ProfileEntity profileEntity =
+                                          ProfileEntity(
+                                        uid: uid,
+                                        name: nameController.text.trim(),
+                                        email: emailController.text.trim(),
+                                        createdAt: DateTime.now(),
+                                      );
+                                      await ref
+                                          .read(profileProvider.notifier)
+                                          .createProfile(profileEntity);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                           );
-                          await ref
-                              .read(profileProvider.notifier)
-                              .createProfile(profileEntity);
                         }
                       }
                     },

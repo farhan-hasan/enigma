@@ -2,15 +2,14 @@ import 'dart:convert';
 
 import 'package:enigma/src/core/barcode/barcode_scanner.dart';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
-import 'package:enigma/src/core/notification/local_notification/local_notification_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/friends_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_generic.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
-import 'package:enigma/src/features/profile/presentation/view_model/controller/people_controller.dart';
-import 'package:enigma/src/features/profile/presentation/view_model/generic/people_generic.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/generic/profile_generic.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +40,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
     WidgetsBinding.instance.addPostFrameCallback((t) async {
       await ref.read(chatRequestProvider.notifier).fetchPendingRequest();
       await ref.read(chatRequestProvider.notifier).fetchChatRequest();
-      await ref.read(peopleProvider.notifier).readAllPeople();
+      await ref.read(profileProvider.notifier).readAllPeople();
     });
   }
 
@@ -52,7 +51,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final PeopleGeneric peopleController = ref.watch(peopleProvider);
+    final ProfileGeneric profileController = ref.watch(profileProvider);
     final ChatRequestGeneric chatRequestController =
         ref.watch(chatRequestProvider);
     ref.watch(chatRequestProvider);
@@ -69,13 +68,66 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
           ),
           trailingWidgets: [
             GestureDetector(
-              onTap: () {},
+              onTap: () async {
+                ProfileEntity profileEntity;
+                String scanDetails;
+                scanDetails = await BarcodeScanner.scanBarcodeNormal();
+                profileEntity = ProfileEntity.fromJson(jsonDecode(scanDetails));
+
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Send Chat Request'),
+                      content: SingleChildScrollView(
+                          child: Container(
+                        child: Column(
+                          children: [
+                            CircularDisplayPicture(
+                              radius: 23,
+                              imageURL: profileEntity.avatarUrl,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              profileEntity.name ?? "",
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text("Send chat request?"),
+                          ],
+                        ),
+                      )),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('Yes'),
+                          onPressed: () {
+                            ref
+                                .read(chatRequestProvider.notifier)
+                                .sendChatRequest(profileEntity);
+                            ref.read(goRouterProvider).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('No'),
+                          onPressed: () {
+                            ref.read(goRouterProvider).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
               child: Container(
                 width: context.width * .1,
                 height: context.width * .1,
                 margin: const EdgeInsets.all(8),
                 child: const Icon(
-                  Icons.person_add_outlined,
+                  Icons.qr_code_scanner,
                   size: 25,
                 ),
               ),
@@ -97,12 +149,13 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                     // People list
                     if (chatRequestController.listOfChatRequest.isNotEmpty)
                       buildChatRequestsSection(
-                          context, peopleController, chatRequestController),
+                          context, profileController, chatRequestController),
                     if (chatRequestController.listOfPendingRequest.isNotEmpty)
                       buildPendingRequestsSection(
-                          context, peopleController, chatRequestController),
-                    buildDiscoverSection(
-                        context, peopleController, chatRequestController)
+                          context, profileController, chatRequestController),
+                    if (profileController.listOfPeople.isNotEmpty)
+                      buildDiscoverSection(
+                          context, profileController, chatRequestController)
                   ],
                 ),
               ),
@@ -148,7 +201,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
 
   Widget buildChatRequestsSection(
       BuildContext context,
-      PeopleGeneric peopleController,
+      ProfileGeneric profileController,
       ChatRequestGeneric chatRequestController) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -172,22 +225,10 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Stack(
-                        children: [
-                          CircularDisplayPicture(
-                            radius: 23,
-                            imageURL: chatRequestController
-                                .listOfChatRequest[index].avatarUrl,
-                          ),
-                          const Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: Icon(
-                                Icons.circle,
-                                color: Colors.green,
-                                size: 15,
-                              ))
-                        ],
+                      CircularDisplayPicture(
+                        radius: 23,
+                        imageURL: chatRequestController
+                            .listOfChatRequest[index].avatarUrl,
                       ),
                       const SizedBox(
                         width: 20,
@@ -268,7 +309,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
 
   Widget buildPendingRequestsSection(
       BuildContext context,
-      PeopleGeneric peopleController,
+      ProfileGeneric profileController,
       ChatRequestGeneric chatRequestController) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -284,33 +325,16 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  LocalNotificationHandler.showLocalNotification(
-                      chatRequestController.listOfPendingRequest[index].name ??
-                          "",
-                      "Tapped on ${chatRequestController.listOfPendingRequest[index].name ?? ""}");
-                },
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Stack(
-                      children: [
-                        CircularDisplayPicture(
-                          radius: 23,
-                          imageURL: chatRequestController
-                              .listOfPendingRequest[index].avatarUrl,
-                        ),
-                        const Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: Icon(
-                              Icons.circle,
-                              color: Colors.green,
-                              size: 15,
-                            ))
-                      ],
+                    CircularDisplayPicture(
+                      radius: 23,
+                      imageURL: chatRequestController
+                          .listOfPendingRequest[index].avatarUrl,
                     ),
                     const SizedBox(
                       width: 20,
@@ -350,7 +374,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
 
   Widget buildDiscoverSection(
       BuildContext context,
-      PeopleGeneric peopleController,
+      ProfileGeneric profileController,
       ChatRequestGeneric chatRequestController) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -358,70 +382,7 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text("Discover"),
-              InkWell(
-                  onTap: () async {
-                    ProfileEntity profileEntity;
-                    String scanDetails;
-                    scanDetails = await BarcodeScanner.scanBarcodeNormal();
-                    profileEntity =
-                        ProfileEntity.fromJson(jsonDecode(scanDetails));
-
-                    showDialog<void>(
-                      context: context,
-                      barrierDismissible: false, // user must tap button!
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Send Chat Request'),
-                          content: SingleChildScrollView(
-                              child: Container(
-                            child: Column(
-                              children: [
-                                CircularDisplayPicture(
-                                  radius: 23,
-                                  imageURL: profileEntity.avatarUrl,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  profileEntity.name ?? "",
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Text("Send chat request?"),
-                              ],
-                            ),
-                          )),
-                          actions: <Widget>[
-                            TextButton(
-                              child: const Text('Yes'),
-                              onPressed: () {
-                                ref
-                                    .read(chatRequestProvider.notifier)
-                                    .sendChatRequest(profileEntity);
-                                ref.read(goRouterProvider).pop();
-                              },
-                            ),
-                            TextButton(
-                              child: const Text('No'),
-                              onPressed: () {
-                                ref.read(goRouterProvider).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: const Icon(Icons.qr_code_scanner))
-            ],
-          ),
+          const Text("Discover"),
           const SizedBox(
             height: 20,
           ),
@@ -429,81 +390,67 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        children: [
-                          CircularDisplayPicture(
-                            radius: 23,
-                            imageURL:
-                                peopleController.listOfPeople[index].avatarUrl,
-                          ),
-                          const Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: Icon(
-                                Icons.circle,
-                                color: Colors.green,
-                                size: 15,
-                              ))
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            peopleController.listOfPeople[index].name ?? "",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                              peopleController.listOfPeople[index].createdAt
-                                      .toString() ??
-                                  "",
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.labelSmall)
-                        ],
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Visibility(
-                    visible: !chatRequestController.isSendChatRequestLoading,
-                    replacement:
-                        const Center(child: CircularProgressIndicator()),
-                    child: IconButton(
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircularDisplayPicture(
+                          radius: 23,
+                          imageURL:
+                              profileController.listOfPeople[index].avatarUrl,
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              profileController.listOfPeople[index].name ?? "",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                                profileController.listOfPeople[index].createdAt
+                                        .toString() ??
+                                    "",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.labelSmall)
+                          ],
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    IconButton(
                       onPressed: () async {
                         // todo: implement sembast for sender uid
                         String sender =
                             FirebaseHandler.auth.currentUser?.uid ?? "";
                         String receiver =
-                            peopleController.listOfPeople[index].uid ?? "";
+                            profileController.listOfPeople[index].uid ?? "";
                         await ref
                             .read(chatRequestProvider.notifier)
                             .sendChatRequest(
-                                peopleController.listOfPeople[index]);
+                                profileController.listOfPeople[index]);
                       },
                       icon: const Icon(
                         Icons.add,
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               );
             },
-            itemCount: peopleController.listOfPeople.length,
+            itemCount: profileController.listOfPeople.length,
           ),
         ],
       ),

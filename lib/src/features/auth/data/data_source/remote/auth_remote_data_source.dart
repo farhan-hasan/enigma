@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
 import 'package:enigma/src/core/network/responses/success_response.dart';
+import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRemoteDataSource {
@@ -11,6 +12,7 @@ class AuthRemoteDataSource {
     try {
       UserCredential userCredential = await FirebaseHandler.auth
           .createUserWithEmailAndPassword(email: email, password: password);
+      await userCredential.user!.sendEmailVerification();
       return Right(userCredential.user!);
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -55,6 +57,13 @@ class AuthRemoteDataSource {
     try {
       UserCredential userCredential = await FirebaseHandler.auth
           .signInWithEmailAndPassword(email: email, password: password);
+
+      if (!userCredential.user!.emailVerified) {
+        // If email is not verified, return failure
+        failure = Failure(
+            message: 'Email is not verified. Please verify your email.');
+        return Left(failure);
+      }
       return Right(userCredential.user!);
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -128,6 +137,39 @@ class AuthRemoteDataSource {
               Failure(message: 'Network error. Please check your connection.');
           break;
         default:
+          failure = Failure(message: 'An unknown error occurred.');
+          break;
+      }
+      return Left(failure);
+    }
+  }
+
+  Future<Either<Failure, Success>> updateEmail({required String email}) async {
+    Failure failure;
+
+    try {
+      await FirebaseHandler.auth.currentUser!.verifyBeforeUpdateEmail(email);
+      return Right(Success(message: "Verification email sent successfully"));
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'invalid-email':
+          failure = Failure(message: 'The email address is not valid.');
+          break;
+        case 'email-already-in-use':
+          failure = Failure(
+              message:
+                  'The email address is already in use by another account.');
+          break;
+        case 'requires-recent-login':
+          failure =
+              Failure(message: 'Please re-authenticate to update your email.');
+          break;
+        case 'network-request-failed':
+          failure =
+              Failure(message: 'Network error. Please check your connection.');
+          break;
+        default:
+          debug("errorrr");
           failure = Failure(message: 'An unknown error occurred.');
           break;
       }

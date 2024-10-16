@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
@@ -5,8 +7,8 @@ import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_screen_bottom_bar.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_ui.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
-import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
-import 'package:enigma/src/features/profile/presentation/view_model/generic/profile_generic.dart';
+import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
+import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +17,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ChatScreen extends ConsumerStatefulWidget {
   ChatScreen({super.key, required this.data});
 
-  static const String route = "/chat/:chat_id";
+  static const String route = "/chat/:profile_entity";
   String data;
 
-  static setRoute({required String chatId}) => "/chat/$chatId";
+  static setRoute({required ProfileEntity profile_entity}) =>
+      "/chat/${jsonEncode(profile_entity.toJson())}";
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -26,17 +29,12 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final String userUid = FirebaseHandler.auth.currentUser?.uid ?? "";
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((t) async {
-      await ref.read(profileProvider.notifier).readProfile(widget.data);
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    ProfileGeneric profileController = ref.watch(profileProvider);
+    //ProfileGeneric profileController = ref.watch(profileProvider);
+    final ProfileEntity profileEntity =
+        ProfileEntity.fromJson(jsonDecode(widget.data));
     return Scaffold(
         appBar: SharedAppbar(
           titleSpacing: -context.width * 0.04,
@@ -49,48 +47,27 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               size: 25,
             ),
           ),
-          title: ListTile(
-            leading: CircularDisplayPicture(
-              radius: 23,
-              imageURL: profileController.profileEntity?.avatarUrl ?? null,
-            ),
-            title: Text(
-              profileController.profileEntity?.name ?? "",
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            subtitle: Text(
-              (profileController.profileEntity?.isActive ?? false)
-                  ? "Active Now"
-                  : "",
-              style: Theme.of(context).textTheme.bodySmall,
+          title: InkWell(
+            onTap: () {
+              ref
+                  .read(goRouterProvider)
+                  .push(ProfileScreen.setRoute(profileEntity: profileEntity));
+            },
+            child: ListTile(
+              leading: CircularDisplayPicture(
+                radius: 23,
+                imageURL: profileEntity.avatarUrl ?? null,
+              ),
+              title: Text(
+                profileEntity.name ?? "",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              subtitle: Text(
+                (profileEntity.isActive ?? false) ? "Active Now" : "",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ),
           ),
-          trailingWidgets: [
-            CircleAvatar(
-              radius: context.width * 0.05,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              child: Icon(
-                Icons.call_outlined,
-                color: Theme.of(context).canvasColor,
-              ),
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            InkWell(
-              onTap: () {
-                // context.push(NFCTesting.setRoute);
-              },
-              child: CircleAvatar(
-                radius: context.width * 0.05,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                child: Icon(
-                  Icons.video_camera_front_outlined,
-                  color: Theme.of(context).canvasColor,
-                ),
-              ),
-            ),
-          ],
         ),
         body: Column(
           children: [
@@ -98,7 +75,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               child: FutureBuilder<Stream<List<ChatEntity>>>(
                   future: ref.read(chatProvider.notifier).getChat(
                         myUid: userUid,
-                        friendUid: profileController.profileEntity?.uid ?? "",
+                        friendUid: profileEntity.uid ?? "",
                       ),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
@@ -128,7 +105,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             ChatScreenBottomBar(
               sender: userUid,
-              receiver: profileController.profileEntity?.uid ?? "",
+              receiver: profileEntity.uid ?? "",
             ),
             // ChatUI(textMessage: textMessage)
           ],

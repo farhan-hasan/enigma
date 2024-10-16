@@ -158,6 +158,14 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                         _stories[_currentStoryIndex].storyList ?? []);
                   }
                 },
+                onVerticalDragEnd: (details) {
+                  // Check if the swipe was in the downward direction
+                  if (details.primaryVelocity != null &&
+                      details.primaryVelocity! > 0) {
+                    // Velocity > 0 means a downward swipe
+                    ref.read(goRouterProvider).pop(); // Pop the current screen
+                  }
+                },
                 child: ValueListenableBuilder(
                   builder: (context, value, child) {
                     return Stack(children: [
