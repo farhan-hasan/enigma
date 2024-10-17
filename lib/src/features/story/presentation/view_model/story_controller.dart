@@ -11,8 +11,6 @@ import 'package:enigma/src/features/story/presentation/view_model/story_generic.
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/utils/logger/logger.dart';
-
 final storyProvider = StateNotifierProvider<StoryController, StoryGeneric>(
   (ref) => StoryController(ref),
 );
@@ -38,8 +36,7 @@ class StoryController extends StateNotifier<StoryGeneric> {
   }
 
   getStories({required uid, isMyStory = false}) async {
-    List<UserStoryEntity> stories =
-        List<UserStoryEntity>.from(state.friendsStories);
+    List<UserStoryEntity> stories = [];
     UserStoryEntity myStory = UserStoryEntity();
     Either<Failure, UserStoryEntity> response =
         await getStoriesUseCase.call(uid);
@@ -53,7 +50,7 @@ class StoryController extends StateNotifier<StoryGeneric> {
         }
         state = state.update(myStory: myStory);
       } else {
-        if ((right.storyList ?? []).isNotEmpty || right.name != null) {
+        if ((right.storyList ?? []).isNotEmpty) {
           int index = stories.indexWhere((story) => story.uid == right.uid);
           if (index != -1) {
             stories[index] = right; // Update with new values
@@ -67,10 +64,8 @@ class StoryController extends StateNotifier<StoryGeneric> {
   }
 
   fetchAllFriendsStories(Set<String> friendsUids) async {
-    state = state.update(friendsStories: []);
     for (String id in friendsUids) {
       await getStories(uid: id);
     }
-    debug("friends stories: ${state.friendsStories}");
   }
 }

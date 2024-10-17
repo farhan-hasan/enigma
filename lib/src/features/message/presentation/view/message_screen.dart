@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_keys.dart';
@@ -27,15 +26,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MessageScreen extends ConsumerStatefulWidget {
-  MessageScreen({super.key, required this.data}) {
-    messageEntity = MessageEntity.fromJson(jsonDecode(data["message_entity"]));
-  }
-
-  Map<String, dynamic> data;
+  MessageScreen({
+    super.key,
+  });
   MessageEntity? messageEntity;
-  static const route = "/message/:message_entity";
-  static setRoute({required MessageEntity messageEntity}) =>
-      "/message/${jsonEncode(messageEntity.toJson())}";
+  static const route = "/message";
+  static setRoute() => "/message";
 
   @override
   ConsumerState<MessageScreen> createState() => _MessageScreenState();
@@ -58,11 +54,11 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   init() async {
     await ref.read(profileProvider.notifier).readProfile(
         sharedPreferenceManager.getValue(key: SharedPreferenceKeys.USER_UID));
-    await ref.read(chatRequestProvider.notifier).fetchFriends();
     await ref.read(storyProvider.notifier).getStories(
         uid: sharedPreferenceManager.getValue(
             key: SharedPreferenceKeys.USER_UID),
         isMyStory: true);
+    await ref.read(chatRequestProvider.notifier).fetchFriends();
     await ref.read(profileProvider.notifier).readAllProfile();
   }
 
@@ -140,10 +136,8 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
-            ref.read(goRouterProvider).push(
-                  ChatScreen.setRoute(
-                      profile_entity: profileController.listOfFriends[index]),
-                );
+            ref.read(goRouterProvider).push(ChatScreen.setRoute(),
+                extra: profileController.listOfFriends[index]);
           },
           child: Container(
             padding: const EdgeInsets.symmetric(

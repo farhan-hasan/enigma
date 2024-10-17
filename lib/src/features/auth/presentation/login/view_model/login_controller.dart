@@ -7,7 +7,6 @@ import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/features/auth/domain/dto/login_dto.dart';
 import 'package:enigma/src/features/auth/domain/usecases/login_usecase.dart';
 import 'package:enigma/src/features/auth/presentation/login/view_model/login_generic.dart';
-import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/features/message/presentation/view/message_screen.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
@@ -57,9 +56,7 @@ class LoginController extends StateNotifier<LoginGeneric> {
             key: SharedPreferenceKeys.USER_NAME, data: userProfile.name ?? "");
         isSuccess = true;
         ref.read(goRouterProvider).go(
-              MessageScreen.setRoute(
-                messageEntity: MessageEntity(),
-              ),
+              MessageScreen.setRoute(),
             );
       },
     );

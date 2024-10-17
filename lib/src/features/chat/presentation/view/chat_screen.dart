@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
@@ -15,13 +13,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  ChatScreen({super.key, required this.data});
+  ChatScreen({super.key, required this.profileEntity});
 
-  static const String route = "/chat/:profile_entity";
-  String data;
+  static const String route = "/chat";
+  ProfileEntity profileEntity;
 
-  static setRoute({required ProfileEntity profile_entity}) =>
-      "/chat/${jsonEncode(profile_entity.toJson())}";
+  static setRoute() => "/chat";
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -33,8 +30,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     //ProfileGeneric profileController = ref.watch(profileProvider);
-    final ProfileEntity profileEntity =
-        ProfileEntity.fromJson(jsonDecode(widget.data));
+    final ProfileEntity profileEntity = widget.profileEntity;
     return Scaffold(
         appBar: SharedAppbar(
           titleSpacing: -context.width * 0.04,

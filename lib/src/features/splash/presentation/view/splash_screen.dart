@@ -4,7 +4,6 @@ import 'package:enigma/src/core/database/local/shared_preference/shared_preferen
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_manager.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/features/auth/presentation/auth_screen/view/auth_screen.dart';
-import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/features/message/presentation/view/message_screen.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +34,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           ref.read(goRouterProvider).go(AuthScreen.setRoute());
         } else {
           ref.read(goRouterProvider).go(
-                MessageScreen.setRoute(
-                  messageEntity: MessageEntity(),
-                ),
+                MessageScreen.setRoute(),
               );
         }
       },

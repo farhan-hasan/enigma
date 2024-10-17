@@ -8,8 +8,8 @@ import 'package:enigma/src/features/auth/presentation/signup/view/signup_screen.
 import 'package:enigma/src/features/chat/presentation/view/chat_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/friends_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/people_screen.dart';
-import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/features/message/presentation/view/message_screen.dart';
+import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
 import 'package:enigma/src/features/profile/presentation/view/settings_screen.dart';
 import 'package:enigma/src/features/splash/presentation/view/splash_screen.dart';
@@ -27,6 +27,11 @@ final goRouterProvider = Provider(
       initialLocation: SplashScreen.route,
       observers: [BotToastNavigatorObserver()],
       routes: [
+        GoRoute(
+            path: "/",
+            builder: (context, state) {
+              return MessageScreen();
+            }),
         GoRoute(
           path: SplashScreen.route,
           builder: (context, state) {
@@ -82,8 +87,9 @@ final goRouterProvider = Provider(
           path: ChatScreen.route,
           builder: (context, state) {
             debug("path parameter : ${state.pathParameters}");
+            ProfileEntity profileEntity = state.extra as ProfileEntity;
             return ChatScreen(
-              data: state.pathParameters["profile_entity"] ?? "",
+              profileEntity: profileEntity,
             );
           },
         ),
@@ -97,16 +103,12 @@ final goRouterProvider = Provider(
         StatefulShellRoute.indexedStack(
             branches: [
               StatefulShellBranch(
-                  initialLocation: MessageScreen.setRoute(
-                      messageEntity:
-                          MessageEntity(id: 1, message: "Message Screen")),
+                  initialLocation: MessageScreen.setRoute(),
                   routes: [
                     GoRoute(
                         path: MessageScreen.route,
                         builder: (context, state) {
-                          return MessageScreen(
-                            data: state.pathParameters,
-                          );
+                          return MessageScreen();
                         }),
                   ]),
               StatefulShellBranch(routes: [
