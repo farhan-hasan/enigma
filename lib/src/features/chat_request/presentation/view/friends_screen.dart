@@ -54,13 +54,10 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
           ),
         ),
       ),
-      body: RefreshIndicator(
-        child: ListView.builder(
-          itemCount: 1,
-          itemBuilder: (context, index) =>
-              buildPeopleSection(context, profileController),
-        ),
-        onRefresh: () async => await init(),
+      body: ListView.builder(
+        itemCount: 1,
+        itemBuilder: (context, index) =>
+            buildPeopleSection(context, profileController),
       ),
     );
   }
@@ -69,109 +66,120 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
       BuildContext context, ProfileGeneric profileController) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
-      child: ListView.separated(
-        primary: true,
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
+      child: RefreshIndicator(
+        onRefresh: () async => await init(),
+        child: ListView.builder(
+          primary: true,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Stack(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      CircularDisplayPicture(
-                        radius: 23,
-                        imageURL:
-                            profileController.listOfFriends[index].avatarUrl,
+                      Stack(
+                        children: [
+                          CircularDisplayPicture(
+                            radius: 23,
+                            imageURL: profileController
+                                .listOfFriends[index].avatarUrl,
+                          ),
+                          Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Icon(
+                                Icons.circle,
+                                color: (profileController
+                                            .listOfFriends[index].isActive ??
+                                        false)
+                                    ? Colors.green
+                                    : Colors.transparent,
+                                size: 15,
+                              ))
+                        ],
                       ),
-                      Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: Icon(
-                            Icons.circle,
-                            color: (profileController
-                                        .listOfFriends[index].isActive ??
-                                    false)
-                                ? Colors.green
-                                : Colors.transparent,
-                            size: 15,
-                          ))
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            profileController.listOfFriends[index].name ?? "",
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                              profileController.listOfFriends[index].createdAt
+                                      .toString() ??
+                                  "",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelSmall)
+                        ],
+                      ),
                     ],
                   ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        profileController.listOfFriends[index].name ?? "",
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                  IconButtonWithDropdown(
+                    popupMenuEntryList: [
+                      PopupMenuItem<String>(
+                        onTap: () async {
+                          await ref
+                              .read(chatRequestProvider.notifier)
+                              .removeFriend(
+                                  profileController.listOfFriends[index].uid ??
+                                      "");
+                          await ref
+                              .read(chatRequestProvider.notifier)
+                              .fetchFriends();
+                          await ref
+                              .read(profileProvider.notifier)
+                              .readAllPeople();
+                        },
+                        value: 'Remove',
+                        child: const Text('Remove'),
                       ),
-                      Text(
-                          profileController.listOfFriends[index].createdAt
-                                  .toString() ??
-                              "",
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall)
+                      PopupMenuItem<String>(
+                        onTap: () async {
+                          await ref
+                              .read(chatRequestProvider.notifier)
+                              .updateRequestStatus(
+                                  "blocked",
+                                  profileController.listOfFriends[index].uid ??
+                                      "");
+                          await ref
+                              .read(chatRequestProvider.notifier)
+                              .fetchFriends();
+                          await ref
+                              .read(profileProvider.notifier)
+                              .readAllPeople();
+                        },
+                        value: 'Block',
+                        child: const Text('Block'),
+                      ),
                     ],
-                  ),
+                    icon: const Icon(
+                      Icons.close,
+                    ),
+                    style: IconButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white),
+                  )
                 ],
               ),
-              IconButtonWithDropdown(
-                popupMenuEntryList: [
-                  PopupMenuItem<String>(
-                    onTap: () async {
-                      await ref.read(chatRequestProvider.notifier).removeFriend(
-                          profileController.listOfFriends[index].uid ?? "");
-                      await ref
-                          .read(chatRequestProvider.notifier)
-                          .fetchFriends();
-                      await ref.read(profileProvider.notifier).readAllPeople();
-                    },
-                    value: 'Remove',
-                    child: const Text('Remove'),
-                  ),
-                  PopupMenuItem<String>(
-                    onTap: () async {
-                      await ref
-                          .read(chatRequestProvider.notifier)
-                          .updateRequestStatus("blocked",
-                              profileController.listOfFriends[index].uid ?? "");
-                      await ref
-                          .read(chatRequestProvider.notifier)
-                          .fetchFriends();
-                      await ref.read(profileProvider.notifier).readAllPeople();
-                    },
-                    value: 'Block',
-                    child: const Text('Block'),
-                  ),
-                ],
-                icon: const Icon(
-                  Icons.close,
-                ),
-                style: IconButton.styleFrom(
-                    backgroundColor: Colors.red, foregroundColor: Colors.white),
-              )
-            ],
-          );
-        },
-        itemCount: profileController.listOfFriends.length,
-        separatorBuilder: (BuildContext context, int index) {
-          return const SizedBox(
-            height: 30,
-          );
-        },
+            );
+          },
+          itemCount: profileController.listOfFriends.length,
+        ),
       ),
     );
   }
