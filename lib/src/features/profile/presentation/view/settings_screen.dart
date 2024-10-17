@@ -437,38 +437,36 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       BuildContext context, ProfileGeneric profileController) {
     return Column(
       children: [
-        Container(
-          height: context.width * 0.4,
-          width: context.width * 0.4,
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl: profileController.profileEntity?.avatarUrl ?? "",
-                    errorWidget: (context, url, error) => Icon(
-                      Icons.person,
-                      size: context.width * 0.1,
-                    ),
-                    fit: BoxFit.contain,
+        Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: ClipOval(
+                child: CachedNetworkImage(
+                  height: context.width * 0.4,
+                  width: context.width * 0.4,
+                  imageUrl: profileController.profileEntity?.avatarUrl ?? "",
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.person,
+                    size: context.width * 0.1,
                   ),
+                  fit: BoxFit.fill,
                 ),
               ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: IconButton(
-                  onPressed: () async {
-                    _showOptions(context, profileController);
-                  },
-                  icon: const Icon(
-                    Icons.edit,
-                  ),
+            ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: IconButton(
+                onPressed: () async {
+                  _showOptions(context, profileController);
+                },
+                icon: const Icon(
+                  Icons.edit,
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
         const SizedBox(
           height: 10,

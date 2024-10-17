@@ -11,6 +11,7 @@ class FCMRemoteDataSource {
     required String recipientToken,
     required String title,
     required String body,
+    required String imageUrl,
   }) async {
     const String jsonSource = 'assets/data/enigma-credential.json';
     Failure failure;
@@ -28,8 +29,7 @@ class FCMRemoteDataSource {
         'notification': {
           'title': title,
           'body': body,
-          'image':
-              'https://static8.depositphotos.com/1026550/1036/i/950/depositphotos_10361062-stock-photo-shopping-cart-symbol-at-the.jpg/'
+          'image': imageUrl,
         },
       },
     };

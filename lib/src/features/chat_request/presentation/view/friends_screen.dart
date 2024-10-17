@@ -17,6 +17,7 @@ class FriendsScreen extends ConsumerStatefulWidget {
   Map<String, dynamic> data;
   ChatRequestEntity? chatRequestEntity;
   static const route = "/chat_request/:chat_request_entity";
+
   static setRoute({required ChatRequestEntity chatRequestEntity}) =>
       "chat_request/${jsonEncode(chatRequestEntity.toJson())}";
 
@@ -27,10 +28,14 @@ class FriendsScreen extends ConsumerStatefulWidget {
 class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((t) {
-      ref.read(chatRequestProvider.notifier).fetchFriends();
+    WidgetsBinding.instance.addPostFrameCallback((t) async {
+      await init();
     });
     super.initState();
+  }
+
+  Future<void> init() async {
+    ref.read(chatRequestProvider.notifier).fetchFriends();
   }
 
   @override
@@ -49,7 +54,14 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
           ),
         ),
       ),
-      body: buildPeopleSection(context, profileController),
+      body: RefreshIndicator(
+        child: ListView.builder(
+          itemCount: 1,
+          itemBuilder: (context, index) =>
+              buildPeopleSection(context, profileController),
+        ),
+        onRefresh: () async => await init(),
+      ),
     );
   }
 

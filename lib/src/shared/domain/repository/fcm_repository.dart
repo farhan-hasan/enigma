@@ -7,5 +7,6 @@ abstract class FCMRepository {
     required String recipientToken,
     required String title,
     required String body,
+    required String imageUrl,
   });
 }

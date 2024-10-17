@@ -34,6 +34,7 @@ class MessageScreen extends ConsumerStatefulWidget {
   Map<String, dynamic> data;
   MessageEntity? messageEntity;
   static const route = "/message/:message_entity";
+
   static setRoute({required MessageEntity messageEntity}) =>
       "/message/${jsonEncode(messageEntity.toJson())}";
 
@@ -70,59 +71,59 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   Widget build(BuildContext context) {
     StoryGeneric storyController = ref.watch(storyProvider);
     return Scaffold(
-      //backgroundColor: Theme.of(context).colorScheme.secondary,
-      appBar: SharedAppbar(
-          title: const Text("Home"),
-          leadingWidget: GestureDetector(
-            onTap: () {},
-            child: Container(
-              height: context.height * .05,
-              width: context.width * .05,
-              margin: const EdgeInsets.all(8),
-              child: GestureDetector(
-                onTap: () {},
-                child: const Icon(
-                  Icons.search,
-                  size: 25,
-                ),
-              ),
-            ),
-          ),
-          trailingWidgets: [
-            GestureDetector(
-              onTap: () {
-                ref.read(goRouterProvider).go(SettingsScreen.route);
-              },
+        //backgroundColor: Theme.of(context).colorScheme.secondary,
+        appBar: SharedAppbar(
+            title: const Text("Home"),
+            leadingWidget: GestureDetector(
+              onTap: () {},
               child: Container(
-                height: context.height * .15,
-                width: context.width * .137,
-                padding: const EdgeInsets.all(8),
-                child: CircularDisplayPicture(
-                  radius: 30,
-                  imageURL:
-                      ref.read(profileProvider).profileEntity?.avatarUrl ?? "",
+                height: context.height * .05,
+                width: context.width * .05,
+                margin: const EdgeInsets.all(8),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: const Icon(
+                    Icons.search,
+                    size: 25,
+                  ),
                 ),
               ),
-            )
-          ]),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await init();
-        },
-        child: Stack(children: [
-          SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                buildStorySection(context, storyController),
-                buildChatSection(context)
-              ],
+            ),
+            trailingWidgets: [
+              GestureDetector(
+                onTap: () {
+                  ref.read(goRouterProvider).go(SettingsScreen.route);
+                },
+                child: Container(
+                  height: context.height * .15,
+                  width: context.width * .137,
+                  padding: const EdgeInsets.all(8),
+                  child: CircularDisplayPicture(
+                    radius: 30,
+                    imageURL:
+                        ref.read(profileProvider).profileEntity?.avatarUrl ??
+                            "",
+                  ),
+                ),
+              )
+            ]),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await init();
+          },
+          child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (context, index) => SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  buildStorySection(context, storyController),
+                  buildChatSection(context)
+                ],
+              ),
             ),
           ),
-          //ListView()
-        ]),
-      ),
-    );
+        ));
   }
 
   String getLastSeen(DateTime lastSeen) {
@@ -142,7 +143,8 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           onTap: () {
             ref.read(goRouterProvider).push(
                   ChatScreen.setRoute(
-                      profile_entity: profileController.listOfFriends[index]),
+                    profile_entity: profileController.listOfFriends[index],
+                  ),
                 );
           },
           child: Container(
