@@ -17,7 +17,8 @@ class CircularDisplayPicture extends StatelessWidget {
           width: 100,
           height: 100,
           fit: BoxFit.cover,
-          imageURL ?? dummyImage,
+          (imageURL == "" || imageURL == null) ? dummyImage : imageURL ?? "",
+          // imageURL ?? dummyImage,
         ),
       ),
     );

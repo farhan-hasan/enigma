@@ -25,7 +25,12 @@ class FCMRemoteDataSource {
     final notificationData = {
       'message': {
         'token': recipientToken,
-        'notification': {'title': title, 'body': body}
+        'notification': {
+          'title': title,
+          'body': body,
+          'image':
+              'https://static8.depositphotos.com/1026550/1036/i/950/depositphotos_10361062-stock-photo-shopping-cart-symbol-at-the.jpg/'
+        },
       },
     };
 

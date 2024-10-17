@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:enigma/src/core/network/remote/firebase/storage_directory_name.dart';
+import 'package:enigma/src/core/network/remote/firebase/firebase_storage_directory_name.dart';
 import 'package:enigma/src/core/utils/chat_utils/chat_utils.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/core/utils/logger/logger.dart';
@@ -170,8 +170,8 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                               .read(chatProvider.notifier)
                               .addImageMedia(
                                 file: audioFile.value!,
-                                directory:
-                                    StorageDirectoryName.CHAT_MEDIA_DIRECTORY,
+                                directory: FirebaseStorageDirectoryName
+                                    .CHAT_MEDIA_DIRECTORY,
                                 fileName: const Uuid().v4(),
                               );
                           ChatEntity chatEntity = ChatEntity(
@@ -293,8 +293,8 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                                 .read(chatProvider.notifier)
                                 .addImageMedia(
                                   file: imageFile.value!,
-                                  directory:
-                                      StorageDirectoryName.CHAT_MEDIA_DIRECTORY,
+                                  directory: FirebaseStorageDirectoryName
+                                      .CHAT_MEDIA_DIRECTORY,
                                   fileName:
                                       imageFile.value!.path.split("/").last,
                                 );

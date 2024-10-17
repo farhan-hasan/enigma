@@ -43,12 +43,15 @@ class LoginController extends StateNotifier<LoginGeneric> {
             key: SharedPreferenceKeys.AUTH_STATE, data: true);
         preferenceManager.insertValue<String>(
             key: SharedPreferenceKeys.USER_UID, data: right.uid);
+        preferenceManager.insertValue<String>(
+            key: SharedPreferenceKeys.USER_EMAIL, data: right.email ?? "");
 
         await ref.read(profileProvider.notifier).readProfile(right.uid);
         ProfileEntity userProfile =
             ref.read(profileProvider).profileEntity ?? ProfileEntity();
         userProfile.isActive = true;
         userProfile.deviceToken = deviceToken;
+        if (userProfile.email != right.email) userProfile.email = right.email;
         await ref.read(profileProvider.notifier).updateProfile(userProfile);
         preferenceManager.insertValue<String>(
             key: SharedPreferenceKeys.USER_NAME, data: userProfile.name ?? "");

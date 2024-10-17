@@ -2,32 +2,44 @@ import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 
 class ProfileGeneric {
   bool isLoading;
+  bool nameEditInProgress;
+  bool emailEditInProgress;
+  bool phoneNumberEditInProgress;
   ProfileEntity? profileEntity;
-  // Map<String,ProfileEntity> loadedProfiles = {};
+  List<ProfileEntity> listOfFriends;
+  List<ProfileEntity> listOfPeople;
+  List<ProfileEntity> listOfAllProfiles;
 
-  ProfileGeneric({this.isLoading = false, this.profileEntity});
+  ProfileGeneric({
+    this.isLoading = false,
+    this.nameEditInProgress = false,
+    this.emailEditInProgress = false,
+    this.phoneNumberEditInProgress = false,
+    this.profileEntity,
+    this.listOfFriends = const [],
+    this.listOfPeople = const [],
+    this.listOfAllProfiles = const [],
+  });
 
-  ProfileGeneric update({bool? isLoading, ProfileEntity? profileEntity}) {
+  ProfileGeneric update({
+    bool? isLoading,
+    bool? nameEditInProgress,
+    bool? emailEditInProgress,
+    bool? phoneNumberEditInProgress,
+    ProfileEntity? profileEntity,
+    List<ProfileEntity>? listOfFriends,
+    List<ProfileEntity>? listOfPeople,
+    List<ProfileEntity>? listOfAllProfiles,
+  }) {
     return ProfileGeneric(
         isLoading: isLoading ?? this.isLoading,
+        nameEditInProgress: nameEditInProgress ?? this.nameEditInProgress,
+        emailEditInProgress: emailEditInProgress ?? this.emailEditInProgress,
+        phoneNumberEditInProgress:
+            phoneNumberEditInProgress ?? this.phoneNumberEditInProgress,
+        listOfFriends: listOfFriends ?? this.listOfFriends,
+        listOfPeople: listOfPeople ?? this.listOfPeople,
+        listOfAllProfiles: listOfAllProfiles ?? this.listOfAllProfiles,
         profileEntity: profileEntity ?? this.profileEntity);
   }
-
-  // loadProfile(String uid, ProfileEntity profileEntity) {
-  //   loadedProfiles[uid] = profileEntity;
-  // }
-  //
-  // resetProfiles() {
-  //   loadedProfiles.clear();
-  // }
-  //
-  // Either<bool,ProfileEntity>getProfile(String uid) {
-  //   if(loadedProfiles.containsKey(uid)) {
-  //     ProfileEntity profile = loadedProfiles[uid] ?? ProfileEntity();
-  //     return Right(profile);
-  //   }
-  //   else {
-  //     return const Left(false);
-  //   }
-  // }
 }

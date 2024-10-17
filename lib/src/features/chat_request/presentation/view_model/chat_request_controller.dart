@@ -17,7 +17,6 @@ import 'package:enigma/src/features/chat_request/presentation/view_model/chat_re
 import 'package:enigma/src/features/profile/domain/dto/filter_dto.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/domain/usecases/read_all_people_usecase.dart';
-import 'package:enigma/src/features/profile/presentation/view_model/controller/people_controller.dart';
 import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
 import 'package:enigma/src/features/story/presentation/view_model/story_controller.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
@@ -63,17 +62,21 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
       BotToast.showText(text: left.message);
     }, (right) async {
       BotToast.showText(text: "Chat request sent Successfully");
-      ProfileEntity? user = ref.read(profileProvider).profileEntity;
-      FCMDto params = FCMDto(
-          recipientToken: profileEntity.deviceToken ?? "",
-          title: "Chat Request Received",
-          body: "A new chat request received from ${user?.name}");
-      sendPushMessageUseCase.call(params);
+      sendChatRequestNotification(profileEntity);
       await ref.read(chatRequestProvider.notifier).fetchPendingRequest();
-      await ref.read(peopleProvider.notifier).readAllPeople();
+      await ref.read(profileProvider.notifier).readAllPeople();
     });
     state = state.update(isSendChatRequestLoading: false);
     debug("state = ${state.isSendChatRequestLoading}");
+  }
+
+  sendChatRequestNotification(ProfileEntity profileEntity) {
+    ProfileEntity? user = ref.read(profileProvider).profileEntity;
+    FCMDto params = FCMDto(
+        recipientToken: profileEntity.deviceToken ?? "",
+        title: "Chat Request Received",
+        body: "A new chat request received from ${user?.name}");
+    sendPushMessageUseCase.call(params);
   }
 
   updateRequestStatus(String status, String senderUid) async {
@@ -150,7 +153,6 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
       BotToast.showText(text: left.message);
     }, (right) {
       listOfChatRequestEntity = right;
-
       isSuccess = true;
     });
 
@@ -182,18 +184,11 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
     FilterDto params = FilterDto(
         firebaseWhereModel:
             FirebaseWhereModel(field: "status", isEqualTo: "accepted"));
-
     Either<Failure, List<ChatRequestEntity>> response =
         await fetchFriendsUseCase.call(params);
-    // debug("checking fetch friends");
     response.fold((left) {
       BotToast.showText(text: left.message);
     }, (right) {
-      // debug("isSuccess = true");
-      for (ChatRequestEntity c in right) {
-        // debug("sender = ${c.senderUid}, receiver = ${c.receiverUid}");
-      }
-      for (ChatRequestEntity c in right) {}
       listOfFriends = right;
       isSuccess = true;
     });
@@ -201,24 +196,21 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
     if (isSuccess) {
       if (listOfFriends.isNotEmpty) {
         // filtering all uid except the current users uid
-        Set<String> allUid = {};
+        Set<String> friendsUids = {};
         for (ChatRequestEntity f in listOfFriends) {
           if (f.senderUid != userId) {
-            allUid.add(f.senderUid ?? "");
+            friendsUids.add(f.senderUid ?? "");
           }
           if (f.receiverUid != userId) {
-            allUid.add(f.receiverUid ?? "");
+            friendsUids.add(f.receiverUid ?? "");
           }
         }
-        await fetchAllFriendsProfileData(allUid);
-
-        {
-          ref.read(storyProvider).update(friendsStories: []);
-          for (String id in allUid) {
-            await ref.read(storyProvider.notifier).getStories(uid: id);
-          }
-          debug("friends stories: ${ref.read(storyProvider).friendsStories}");
-        }
+        await ref
+            .read(profileProvider.notifier)
+            .fetchAllFriendsProfileData(friendsUids);
+        await ref
+            .read(storyProvider.notifier)
+            .fetchAllFriendsStories(friendsUids);
       } else {
         state = state.update(listOfFriends: []);
       }
@@ -227,21 +219,21 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
     state = state.update(isFriendsLoading: false);
   }
 
-  Future<void> fetchAllFriendsProfileData(Set<String> allUid) async {
-    FirebaseWhereModel whereModel = FirebaseWhereModel(
-      field: "uid",
-      whereIn: allUid.toList(),
-    );
-    FilterDto params = FilterDto(firebaseWhereModel: whereModel);
-    Either<Failure, List<ProfileEntity>> response =
-        await readAllPeopleUseCase.call(params);
-    response.fold((left) {
-      BotToast.showText(text: left.message);
-    }, (right) {
-      state = state.update(listOfFriends: right);
-      BotToast.showText(text: "Fetched friends successfully");
-    });
-  }
+  // Future<void> fetchAllFriendsProfileData(Set<String> allUid) async {
+  //   FirebaseWhereModel whereModel = FirebaseWhereModel(
+  //     field: "uid",
+  //     whereIn: allUid.toList(),
+  //   );
+  //   FilterDto params = FilterDto(firebaseWhereModel: whereModel);
+  //   Either<Failure, List<ProfileEntity>> response =
+  //       await readAllPeopleUseCase.call(params);
+  //   response.fold((left) {
+  //     BotToast.showText(text: left.message);
+  //   }, (right) {
+  //     state = state.update(listOfFriends: right);
+  //     BotToast.showText(text: "Fetched friends successfully");
+  //   });
+  // }
 
   removeFriend(String friendUid) async {
     state = state.update(isRemoveFriendLoading: true);

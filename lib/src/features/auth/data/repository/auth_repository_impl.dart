@@ -44,4 +44,11 @@ class AuthRepositoryImpl extends AuthRepository {
         await _authRemoteDataSource.forgotPassword(email: email);
     return result;
   }
+
+  @override
+  Future<Either<Failure, Success>> updateEmail({required String email}) async {
+    Either<Failure, Success> result =
+        await _authRemoteDataSource.updateEmail(email: email);
+    return result;
+  }
 }

@@ -11,6 +11,7 @@ import 'package:enigma/src/features/chat_request/presentation/view/people_screen
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/features/message/presentation/view/message_screen.dart';
 import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
+import 'package:enigma/src/features/profile/presentation/view/settings_screen.dart';
 import 'package:enigma/src/features/splash/presentation/view/splash_screen.dart';
 import 'package:enigma/src/features/story/presentation/view/story_preview_screen.dart';
 import 'package:enigma/src/features/story/presentation/view/story_screen.dart';
@@ -35,7 +36,10 @@ final goRouterProvider = Provider(
         GoRoute(
           path: ProfileScreen.route,
           builder: (context, state) {
-            return const ProfileScreen();
+            debug("path parameter : ${state.pathParameters}");
+            return ProfileScreen(
+              data: state.pathParameters["profile_entity"] ?? "",
+            );
           },
         ),
         GoRoute(
@@ -79,7 +83,7 @@ final goRouterProvider = Provider(
           builder: (context, state) {
             debug("path parameter : ${state.pathParameters}");
             return ChatScreen(
-              data: state.pathParameters["chat_id"] ?? "",
+              data: state.pathParameters["profile_entity"] ?? "",
             );
           },
         ),
@@ -107,13 +111,6 @@ final goRouterProvider = Provider(
                   ]),
               StatefulShellBranch(routes: [
                 GoRoute(
-                    path: "/calls",
-                    builder: (context, state) {
-                      return Center(child: Text("This is calls screen"));
-                    }),
-              ]),
-              StatefulShellBranch(routes: [
-                GoRoute(
                   path: "/people",
                   builder: (context, state) {
                     return PeopleScreen(data: state.pathParameters);
@@ -124,7 +121,7 @@ final goRouterProvider = Provider(
                 GoRoute(
                     path: "/settings",
                     builder: (context, state) {
-                      return Center(child: Text("This is settings screen"));
+                      return SettingsScreen();
                     }),
               ])
             ],

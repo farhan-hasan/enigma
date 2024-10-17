@@ -61,10 +61,10 @@ class ProfileRemoteDataSource {
     return Left(failure);
   }
 
-  Future<Either<Failure, List<ProfileModel>>> readAllProfile(
+  Future<Either<Failure, List<ProfileEntity>>> readAllProfile(
       {FilterDto? filter}) async {
     Failure failure;
-    List<ProfileModel> allProfile = [];
+    List<ProfileEntity> allProfile = [];
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseHandler.get(
@@ -72,7 +72,8 @@ class ProfileRemoteDataSource {
               where: filter?.firebaseWhereModel);
 
       for (QueryDocumentSnapshot q in querySnapshot.docs) {
-        allProfile.add(ProfileModel.fromJson(q.data() as Map<String, dynamic>));
+        allProfile
+            .add(ProfileEntity.fromJson(q.data() as Map<String, dynamic>));
       }
       return Right(allProfile);
     } on FirebaseException catch (e) {

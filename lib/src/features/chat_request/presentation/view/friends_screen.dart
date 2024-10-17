@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/features/chat_request/domain/entity/chat_request_entity.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
-import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_generic.dart';
-import 'package:enigma/src/features/profile/presentation/view_model/controller/people_controller.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/generic/profile_generic.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/icon_button_with_dropdown.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
@@ -35,8 +35,7 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ChatRequestGeneric chatRequestController =
-        ref.watch(chatRequestProvider);
+    final ProfileGeneric profileController = ref.watch(profileProvider);
     return Scaffold(
       appBar: SharedAppbar(
         title: const Text("Friends"),
@@ -50,12 +49,12 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
           ),
         ),
       ),
-      body: buildPeopleSection(context, chatRequestController),
+      body: buildPeopleSection(context, profileController),
     );
   }
 
   Widget buildPeopleSection(
-      BuildContext context, ChatRequestGeneric chatRequestController) {
+      BuildContext context, ProfileGeneric profileController) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: ListView.separated(
@@ -75,15 +74,15 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
                     children: [
                       CircularDisplayPicture(
                         radius: 23,
-                        imageURL: chatRequestController
-                            .listOfFriends[index].avatarUrl,
+                        imageURL:
+                            profileController.listOfFriends[index].avatarUrl,
                       ),
                       Positioned(
                           right: 0,
                           bottom: 0,
                           child: Icon(
                             Icons.circle,
-                            color: (chatRequestController
+                            color: (profileController
                                         .listOfFriends[index].isActive ??
                                     false)
                                 ? Colors.green
@@ -99,7 +98,7 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        chatRequestController.listOfFriends[index].name ?? "",
+                        profileController.listOfFriends[index].name ?? "",
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context)
                             .textTheme
@@ -107,7 +106,7 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                          chatRequestController.listOfFriends[index].createdAt
+                          profileController.listOfFriends[index].createdAt
                                   .toString() ??
                               "",
                           maxLines: 2,
@@ -122,11 +121,11 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
                   PopupMenuItem<String>(
                     onTap: () async {
                       await ref.read(chatRequestProvider.notifier).removeFriend(
-                          chatRequestController.listOfFriends[index].uid ?? "");
+                          profileController.listOfFriends[index].uid ?? "");
                       await ref
                           .read(chatRequestProvider.notifier)
                           .fetchFriends();
-                      await ref.read(peopleProvider.notifier).readAllPeople();
+                      await ref.read(profileProvider.notifier).readAllPeople();
                     },
                     value: 'Remove',
                     child: const Text('Remove'),
@@ -135,14 +134,12 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
                     onTap: () async {
                       await ref
                           .read(chatRequestProvider.notifier)
-                          .updateRequestStatus(
-                              "blocked",
-                              chatRequestController.listOfFriends[index].uid ??
-                                  "");
+                          .updateRequestStatus("blocked",
+                              profileController.listOfFriends[index].uid ?? "");
                       await ref
                           .read(chatRequestProvider.notifier)
                           .fetchFriends();
-                      await ref.read(peopleProvider.notifier).readAllPeople();
+                      await ref.read(profileProvider.notifier).readAllPeople();
                     },
                     value: 'Block',
                     child: const Text('Block'),
@@ -157,7 +154,7 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
             ],
           );
         },
-        itemCount: chatRequestController.listOfFriends.length,
+        itemCount: profileController.listOfFriends.length,
         separatorBuilder: (BuildContext context, int index) {
           return const SizedBox(
             height: 30,
