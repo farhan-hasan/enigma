@@ -8,9 +8,10 @@ import 'package:enigma/src/features/auth/presentation/signup/view/signup_screen.
 import 'package:enigma/src/features/chat/presentation/view/chat_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/friends_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view/people_screen.dart';
-import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
 import 'package:enigma/src/features/message/presentation/view/message_screen.dart';
+import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
+import 'package:enigma/src/features/profile/presentation/view/settings_screen.dart';
 import 'package:enigma/src/features/splash/presentation/view/splash_screen.dart';
 import 'package:enigma/src/features/story/presentation/view/story_preview_screen.dart';
 import 'package:enigma/src/features/story/presentation/view/story_screen.dart';
@@ -27,6 +28,11 @@ final goRouterProvider = Provider(
       observers: [BotToastNavigatorObserver()],
       routes: [
         GoRoute(
+            path: "/",
+            builder: (context, state) {
+              return MessageScreen();
+            }),
+        GoRoute(
           path: SplashScreen.route,
           builder: (context, state) {
             return const SplashScreen();
@@ -35,7 +41,10 @@ final goRouterProvider = Provider(
         GoRoute(
           path: ProfileScreen.route,
           builder: (context, state) {
-            return const ProfileScreen();
+            debug("path parameter : ${state.pathParameters}");
+            return ProfileScreen(
+              data: state.pathParameters["profile_entity"] ?? "",
+            );
           },
         ),
         GoRoute(
@@ -78,8 +87,9 @@ final goRouterProvider = Provider(
           path: ChatScreen.route,
           builder: (context, state) {
             debug("path parameter : ${state.pathParameters}");
+            ProfileEntity profileEntity = state.extra as ProfileEntity;
             return ChatScreen(
-              data: state.pathParameters["chat_id"] ?? "",
+              profileEntity: profileEntity,
             );
           },
         ),
@@ -93,25 +103,14 @@ final goRouterProvider = Provider(
         StatefulShellRoute.indexedStack(
             branches: [
               StatefulShellBranch(
-                  initialLocation: MessageScreen.setRoute(
-                      messageEntity:
-                          MessageEntity(id: 1, message: "Message Screen")),
+                  initialLocation: MessageScreen.setRoute(),
                   routes: [
                     GoRoute(
                         path: MessageScreen.route,
                         builder: (context, state) {
-                          return MessageScreen(
-                            data: state.pathParameters,
-                          );
+                          return MessageScreen();
                         }),
                   ]),
-              StatefulShellBranch(routes: [
-                GoRoute(
-                    path: "/calls",
-                    builder: (context, state) {
-                      return Center(child: Text("This is calls screen"));
-                    }),
-              ]),
               StatefulShellBranch(routes: [
                 GoRoute(
                   path: "/people",
@@ -124,7 +123,7 @@ final goRouterProvider = Provider(
                 GoRoute(
                     path: "/settings",
                     builder: (context, state) {
-                      return Center(child: Text("This is settings screen"));
+                      return SettingsScreen();
                     }),
               ])
             ],

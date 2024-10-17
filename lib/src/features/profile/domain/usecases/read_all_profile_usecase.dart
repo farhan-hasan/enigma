@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
-import 'package:enigma/src/features/profile/data/model/profile_model.dart';
 import 'package:enigma/src/features/profile/data/repository/profile_repository_impl.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/domain/repository/profile_repository.dart';
@@ -13,13 +12,9 @@ class ReadAllProfileUseCase
 
   @override
   Future<Either<Failure, List<ProfileEntity>>> call(NoParams params) async {
-    Either<Failure, List<ProfileModel>> response =
+    Either<Failure, List<ProfileEntity>> response =
         await _profileRepository.readAllProfile();
 
-    return response.map((listProfileModel) => listProfileModel
-        .map(
-          (e) => e.toEntity(),
-        )
-        .toList());
+    return response;
   }
 }

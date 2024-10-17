@@ -9,7 +9,7 @@ class ChatRequestGeneric {
   bool isRemoveFriendLoading;
   List<ProfileEntity> listOfChatRequest;
   List<ProfileEntity> listOfPendingRequest;
-  List<ProfileEntity> listOfFriends;
+  //List<ProfileEntity> listOfFriends;
 
   ChatRequestGeneric({
     this.isChatRequestLoading = false,
@@ -20,7 +20,7 @@ class ChatRequestGeneric {
     this.isRemoveFriendLoading = false,
     this.listOfChatRequest = const [],
     this.listOfPendingRequest = const [],
-    this.listOfFriends = const [],
+    //this.listOfFriends = const [],
   });
 
   ChatRequestGeneric update(
@@ -45,7 +45,7 @@ class ChatRequestGeneric {
             isSendChatRequestLoading ?? this.isSendChatRequestLoading,
         isFriendsLoading: isFriendsLoading ?? this.isFriendsLoading,
         listOfChatRequest: listOfChatRequest ?? this.listOfChatRequest,
-        listOfFriends: listOfFriends ?? this.listOfFriends,
+        //listOfFriends: listOfFriends ?? this.listOfFriends,
         listOfPendingRequest:
             listOfPendingRequest ?? this.listOfPendingRequest);
   }

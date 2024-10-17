@@ -38,7 +38,7 @@ class LogoutController extends StateNotifier<LogoutGeneric> {
       },
       (right) async {
         BotToast.showText(text: "See you again!");
-        await ref.read(profileProvider.notifier).readProfile(uid);
+        //await ref.read(profileProvider.notifier).readProfile(uid);
         ProfileEntity userProfile =
             ref.read(profileProvider).profileEntity ?? ProfileEntity();
         userProfile.isActive = false;

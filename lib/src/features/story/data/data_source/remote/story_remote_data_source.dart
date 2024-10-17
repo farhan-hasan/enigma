@@ -24,18 +24,6 @@ class StoryRemoteDataSource {
           .collection(FirestoreCollectionName.storyListCollection)
           .doc()
           .set(storyDto.storyEntity.toJson());
-      // DocumentReference docRef = FirebaseHandler.fireStore
-      //     .collection(FirestoreCollectionName.storyCollection)
-      //     .doc(storyEntity.uid);
-      // await FirebaseHandler.fireStore.runTransaction((transaction) async {
-      //   transaction.update(docRef, {
-      //     'uid': storyEntity.uid,
-      //   });
-      //   DocumentReference subCollectionRef = docRef
-      //       .collection(FirestoreCollectionName.storyListCollection)
-      //       .doc();
-      //   transaction.set(subCollectionRef, storyEntity.toJson());
-      // });
       return Right(Success(message: "Story added successfully"));
     } on FirebaseException catch (e) {
       switch (e.code) {
@@ -84,7 +72,14 @@ class StoryRemoteDataSource {
           .get();
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        stories.add(StoryEntity.fromJson(data));
+        StoryEntity storyEntity = StoryEntity.fromJson(data);
+        DateTime today = DateTime.now();
+        DateTime? anotherDate = storyEntity.timestamp;
+        int daysDifference =
+            today.difference(anotherDate ?? DateTime.now()).inDays;
+        if (daysDifference <= 1) {
+          stories.add(StoryEntity.fromJson(data));
+        }
       }
       userStoryEntity.storyList = stories;
       return Right(userStoryEntity);

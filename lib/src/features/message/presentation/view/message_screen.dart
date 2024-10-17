@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_keys.dart';
@@ -12,7 +11,9 @@ import 'package:enigma/src/features/chat/presentation/view/chat_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_generic.dart';
 import 'package:enigma/src/features/message/domain/entity/message_entity.dart';
-import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
+import 'package:enigma/src/features/profile/presentation/view/settings_screen.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/generic/profile_generic.dart';
 import 'package:enigma/src/features/story/presentation/view/story_preview_screen.dart';
 import 'package:enigma/src/features/story/presentation/view/story_screen.dart';
 import 'package:enigma/src/features/story/presentation/view_model/story_controller.dart';
@@ -25,15 +26,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MessageScreen extends ConsumerStatefulWidget {
-  MessageScreen({super.key, required this.data}) {
-    messageEntity = MessageEntity.fromJson(jsonDecode(data["message_entity"]));
-  }
-
-  Map<String, dynamic> data;
+  MessageScreen({
+    super.key,
+  });
   MessageEntity? messageEntity;
-  static const route = "/message/:message_entity";
-  static setRoute({required MessageEntity messageEntity}) =>
-      "/message/${jsonEncode(messageEntity.toJson())}";
+  static const route = "/message";
+  static setRoute() => "/message";
 
   @override
   ConsumerState<MessageScreen> createState() => _MessageScreenState();
@@ -54,69 +52,73 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   }
 
   init() async {
+    await ref.read(profileProvider.notifier).readProfile(
+        sharedPreferenceManager.getValue(key: SharedPreferenceKeys.USER_UID));
     await ref.read(chatRequestProvider.notifier).fetchFriends();
     await ref.read(storyProvider.notifier).getStories(
         uid: sharedPreferenceManager.getValue(
             key: SharedPreferenceKeys.USER_UID),
         isMyStory: true);
+    await ref.read(profileProvider.notifier).readAllProfile();
   }
 
   @override
   Widget build(BuildContext context) {
     StoryGeneric storyController = ref.watch(storyProvider);
     return Scaffold(
-      //backgroundColor: Theme.of(context).colorScheme.secondary,
-      appBar: SharedAppbar(
-          title: const Text("Home"),
-          leadingWidget: GestureDetector(
-            onTap: () {},
-            child: Container(
-              height: context.height * .05,
-              width: context.width * .05,
-              margin: const EdgeInsets.all(8),
-              child: GestureDetector(
-                onTap: () {},
-                child: const Icon(
-                  Icons.search,
-                  size: 25,
-                ),
-              ),
-            ),
-          ),
-          trailingWidgets: [
-            GestureDetector(
-              onTap: () {
-                ref.read(goRouterProvider).push(ProfileScreen.route);
-              },
+        //backgroundColor: Theme.of(context).colorScheme.secondary,
+        appBar: SharedAppbar(
+            title: const Text("Home"),
+            leadingWidget: GestureDetector(
+              onTap: () {},
               child: Container(
-                height: context.height * .15,
-                width: context.width * .137,
-                padding: const EdgeInsets.all(8),
-                child: CircularDisplayPicture(
-                  radius: 30,
-                  imageURL: null,
+                height: context.height * .05,
+                width: context.width * .05,
+                margin: const EdgeInsets.all(8),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: const Icon(
+                    Icons.search,
+                    size: 25,
+                  ),
                 ),
               ),
-            )
-          ]),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await init();
-        },
-        child: Stack(children: [
-          SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                buildStorySection(context, storyController),
-                buildChatSection(context)
-              ],
+            ),
+            trailingWidgets: [
+              GestureDetector(
+                onTap: () {
+                  ref.read(goRouterProvider).go(SettingsScreen.route);
+                },
+                child: Container(
+                  height: context.height * .15,
+                  width: context.width * .137,
+                  padding: const EdgeInsets.all(8),
+                  child: CircularDisplayPicture(
+                    radius: 30,
+                    imageURL:
+                        ref.read(profileProvider).profileEntity?.avatarUrl ??
+                            "",
+                  ),
+                ),
+              )
+            ]),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await init();
+          },
+          child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (context, index) => SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  buildStorySection(context, storyController),
+                  buildChatSection(context)
+                ],
+              ),
             ),
           ),
-          //ListView()
-        ]),
-      ),
-    );
+        ));
   }
 
   String getLastSeen(DateTime lastSeen) {
@@ -127,17 +129,15 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   Widget buildChatSection(BuildContext context) {
     final ChatRequestGeneric chatRequestController =
         ref.watch(chatRequestProvider);
+    final ProfileGeneric profileController = ref.watch(profileProvider);
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
-            ref.read(goRouterProvider).push(
-                  ChatScreen.setRoute(
-                      chatId:
-                          chatRequestController.listOfFriends[index].uid ?? ""),
-                );
+            ref.read(goRouterProvider).push(ChatScreen.setRoute(),
+                extra: profileController.listOfFriends[index]);
           },
           child: Container(
             padding: const EdgeInsets.symmetric(
@@ -159,7 +159,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                           children: [
                             CircularDisplayPicture(
                               radius: 23,
-                              imageURL: chatRequestController
+                              imageURL: profileController
                                       .listOfFriends[index].avatarUrl ??
                                   null,
                             ),
@@ -168,7 +168,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                                 bottom: 0,
                                 child: Icon(
                                   Icons.circle,
-                                  color: (chatRequestController
+                                  color: (profileController
                                               .listOfFriends[index].isActive ??
                                           false)
                                       ? Colors.green
@@ -186,8 +186,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                chatRequestController
-                                        .listOfFriends[index].name ??
+                                profileController.listOfFriends[index].name ??
                                     "",
                                 style: Theme.of(context)
                                     .textTheme
@@ -212,10 +211,10 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        (chatRequestController.listOfFriends[index].isActive ??
+                        (profileController.listOfFriends[index].isActive ??
                                 false)
                             ? ""
-                            : getLastSeen(chatRequestController
+                            : getLastSeen(profileController
                                     .listOfFriends[index].lastSeen ??
                                 DateTime.now()),
                         style: Theme.of(context).textTheme.labelSmall,
@@ -237,7 +236,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           ),
         );
       },
-      itemCount: chatRequestController.listOfFriends.length,
+      itemCount: profileController.listOfFriends.length,
       separatorBuilder: (BuildContext context, int index) {
         return const SizedBox(
           height: 5,

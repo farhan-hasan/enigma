@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_keys.dart';
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_manager.dart';
-import 'package:enigma/src/core/network/remote/firebase/storage_directory_name.dart';
+import 'package:enigma/src/core/network/remote/firebase/firebase_storage_directory_name.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
@@ -78,8 +78,8 @@ class _StoryPreviewScreenState extends ConsumerState<StoryPreviewScreen> {
                       String? mediaLink =
                           await ref.read(chatProvider.notifier).addImageMedia(
                                 file: widget.mediaFile,
-                                directory:
-                                    StorageDirectoryName.STORY_MEDIA_DIRECTORY,
+                                directory: FirebaseStorageDirectoryName
+                                    .STORY_MEDIA_DIRECTORY,
                                 fileName: widget.mediaFile.path.split("/").last,
                               );
                       String uid = sharedPreferenceManager.getValue(

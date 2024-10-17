@@ -11,6 +11,7 @@ class FCMRemoteDataSource {
     required String recipientToken,
     required String title,
     required String body,
+    required String imageUrl,
   }) async {
     const String jsonSource = 'assets/data/enigma-credential.json';
     Failure failure;
@@ -25,7 +26,11 @@ class FCMRemoteDataSource {
     final notificationData = {
       'message': {
         'token': recipientToken,
-        'notification': {'title': title, 'body': body}
+        'notification': {
+          'title': title,
+          'body': body,
+          'image': imageUrl,
+        },
       },
     };
 

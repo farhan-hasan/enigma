@@ -11,8 +11,6 @@ import 'package:enigma/src/features/story/presentation/view_model/story_generic.
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/utils/logger/logger.dart';
-
 final storyProvider = StateNotifierProvider<StoryController, StoryGeneric>(
   (ref) => StoryController(ref),
 );
@@ -29,7 +27,6 @@ class StoryController extends StateNotifier<StoryGeneric> {
       required UserStoryEntity userStoryEntity}) async {
     StoryDto params =
         StoryDto(userStoryEntity: userStoryEntity, storyEntity: storyEntity);
-
     Either<Failure, Success> response = await addStoryUseCase.call(params);
     response.fold((left) {
       BotToast.showText(text: left.message);
@@ -39,8 +36,7 @@ class StoryController extends StateNotifier<StoryGeneric> {
   }
 
   getStories({required uid, isMyStory = false}) async {
-    List<UserStoryEntity> stories =
-        List<UserStoryEntity>.from(state.friendsStories);
+    List<UserStoryEntity> stories = [];
     UserStoryEntity myStory = UserStoryEntity();
     Either<Failure, UserStoryEntity> response =
         await getStoriesUseCase.call(uid);
@@ -49,14 +45,12 @@ class StoryController extends StateNotifier<StoryGeneric> {
     }, (right) {
       BotToast.showText(text: "Fetched stories successfully");
       if (isMyStory) {
-        debug("for ${right.name}, stories: ${right.toString()}");
         if ((right.storyList ?? []).isNotEmpty || right.name != null) {
           myStory = right;
         }
         state = state.update(myStory: myStory);
       } else {
-        debug("for ${right.name}, stories: ${right.toString()}");
-        if ((right.storyList ?? []).isNotEmpty || right.name != null) {
+        if ((right.storyList ?? []).isNotEmpty) {
           int index = stories.indexWhere((story) => story.uid == right.uid);
           if (index != -1) {
             stories[index] = right; // Update with new values
@@ -67,5 +61,11 @@ class StoryController extends StateNotifier<StoryGeneric> {
         state = state.update(friendsStories: stories);
       }
     });
+  }
+
+  fetchAllFriendsStories(Set<String> friendsUids) async {
+    for (String id in friendsUids) {
+      await getStories(uid: id);
+    }
   }
 }

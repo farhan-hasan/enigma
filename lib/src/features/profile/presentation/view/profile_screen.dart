@@ -1,23 +1,25 @@
 import 'dart:convert';
 
-import 'package:barcode_widget/barcode_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:enigma/src/core/database/local/shared_preference/shared_preference_keys.dart';
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_manager.dart';
+import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
-import 'package:enigma/src/features/auth/presentation/logout/view_model/logout_controller.dart';
+import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/generic/profile_generic.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key});
+  ProfileScreen({super.key, required this.data});
 
-  static const route = "/profile";
+  static const String route = "/profile/:profile_entity";
+  String data;
 
-  static setRoute() => "/profile";
+  static setRoute({required ProfileEntity profileEntity}) =>
+      "/profile/${jsonEncode(profileEntity.toJson())}";
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -26,90 +28,167 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   SharedPreferenceManager sp = sl.get<SharedPreferenceManager>();
 
-  readProfile() {
-    ref
-        .read(profileProvider.notifier)
-        .readProfile(sp.getValue(key: SharedPreferenceKeys.USER_UID));
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    WidgetsBinding.instance.addPostFrameCallback(
-      (t) => readProfile(),
-    );
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final profileController = ref.watch(profileProvider);
-    print(jsonEncode(profileController.profileEntity));
+    ProfileGeneric profileController = ref.watch(profileProvider);
+    final ProfileEntity profileEntity =
+        ProfileEntity.fromJson(jsonDecode(widget.data));
     return Scaffold(
       appBar: SharedAppbar(
-        trailingWidgets: [
-          GestureDetector(
-            onTap: () {
-              ref.read(logoutProvider.notifier).logout();
-            },
+        leadingWidget: InkWell(
+          onTap: () {
+            ref.read(goRouterProvider).pop();
+          },
+          child: Container(
+            height: context.height * .05,
+            width: context.width * .05,
+            margin: const EdgeInsets.all(8),
             child: Container(
-              height: context.height * .15,
-              width: context.width * .137,
-              padding: const EdgeInsets.all(8),
-              child: const Icon(Icons.logout),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.arrow_back_outlined,
+                size: 25,
+              ),
             ),
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              Container(
-                height: context.width * 0.4,
-                width: context.width * 0.4,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle, // Set the shape to circle
-                  border: Border.all(),
-                ),
-                child: ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl: profileController.profileEntity?.avatarUrl ?? "",
-                    errorWidget: (context, url, error) => Icon(
-                      Icons.person,
-                      size: context.width * 0.1,
-                    ),
-                    fit: BoxFit
-                        .cover, // Use BoxFit.cover to ensure the image covers the entire container
-                  ),
-                ),
-              ),
-              Text(
-                "${profileController.profileEntity?.name}",
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              Text(
-                "Email: ${profileController.profileEntity?.email}",
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              if (profileController.profileEntity?.phoneNumber != null)
-                Text(
-                  "Mobile: ${profileController.profileEntity?.phoneNumber}",
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              SizedBox(
-                height: context.height * 0.15,
-                width: context.width * 0.3,
-                child: BarcodeWidget(
-                  barcode: Barcode.qrCode(),
-                  data: jsonEncode(profileController.profileEntity),
-                  drawText: true,
-                ),
-              ),
-            ],
           ),
         ),
+        title: const Text("Profile"),
       ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: buildImageSection(context, profileEntity),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildDisplayNameSection(context, profileEntity),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  buildEmailSection(context, profileEntity),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  buildPhoneNumberSection(context, profileEntity),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildPhoneNumberSection(
+      BuildContext context, ProfileEntity profileEntity) {
+    return SizedBox(
+        height: context.height * 0.06,
+        //color: Colors.amber,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Phone Number",
+                  style: TextStyle(color: Colors.grey),
+                ),
+                Text(
+                  "${profileEntity.phoneNumber ?? "-"}",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+          ],
+        ));
+  }
+
+  Widget buildEmailSection(BuildContext context, ProfileEntity profileEntity) {
+    return SizedBox(
+        height: context.height * 0.06,
+        //color: Colors.amber,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Email",
+                  style: TextStyle(color: Colors.grey),
+                ),
+                Text(
+                  profileEntity.email ?? "-",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+          ],
+        ));
+  }
+
+  Widget buildDisplayNameSection(
+      BuildContext context, ProfileEntity profileEntity) {
+    return SizedBox(
+        height: context.height * 0.06,
+        //color: Colors.amber,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Display name",
+                  style: TextStyle(color: Colors.grey),
+                ),
+                Text(
+                  "${profileEntity.name ?? "-"}",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+          ],
+        ));
+  }
+
+  Widget buildImageSection(BuildContext context, ProfileEntity profileEntity) {
+    return Column(
+      children: [
+        Container(
+          height: context.width * 0.4,
+          width: context.width * 0.4,
+          child: Align(
+            alignment: Alignment.center,
+            child: ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: profileEntity.avatarUrl ?? "",
+                errorWidget: (context, url, error) => Icon(
+                  Icons.person,
+                  size: context.width * 0.1,
+                ),
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          "${profileEntity.name}",
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+      ],
     );
   }
 }
