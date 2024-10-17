@@ -221,22 +221,6 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
     state = state.update(isFriendsLoading: false);
   }
 
-  // Future<void> fetchAllFriendsProfileData(Set<String> allUid) async {
-  //   FirebaseWhereModel whereModel = FirebaseWhereModel(
-  //     field: "uid",
-  //     whereIn: allUid.toList(),
-  //   );
-  //   FilterDto params = FilterDto(firebaseWhereModel: whereModel);
-  //   Either<Failure, List<ProfileEntity>> response =
-  //       await readAllPeopleUseCase.call(params);
-  //   response.fold((left) {
-  //     BotToast.showText(text: left.message);
-  //   }, (right) {
-  //     state = state.update(listOfFriends: right);
-  //     BotToast.showText(text: "Fetched friends successfully");
-  //   });
-  // }
-
   removeFriend(String friendUid) async {
     state = state.update(isRemoveFriendLoading: true);
     String userUid = FirebaseHandler.auth.currentUser?.uid ?? "";

@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:enigma/src/core/router/router.dart';
+import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/story/domain/entity/story_entity.dart';
 import 'package:enigma/src/features/story/domain/entity/user_story_entity.dart';
@@ -36,6 +38,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
     if (_currentStoryIndex == -1) {
       _currentStoryIndex = 0;
       _stories.add((ref.read(storyProvider).myStory ?? UserStoryEntity()));
+      debug(_stories[_currentStory.value].storyList?[0].content);
       _startProgress(_stories[_currentStory.value].storyList ?? []);
     } else {
       _stories = ref.read(storyProvider).friendsStories;
@@ -124,13 +127,13 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
     }
   }
 
-  // void _pauseTimer() {
-  //   _isPaused.value = true;
-  // }
-  //
-  // void _resumeTimer() {
-  //   _isPaused.value = false;
-  // }
+  void _pauseTimer() {
+    _isPaused.value = true;
+  }
+
+  void _resumeTimer() {
+    _isPaused.value = false;
+  }
 
   @override
   void dispose() {
@@ -160,8 +163,9 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
             ref.read(goRouterProvider).pop(); // Pop the current screen
           }
         },
+        onLongPressStart: (_) => _pauseTimer(),
         // onLongPress: _pauseTimer,
-        // onLongPressEnd: (_) => _resumeTimer(),
+        onLongPressEnd: (_) => _resumeTimer(),
         child: Stack(
           children: [
             // Story content
@@ -198,12 +202,15 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                           ),
                         ),
                       ),
-                      Image.network(
-                        _stories[index].storyList?[value].mediaLink ??
-                            "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI",
-                        fit: BoxFit.contain,
-                        width: double.infinity,
+                      CachedNetworkImage(
                         height: double.infinity,
+                        width: double.infinity,
+                        imageUrl: _stories[index].storyList?[value].mediaLink ??
+                            "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI",
+                        errorWidget: (context, url, error) => Icon(
+                          Icons.person,
+                          size: context.width * 0.1,
+                        ),
                       ),
                       Align(
                         alignment: Alignment.bottomCenter,
