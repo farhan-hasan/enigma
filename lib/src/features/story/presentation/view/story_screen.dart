@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:enigma/src/core/router/router.dart';
+import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/story/domain/entity/story_entity.dart';
 import 'package:enigma/src/features/story/domain/entity/user_story_entity.dart';
@@ -26,6 +28,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
   Timer? _timer;
   final ValueNotifier<int> _currentStory = ValueNotifier(0);
   final ValueNotifier<double> _progress = ValueNotifier(0.0);
+  final ValueNotifier<bool> _isPaused = ValueNotifier(false);
 
   @override
   void initState() {
@@ -35,6 +38,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
     if (_currentStoryIndex == -1) {
       _currentStoryIndex = 0;
       _stories.add((ref.read(storyProvider).myStory ?? UserStoryEntity()));
+      debug(_stories[_currentStory.value].storyList?[0].content);
       _startProgress(_stories[_currentStory.value].storyList ?? []);
     } else {
       _stories = ref.read(storyProvider).friendsStories;
@@ -50,7 +54,9 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
 
   void _startProgress(List<StoryEntity> storyList) {
     _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      _progress.value += 0.02;
+      if (!_isPaused.value) {
+        _progress.value += 0.02;
+      }
       if (_progress.value >= 1.0) {
         _goToNextStory(storyList);
       }
@@ -121,6 +127,14 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
     }
   }
 
+  void _pauseTimer() {
+    _isPaused.value = true;
+  }
+
+  void _resumeTimer() {
+    _isPaused.value = false;
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
@@ -133,40 +147,40 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
     StoryGeneric storyController = ref.watch(storyProvider);
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Story content
-          PageView.builder(
-            controller: _pageController,
-            itemCount: storyController.friendsStories.length,
-            onPageChanged: (index) {
-              _currentStoryIndex = index;
-              _progress.value = 0.0;
-              _startProgress(_stories[_currentStoryIndex].storyList ?? []);
-            },
-            itemBuilder: (context, index) {
-              index = _currentStoryIndex;
+      body: GestureDetector(
+        onTapDown: (details) {
+          if (details.globalPosition.dx <
+              MediaQuery.of(context).size.width / 2) {
+            _goToPreviousStory(_stories[_currentStoryIndex].storyList ?? []);
+          } else {
+            _goToNextStory(_stories[_currentStoryIndex].storyList ?? []);
+          }
+        },
+        onVerticalDragEnd: (details) {
+          // Check if the swipe was in the downward direction
+          if (details.primaryVelocity != null && details.primaryVelocity! > 0) {
+            // Velocity > 0 means a downward swipe
+            ref.read(goRouterProvider).pop(); // Pop the current screen
+          }
+        },
+        onLongPressStart: (_) => _pauseTimer(),
+        // onLongPress: _pauseTimer,
+        onLongPressEnd: (_) => _resumeTimer(),
+        child: Stack(
+          children: [
+            // Story content
+            PageView.builder(
+              controller: _pageController,
+              itemCount: storyController.friendsStories.length,
+              onPageChanged: (index) {
+                _currentStoryIndex = index;
+                _progress.value = 0.0;
+                _startProgress(_stories[_currentStoryIndex].storyList ?? []);
+              },
+              itemBuilder: (context, index) {
+                index = _currentStoryIndex;
 
-              return GestureDetector(
-                onTapDown: (details) {
-                  if (details.globalPosition.dx <
-                      MediaQuery.of(context).size.width / 2) {
-                    _goToPreviousStory(
-                        _stories[_currentStoryIndex].storyList ?? []);
-                  } else {
-                    _goToNextStory(
-                        _stories[_currentStoryIndex].storyList ?? []);
-                  }
-                },
-                onVerticalDragEnd: (details) {
-                  // Check if the swipe was in the downward direction
-                  if (details.primaryVelocity != null &&
-                      details.primaryVelocity! > 0) {
-                    // Velocity > 0 means a downward swipe
-                    ref.read(goRouterProvider).pop(); // Pop the current screen
-                  }
-                },
-                child: ValueListenableBuilder(
+                return ValueListenableBuilder(
                   builder: (context, value, child) {
                     return Stack(children: [
                       Align(
@@ -188,12 +202,15 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                           ),
                         ),
                       ),
-                      Image.network(
-                        _stories[index].storyList?[value].mediaLink ??
-                            "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI",
-                        fit: BoxFit.contain,
-                        width: double.infinity,
+                      CachedNetworkImage(
                         height: double.infinity,
+                        width: double.infinity,
+                        imageUrl: _stories[index].storyList?[value].mediaLink ??
+                            "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI",
+                        errorWidget: (context, url, error) => Icon(
+                          Icons.person,
+                          size: context.width * 0.1,
+                        ),
                       ),
                       Align(
                         alignment: Alignment.bottomCenter,
@@ -217,27 +234,28 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                     ]);
                   },
                   valueListenable: _currentStory,
-                ),
-              );
-            },
-          ),
-          // Progress bar
-          Positioned(
-            top: 50,
-            left: 10,
-            right: 10,
-            child: ValueListenableBuilder(
-              builder: (context, value, child) {
-                return LinearProgressIndicator(
-                  value: value,
-                  backgroundColor: Colors.white38,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                 );
               },
-              valueListenable: _progress,
             ),
-          ),
-        ],
+            // Progress bar
+            Positioned(
+              top: 50,
+              left: 10,
+              right: 10,
+              child: ValueListenableBuilder(
+                builder: (context, value, child) {
+                  return LinearProgressIndicator(
+                    value: value,
+                    backgroundColor: Colors.white38,
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.white),
+                  );
+                },
+                valueListenable: _progress,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

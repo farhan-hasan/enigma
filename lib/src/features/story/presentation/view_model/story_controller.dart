@@ -36,7 +36,9 @@ class StoryController extends StateNotifier<StoryGeneric> {
   }
 
   getStories({required uid, isMyStory = false}) async {
-    List<UserStoryEntity> stories = [];
+    List<UserStoryEntity> stories =
+        List<UserStoryEntity>.from(state.friendsStories);
+    //List<UserStoryEntity> stories = [];
     UserStoryEntity myStory = UserStoryEntity();
     Either<Failure, UserStoryEntity> response =
         await getStoriesUseCase.call(uid);
