@@ -12,12 +12,14 @@ class FCMRepositoryImpl extends FCMRepository {
     required String recipientToken,
     required String title,
     required String body,
+    required String imageUrl,
   }) async {
     Either<Failure, Success> response =
         await _fcmRemoteDataSource.sendPushMessage(
       recipientToken: recipientToken,
       title: title,
       body: body,
+      imageUrl: imageUrl,
     );
     return response;
   }

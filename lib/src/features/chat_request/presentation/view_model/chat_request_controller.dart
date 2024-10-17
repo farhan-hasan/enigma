@@ -72,10 +72,12 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
 
   sendChatRequestNotification(ProfileEntity profileEntity) {
     ProfileEntity? user = ref.read(profileProvider).profileEntity;
+    debug(user?.avatarUrl);
     FCMDto params = FCMDto(
         recipientToken: profileEntity.deviceToken ?? "",
         title: "Chat Request Received",
-        body: "A new chat request received from ${user?.name}");
+        body: "A new chat request received from ${user?.name}",
+        imageUrl: user?.avatarUrl ?? "");
     sendPushMessageUseCase.call(params);
   }
 

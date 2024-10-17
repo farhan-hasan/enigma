@@ -21,6 +21,7 @@ class PeopleScreen extends ConsumerStatefulWidget {
   Map<String, dynamic> data;
   ProfileEntity? peopleEntity;
   static const route = "/people/:people_entity";
+
   static setRoute({required ProfileEntity profileEntity}) =>
       "/people/${jsonEncode(profileEntity.toJson())}";
 
@@ -30,6 +31,7 @@ class PeopleScreen extends ConsumerStatefulWidget {
 
 class _PeopleScreenState extends ConsumerState<PeopleScreen> {
   String _scanBarcode = 'Unknown';
+
   @override
   void initState() {
     init();
@@ -137,31 +139,29 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
         onRefresh: () async {
           init();
         },
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    // Chat requests
-                    buildFriendsSection(context, chatRequestController),
-                    // People list
-                    if (chatRequestController.listOfChatRequest.isNotEmpty)
-                      buildChatRequestsSection(
-                          context, profileController, chatRequestController),
-                    if (chatRequestController.listOfPendingRequest.isNotEmpty)
-                      buildPendingRequestsSection(
-                          context, profileController, chatRequestController),
-                    if (profileController.listOfPeople.isNotEmpty)
-                      buildDiscoverSection(
-                          context, profileController, chatRequestController)
-                  ],
-                ),
+        child: ListView.builder(
+          itemCount: 1,
+          itemBuilder: (context, index) => SingleChildScrollView(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  // Chat requests
+                  buildFriendsSection(context, chatRequestController),
+                  // People list
+                  if (chatRequestController.listOfChatRequest.isNotEmpty)
+                    buildChatRequestsSection(
+                        context, profileController, chatRequestController),
+                  if (chatRequestController.listOfPendingRequest.isNotEmpty)
+                    buildPendingRequestsSection(
+                        context, profileController, chatRequestController),
+                  if (profileController.listOfPeople.isNotEmpty)
+                    buildDiscoverSection(
+                        context, profileController, chatRequestController)
+                ],
               ),
             ),
-            //ListView(), // todo: refresh indicator. will handle later
-          ],
+          ),
         ),
       ),
     );
