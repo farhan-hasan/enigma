@@ -87,7 +87,6 @@ final goRouterProvider = Provider(
         GoRoute(
           path: ChatScreen.route,
           builder: (context, state) {
-            debug("path parameter : ${state.pathParameters}");
             ProfileEntity profileEntity = state.extra as ProfileEntity;
             return ChatScreen(
               profileEntity: profileEntity,
