@@ -1,6 +1,7 @@
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
+import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_screen_bottom_bar.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_ui.dart';
@@ -71,7 +72,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CallScreen()));
+                        builder: (context) => const JoinChannelAudio()));
               },
               child: Container(
                 width: context.width * .1,
@@ -94,6 +95,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         friendUid: profileEntity.uid ?? "",
                       ),
                   builder: (context, snapshot) {
+                    // debug(profileEntity.uid);
                     if (snapshot.hasData) {
                       return StreamBuilder<List<ChatEntity>>(
                         stream: snapshot.data,
