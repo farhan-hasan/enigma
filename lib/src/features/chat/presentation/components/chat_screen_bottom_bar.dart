@@ -8,6 +8,7 @@ import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/components/voice_message_view.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
+import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -182,6 +183,8 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                             sender: widget.sender,
                             receiver: widget.receiver,
                           );
+                          debug(widget.sender);
+                          debug(widget.receiver);
                           await ref
                               .read(chatProvider.notifier)
                               .addChat(chatEntity);
@@ -318,7 +321,7 @@ class _ChatScreenBottomBarState extends ConsumerState<ChatScreenBottomBar> {
                                 .read(chatProvider.notifier)
                                 .addChat(chatEntity);
                             messageTextController.value.clear();
-                            debug("Success message");
+                            // debug("Success message");
                             imageFile.value = null;
                           }
                         },

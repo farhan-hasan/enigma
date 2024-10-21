@@ -6,6 +6,7 @@ import 'package:enigma/src/core/network/remote/firebase/firestore_collection_nam
 import 'package:enigma/src/core/network/responses/failure_response.dart';
 import 'package:enigma/src/core/network/responses/success_response.dart';
 import 'package:enigma/src/core/utils/id_hashing/id_hashing.dart';
+import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/chat/data/model/chat_model.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 
@@ -22,6 +23,9 @@ class ChatRemoteDataSource {
       if (doesExist) {
         await FirebaseHandler.fireStore
             .collection(FirestoreCollectionName.chatCollection)
+            .doc(roomID).set({"roomID" : roomID});
+        await FirebaseHandler.fireStore
+            .collection(FirestoreCollectionName.chatCollection)
             .doc(roomID)
             .collection(FirestoreCollectionName.messageCollection)
             .doc()
@@ -31,6 +35,9 @@ class ChatRemoteDataSource {
           myUid: chatEntity.receiver ?? "",
           friendUid: chatEntity.sender ?? "",
         );
+        await FirebaseHandler.fireStore
+            .collection(FirestoreCollectionName.chatCollection)
+            .doc(roomID).set({"roomID" : roomID});
         await FirebaseHandler.fireStore
             .collection(FirestoreCollectionName.chatCollection)
             .doc(roomID)
@@ -64,13 +71,16 @@ class ChatRemoteDataSource {
         friendUid: friendUid,
       );
       bool doesExist = await DocumentFinder.checkExistence(roomID: roomID);
-
+      debug(roomID);
+      debug(doesExist);
       if (!doesExist) {
         roomID = HashGenerator.idHashing(
           myUid: friendUid,
           friendUid: myUid,
         );
       }
+      debug(roomID);
+      debug(doesExist);
 
       Stream<List<ChatModel>> querySnapshot = FirebaseHandler.fireStore
           .collection(FirestoreCollectionName.chatCollection)
