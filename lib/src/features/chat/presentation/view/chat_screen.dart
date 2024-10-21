@@ -1,6 +1,7 @@
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
+import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_screen_bottom_bar.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_ui.dart';
@@ -8,6 +9,7 @@ import 'package:enigma/src/features/chat/presentation/view-model/chat_controller
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
 import 'package:enigma/src/features/voice_call/presentation/view/call_screen.dart';
+import 'package:enigma/src/features/voice_call/presentation/view/video_call_screen.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +73,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CallScreen()));
+                        builder: (context) => const JoinChannelAudio()));
               },
               child: Container(
                 width: context.width * .1,
@@ -82,7 +84,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   size: 25,
                 ),
               ),
-            )
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const JoinChannelVideo()));
+              },
+              child: Container(
+                width: context.width * .1,
+                height: context.width * .1,
+                margin: const EdgeInsets.all(8),
+                child: const Icon(
+                  Icons.video_call,
+                  size: 25,
+                ),
+              ),
+            ),
           ],
         ),
         body: Column(
@@ -94,6 +113,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         friendUid: profileEntity.uid ?? "",
                       ),
                   builder: (context, snapshot) {
+                    // debug(profileEntity.uid);
                     if (snapshot.hasData) {
                       return StreamBuilder<List<ChatEntity>>(
                         stream: snapshot.data,
