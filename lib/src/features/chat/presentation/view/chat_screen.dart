@@ -9,6 +9,7 @@ import 'package:enigma/src/features/chat/presentation/view-model/chat_controller
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
 import 'package:enigma/src/features/voice_call/presentation/view/call_screen.dart';
+import 'package:enigma/src/features/voice_call/presentation/view/video_call_screen.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +84,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   size: 25,
                 ),
               ),
-            )
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const JoinChannelVideo()));
+              },
+              child: Container(
+                width: context.width * .1,
+                height: context.width * .1,
+                margin: const EdgeInsets.all(8),
+                child: const Icon(
+                  Icons.video_call,
+                  size: 25,
+                ),
+              ),
+            ),
           ],
         ),
         body: Column(

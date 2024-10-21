@@ -20,7 +20,6 @@ class JoinChannelAudio extends StatefulWidget {
 }
 
 class _State extends State<JoinChannelAudio> {
-
   late final RtcEngine _engine;
 
   // todo: Replace with channel ID
@@ -196,16 +195,16 @@ class _State extends State<JoinChannelAudio> {
     ];
     final items = channelProfileType
         .map((e) => DropdownMenuItem(
+              value: e,
               child: Text(
                 e.toString().split('.')[1],
               ),
-              value: e,
             ))
         .toList();
 
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Stack(
           children: [
             Column(
@@ -223,10 +222,10 @@ class _State extends State<JoinChannelAudio> {
                     onChanged: isJoined
                         ? null
                         : (v) async {
-                      setState(() {
-                        _channelProfileType = v!;
-                      });
-                    }),
+                            setState(() {
+                              _channelProfileType = v!;
+                            });
+                          }),
                 Row(
                   children: [
                     Expanded(
@@ -264,124 +263,128 @@ class _State extends State<JoinChannelAudio> {
               ],
             ),
             Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      if (kIsWeb) ...[
-                        ElevatedButton(
-                          onPressed: _muteLocalAudioStream,
-                          child: Text(
-                              'Microphone ${muteMicrophone ? 'muted' : 'unmute'}'),
-                        ),
-                        ElevatedButton(
-                          onPressed: _muteAllRemoteAudioStreams,
-                          child: Text(
-                              'All Remote Microphone ${muteAllRemoteAudio ? 'muted' : 'unmute'}'),
-                        ),
-                      ],
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (kIsWeb) ...[
                       ElevatedButton(
-                        onPressed: _switchMicrophone,
-                        child: Text('Microphone ${openMicrophone ? 'on' : 'off'}'),
+                        onPressed: _muteLocalAudioStream,
+                        child: Text(
+                            'Microphone ${muteMicrophone ? 'muted' : 'unmute'}'),
                       ),
-                      if (!kIsWeb) ...[
-                        ElevatedButton(
-                          onPressed: () {
-                            _isSetDefaultAudioRouteToSpeakerphone =
-                            !_isSetDefaultAudioRouteToSpeakerphone;
-                            _engine.setDefaultAudioRouteToSpeakerphone(
-                                _isSetDefaultAudioRouteToSpeakerphone);
-                            setState(() {});
-                          },
-                          child: Text(!_isSetDefaultAudioRouteToSpeakerphone
-                              ? 'SetDefaultAudioRouteToSpeakerphone'
-                              : 'UnsetDefaultAudioRouteToSpeakerphone'),
-                        ),
-                        ElevatedButton(
-                          onPressed: isJoined ? _switchSpeakerphone : null,
-                          child: Text(
-                              enableSpeakerphone ? 'Speakerphone' : 'Earpiece'),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            const Text('RecordingVolume:'),
-                            Slider(
-                              value: _recordingVolume,
-                              min: 0,
-                              max: 400,
-                              divisions: 5,
-                              label: 'RecordingVolume',
-                              onChanged: isJoined
-                                  ? (double value) async {
-                                setState(() {
-                                  _recordingVolume = value;
-                                });
-                                await _engine.adjustRecordingSignalVolume(
-                                    value.toInt());
-                              }
-                                  : null,
-                            )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            const Text('PlaybackVolume:'),
-                            Slider(
-                              value: _playbackVolume,
-                              min: 0,
-                              max: 400,
-                              divisions: 5,
-                              label: 'PlaybackVolume',
-                              onChanged: isJoined
-                                  ? (double value) async {
-                                setState(() {
-                                  _playbackVolume = value;
-                                });
-                                await _engine.adjustPlaybackSignalVolume(
-                                    value.toInt());
-                              }
-                                  : null,
-                            )
-                          ],
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Row(mainAxisSize: MainAxisSize.min, children: [
-                              const Text('InEar Monitoring Volume:'),
-                              Switch(
-                                value: _enableInEarMonitoring,
-                                onChanged: isJoined ? _toggleInEarMonitoring : null,
-                                activeTrackColor: Colors.grey[350],
-                                activeColor: Colors.white,
-                              )
-                            ]),
-                            if (_enableInEarMonitoring)
-                              SizedBox(
-                                  width: 300,
-                                  child: Slider(
-                                    value: _inEarMonitoringVolume,
-                                    min: 0,
-                                    max: 100,
-                                    divisions: 5,
-                                    label:
-                                    'InEar Monitoring Volume $_inEarMonitoringVolume',
-                                    onChanged: isJoined
-                                        ? _onChangeInEarMonitoringVolume
-                                        : null,
-                                  ))
-                          ],
-                        ),
-                      ],
+                      ElevatedButton(
+                        onPressed: _muteAllRemoteAudioStreams,
+                        child: Text(
+                            'All Remote Microphone ${muteAllRemoteAudio ? 'muted' : 'unmute'}'),
+                      ),
                     ],
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
-                ))
+                    ElevatedButton(
+                      onPressed: _switchMicrophone,
+                      child:
+                          Text('Microphone ${openMicrophone ? 'on' : 'off'}'),
+                    ),
+                    if (!kIsWeb) ...[
+                      ElevatedButton(
+                        onPressed: () {
+                          _isSetDefaultAudioRouteToSpeakerphone =
+                              !_isSetDefaultAudioRouteToSpeakerphone;
+                          _engine.setDefaultAudioRouteToSpeakerphone(
+                              _isSetDefaultAudioRouteToSpeakerphone);
+                          setState(() {});
+                        },
+                        child: Text(!_isSetDefaultAudioRouteToSpeakerphone
+                            ? 'SetDefaultAudioRouteToSpeakerphone'
+                            : 'UnsetDefaultAudioRouteToSpeakerphone'),
+                      ),
+                      ElevatedButton(
+                        onPressed: isJoined ? _switchSpeakerphone : null,
+                        child: Text(
+                            enableSpeakerphone ? 'Speakerphone' : 'Earpiece'),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const Text('RecordingVolume:'),
+                          Slider(
+                            value: _recordingVolume,
+                            min: 0,
+                            max: 400,
+                            divisions: 5,
+                            label: 'RecordingVolume',
+                            onChanged: isJoined
+                                ? (double value) async {
+                                    setState(() {
+                                      _recordingVolume = value;
+                                    });
+                                    await _engine.adjustRecordingSignalVolume(
+                                        value.toInt());
+                                  }
+                                : null,
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const Text('PlaybackVolume:'),
+                          Slider(
+                            value: _playbackVolume,
+                            min: 0,
+                            max: 400,
+                            divisions: 5,
+                            label: 'PlaybackVolume',
+                            onChanged: isJoined
+                                ? (double value) async {
+                                    setState(() {
+                                      _playbackVolume = value;
+                                    });
+                                    await _engine.adjustPlaybackSignalVolume(
+                                        value.toInt());
+                                  }
+                                : null,
+                          )
+                        ],
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Row(mainAxisSize: MainAxisSize.min, children: [
+                            const Text('InEar Monitoring Volume:'),
+                            Switch(
+                              value: _enableInEarMonitoring,
+                              onChanged:
+                                  isJoined ? _toggleInEarMonitoring : null,
+                              activeTrackColor: Colors.grey[350],
+                              activeColor: Colors.white,
+                            )
+                          ]),
+                          if (_enableInEarMonitoring)
+                            SizedBox(
+                                width: 300,
+                                child: Slider(
+                                  value: _inEarMonitoringVolume,
+                                  min: 0,
+                                  max: 100,
+                                  divisions: 5,
+                                  label:
+                                      'InEar Monitoring Volume $_inEarMonitoringVolume',
+                                  onChanged: isJoined
+                                      ? _onChangeInEarMonitoringVolume
+                                      : null,
+                                ))
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            )
           ],
         ),
       ),
