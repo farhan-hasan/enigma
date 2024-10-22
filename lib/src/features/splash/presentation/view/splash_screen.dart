@@ -1,5 +1,5 @@
-import 'dart:async';
 
+import 'dart:async';
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_keys.dart';
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_manager.dart';
 import 'package:enigma/src/core/router/router.dart';
@@ -8,6 +8,7 @@ import 'package:enigma/src/features/message/presentation/view/message_screen.dar
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});

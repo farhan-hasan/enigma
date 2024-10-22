@@ -86,6 +86,8 @@ class SignupScreen extends ConsumerWidget {
                   controller: passwordController,
                   labelText: "Password",
                   validator: Validators.passwordValidator,
+                  helperText:
+                      "Password must contains uppercase, lowercase and digit. E.g. Enigma1",
                 ),
                 CustomFormField(
                   controller: confirmPasswordController,
@@ -117,25 +119,26 @@ class SignupScreen extends ConsumerWidget {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 content: const SingleChildScrollView(
-                                    child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.check_circle,
-                                      color: Colors.green,
-                                      size: 50,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "A verification email has been sent to your email. please verify the email from the link.",
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                )),
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                        size: 50,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "A verification email has been sent to your email. please verify the email from the link.",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 actions: [
                                   TextButton(
-                                    child: const Text('Ok'),
+                                    child: const Text('OK'),
                                     onPressed: () async {
                                       ProfileEntity profileEntity =
                                           ProfileEntity(

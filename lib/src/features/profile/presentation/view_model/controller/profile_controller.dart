@@ -5,6 +5,7 @@ import 'package:enigma/src/core/network/remote/firebase/model/firebase_where_mod
 import 'package:enigma/src/core/network/responses/failure_response.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/features/auth/presentation/auth_screen/view/auth_screen.dart';
+import 'package:enigma/src/features/auth/presentation/login/view/login_screen.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/profile/domain/dto/filter_dto.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
@@ -43,7 +44,7 @@ class ProfileController extends StateNotifier<ProfileGeneric> {
       (right) {
         BotToast.showText(text: "Profile Created Successfully");
         isSuccess = true;
-        ref.read(goRouterProvider).go(AuthScreen.setRoute());
+        ref.read(goRouterProvider).go(LoginScreen.setRoute());
       },
     );
     return isSuccess;
