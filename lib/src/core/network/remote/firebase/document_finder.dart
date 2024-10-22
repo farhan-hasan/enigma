@@ -13,7 +13,7 @@ class DocumentFinder {
     // debug(ref.docs.length);
     for (QueryDocumentSnapshot doc in ref.docs) {
       // debug(doc.id);
-      // if (doc.id == roomID) return true;
+      if (doc.id == roomID) return true;
     }
     return false;
   }

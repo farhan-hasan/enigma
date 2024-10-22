@@ -8,12 +8,15 @@ class CustomFormField extends StatelessWidget {
     required this.labelText,
     required this.validator,
     this.obscureText = false,
+    this.helperText,
   });
 
   final TextEditingController controller;
   final String labelText;
   final bool obscureText;
   final FormFieldValidator<String> validator;
+  final String? helperText;
+
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +28,8 @@ class CustomFormField extends StatelessWidget {
           controller: controller,
           decoration: InputDecoration(
             labelText: labelText,
+            helperText: helperText,
+            // prefixIcon: IconButton(onPressed: onPressed, icon: icon),
             contentPadding: const EdgeInsets.symmetric(vertical: 10),
           ),
           obscureText: obscureText,

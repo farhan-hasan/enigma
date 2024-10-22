@@ -10,6 +10,7 @@ import 'package:enigma/src/shared/widgets/icon_button_with_dropdown.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class FriendsScreen extends ConsumerStatefulWidget {
   FriendsScreen({super.key, required this.data});
@@ -37,6 +38,7 @@ class _ChatRequestScreenState extends ConsumerState<FriendsScreen> {
   Future<void> init() async {
     ref.read(chatRequestProvider.notifier).fetchFriends();
   }
+
 
   @override
   Widget build(BuildContext context) {

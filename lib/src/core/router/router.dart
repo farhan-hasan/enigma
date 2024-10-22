@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/auth/presentation/auth_screen/view/auth_screen.dart';
+import 'package:enigma/src/features/auth/presentation/forget_password/view/forgot_password_screen.dart';
 import 'package:enigma/src/features/auth/presentation/login/view/login_screen.dart';
 import 'package:enigma/src/features/auth/presentation/signup/view/signup_screen.dart';
 import 'package:enigma/src/features/chat/presentation/view/chat_screen.dart';
@@ -108,6 +109,12 @@ final goRouterProvider = Provider(
           path: SignupScreen.route,
           builder: (context, state) {
             return SignupScreen();
+          },
+        ),
+        GoRoute(
+          path: ForgotPasswordScreen.route,
+          builder: (context, state) {
+            return ForgotPasswordScreen();
           },
         ),
         GoRoute(

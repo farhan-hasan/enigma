@@ -1,4 +1,5 @@
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_manager.dart';
+import 'package:enigma/src/core/notification/push_notification/push_notification_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/constants/icons_path.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
@@ -7,11 +8,13 @@ import 'package:enigma/src/features/auth/presentation/components/custom_elevated
 import 'package:enigma/src/features/auth/presentation/components/custom_form_field.dart';
 import 'package:enigma/src/features/auth/presentation/components/or_widget.dart';
 import 'package:enigma/src/features/auth/presentation/components/social_media_icon_button.dart';
+import 'package:enigma/src/features/auth/presentation/forget_password/view/forgot_password_screen.dart';
 import 'package:enigma/src/features/auth/presentation/login/view_model/login_controller.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   LoginScreen({super.key}) {}
@@ -116,7 +119,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 CustomFormField(
                   controller: passwordController,
                   labelText: "Password",
-                  obscureText: true,
+                  // obscureText: true,
                   validator: Validators.passwordValidator,
                 ),
                 SizedBox(height: context.height * 0.2),
@@ -136,7 +139,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push(ForgotPasswordScreen.setRoute);
+                    },
                     child: const Text("Forget Password?"),
                   ),
                 )

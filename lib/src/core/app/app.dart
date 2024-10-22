@@ -4,10 +4,10 @@ import 'package:enigma/src/core/styles/theme/app_theme.dart';
 import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
-
   @override
   ConsumerState<App> createState() => _AppState();
 }

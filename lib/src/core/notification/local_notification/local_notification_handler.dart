@@ -31,7 +31,7 @@ class LocalNotificationHandler {
     }
   }
 
-  static showLocalNotification(String title, String body) {
+  static showLocalNotification({required String title, required String body}) {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
