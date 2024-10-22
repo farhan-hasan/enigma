@@ -1,15 +1,16 @@
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
+import 'package:enigma/src/core/rtc/rtc_config.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
-import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_screen_bottom_bar.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_ui.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_controller.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/presentation/view/profile_screen.dart';
+import 'package:enigma/src/features/profile/presentation/view_model/controller/profile_controller.dart';
+import 'package:enigma/src/features/voice_call/data/model/call_model.dart';
 import 'package:enigma/src/features/voice_call/presentation/view/call_screen.dart';
-import 'package:enigma/src/features/voice_call/presentation/view/video_call_screen.dart';
 import 'package:enigma/src/shared/widgets/circular_display_picture.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     //ProfileGeneric profileController = ref.watch(profileProvider);
     final ProfileEntity profileEntity = widget.profileEntity;
+    final user = ref.watch(profileProvider);
     return Scaffold(
         appBar: SharedAppbar(
           titleSpacing: -context.width * 0.04,
@@ -73,7 +75,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const JoinChannelAudio()));
+                        builder: (context) => CallScreen(
+                              isCalling: true,
+                              callModel: CallModel(
+                                channelId: "${userUid}-${profileEntity.uid}",
+                                uid:
+                                    RTCConfig.stringToUnsignedInt("${userUid}"),
+                                senderName: user.profileEntity?.name,
+                                senderAvatar: user.profileEntity?.avatarUrl,
+                                senderUid: user.profileEntity?.uid,
+                                receiverName: profileEntity.name,
+                                receiverAvatar: profileEntity.avatarUrl,
+                                receiverUid: profileEntity.uid,
+                                receiverToken: profileEntity.deviceToken,
+                              ),
+                            )));
               },
               child: Container(
                 width: context.width * .1,
@@ -90,7 +106,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const JoinChannelVideo()));
+                        builder: (context) => CallScreen(
+                              isCalling: true,
+                              callModel: CallModel(
+                                channelId: "${userUid}-${profileEntity.uid}",
+                                uid:
+                                    RTCConfig.stringToUnsignedInt("${userUid}"),
+                                senderName: user.profileEntity?.name,
+                                senderAvatar: user.profileEntity?.avatarUrl,
+                                senderUid: user.profileEntity?.uid,
+                                receiverName: profileEntity.name,
+                                receiverToken: profileEntity.deviceToken,
+                                receiverAvatar: profileEntity.avatarUrl,
+                                receiverUid: profileEntity.uid,
+                              ),
+                            )));
               },
               child: Container(
                 width: context.width * .1,

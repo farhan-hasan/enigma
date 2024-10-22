@@ -18,105 +18,10 @@ class RTCConfig {
     _engine = createAgoraRtcEngine();
   }
 
-  static Future<void> initVoiceChannel({
-    required int intUid,
-    required String channelId,
-  }) async {
-    // Initialize RtcEngine and set the channel profile
-    await _engine.initialize(const RtcEngineContext(
-      appId: APP_ID,
-      channelProfile: ChannelProfileType.channelProfileCommunication,
-    ));
-    // Handle engine events
-    _engine.registerEventHandler(
-      RtcEngineEventHandler(
-        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          debug('local user ${connection.localUid} joined');
-          // setState(() {
-          //   _localUserJoined = true;
-          // });
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          debug("remote user $remoteUid joined");
-          // setState(() {
-          //   _remoteUid = remoteUid;
-          // });
-        },
-        onUserOffline: (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
-          debug("remote user $remoteUid left channel");
-          // setState(() {
-          //   _remoteUid = null;
-          // });
-        },
-        onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
-          debug('Expiring token: $token for local user ${connection.localUid}');
-          _fetchToken(intUid, channelId, false, CallType.voice);
-        },
-        onRequestToken: (RtcConnection connection) {
-          debug('requested token for local user ${connection.localUid}');
-          _fetchToken(intUid, channelId, true, CallType.voice);
-        },
-      ),
-    );
-    debug("before fetch userUidInt: $intUid");
-    await _fetchToken(intUid, channelId, true, CallType.voice);
-  }
-
-  static Future<void> initVideoChannel({
-    required int intUid,
-    required String channelId,
-  }) async {
-    // Initialize RtcEngine and set the channel profile to live broadcasting
-    await _engine.initialize(const RtcEngineContext(
-      appId: APP_ID,
-    ));
-    _engine.registerEventHandler(RtcEngineEventHandler(
-      onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-        debug('local user ${connection.localUid} joined');
-        // setState(() {
-        //   isJoined = true;
-        // });
-      },
-      onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-        debug("remote user $remoteUid joined");
-        // setState(() {
-        //   remoteUid.add(rUid);
-        // });
-      },
-      onUserOffline: (RtcConnection connection, int remoteUid,
-          UserOfflineReasonType reason) {
-        debug("remote user $remoteUid left channel");
-        // setState(() {
-        //   remoteUid.removeWhere((element) => element == rUid);
-        // });
-      },
-      onLeaveChannel: (RtcConnection connection, RtcStats stats) {
-        debug('local user ${connection.localUid} left');
-        // setState(() {
-        //   isJoined = false;
-        //   remoteUid.clear();
-        // });
-      },
-      onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
-        debug('Expiring token: $token for local user ${connection.localUid}');
-        _fetchToken(intUid, channelId, false, CallType.video);
-      },
-      onRequestToken: (RtcConnection connection) {
-        debug('requested token for local user ${connection.localUid}');
-        _fetchToken(intUid, channelId, true, CallType.video);
-      },
-    ));
-    await _engine.enableVideo();
-    await _engine.startPreview();
-    await _fetchToken(intUid, channelId, true, CallType.video);
-    // setState(() {
-    //   _isReadyPreview = true;
-    // });
-  }
-
-  static Future<void> _fetchToken(int uid, String channelId,
-      bool needJoinChannel, CallType callType) async {
+  static Future<String?> fetchToken(
+    int uid,
+    String channelId,
+  ) async {
     var client = Client();
     try {
       Map<String, String> headers = {
@@ -127,54 +32,21 @@ class RTCConfig {
           headers: headers,
           body: jsonEncode({'account': uid, 'channel_name': channelId}));
       var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-      final token = decodedResponse['token'];
-      debug("token form API: $token - $uid");
-      if (needJoinChannel) {
-        switch (callType) {
-          case CallType.voice:
-            {
-              debug("joining voice channel");
-              await _engine.joinChannel(
-                token: token,
-                channelId: channelId,
-                uid: uid,
-                options: const ChannelMediaOptions(
-                    // Automatically subscribe to all audio streams
-                    autoSubscribeAudio: true,
-                    // Publish microphone audio
-                    publishMicrophoneTrack: true,
-                    // Set user role to clientRoleBroadcaster (broadcaster) or clientRoleAudience (audience)
-                    clientRoleType: ClientRoleType.clientRoleBroadcaster),
-              );
-              break;
-            }
-          case CallType.video:
-            {
-              debug("joining video channel");
-              await _engine.joinChannel(
-                token: token,
-                channelId: channelId,
-                uid: uid,
-                options: const ChannelMediaOptions(
-                  channelProfile:
-                      ChannelProfileType.channelProfileLiveBroadcasting,
-                  clientRoleType: ClientRoleType.clientRoleBroadcaster,
-                ),
-              );
-              break;
-            }
-        }
-      } else {
-        debug("called renewToken");
-        await _engine.renewToken(token);
-      }
-    } finally {
-      client.close();
-    }
+      String token = decodedResponse['token'];
+      debug("Token came ${token}");
+      return token;
+    } catch (e) {}
+    client.close();
+    return null;
   }
 
-  static Future<void> releaseResource() async {
-    await _engine.leaveChannel(); // Leave the channel
-    await _engine.release();
+  static int stringToUnsignedInt(String input) {
+    int hash = 0;
+    for (int i = 0; i < input.length; i++) {
+      hash = 31 * hash + input.codeUnitAt(i);
+      // Ensure the hash is within the range of an unsigned 32-bit integer
+      hash = hash & 0xFFFFFFFF;
+    }
+    return hash;
   }
 }
