@@ -15,16 +15,42 @@ import 'package:enigma/src/features/profile/presentation/view/settings_screen.da
 import 'package:enigma/src/features/splash/presentation/view/splash_screen.dart';
 import 'package:enigma/src/features/story/presentation/view/story_preview_screen.dart';
 import 'package:enigma/src/features/story/presentation/view/story_screen.dart';
+import 'package:enigma/src/features/voice_call/data/model/call_model.dart';
+import 'package:enigma/src/features/voice_call/presentation/view/call_screen.dart';
 import 'package:enigma/src/shared/view/bottom_nav_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
+
+final initialCallDataProvider = StateProvider<dynamic>((ref) => null);
+
+final appInitializationProvider = FutureProvider<dynamic>((ref) async {
+  var calls = await FlutterCallkitIncoming.activeCalls();
+  if (calls is List) {
+    if (calls.isNotEmpty) {
+      var callData =
+          calls[0]; // Assuming CallData is the first call in the list
+      ref.read(initialCallDataProvider.notifier).state =
+          callData; // Set the initial call data
+      FlutterCallkitIncoming.endAllCalls();
+      return callData;
+    } else {
+      ref.read(initialCallDataProvider.notifier).state = null;
+      return null;
+    }
+  }
+});
+
 final goRouterProvider = Provider(
   (ref) {
+    final initialCallData = ref.watch(initialCallDataProvider);
+    print("Initial data for call ${initialCallData}");
     return GoRouter(
-      initialLocation: SplashScreen.route,
+      initialLocation:
+          initialCallData == null ? SplashScreen.route : CallScreen.route,
       observers: [BotToastNavigatorObserver()],
       routes: [
         GoRoute(
@@ -91,6 +117,18 @@ final goRouterProvider = Provider(
             ProfileEntity profileEntity = state.extra as ProfileEntity;
             return ChatScreen(
               profileEntity: profileEntity,
+            );
+          },
+        ),
+        GoRoute(
+          path: CallScreen.route,
+          builder: (context, state) {
+            // return CallScreen(callModel: CallModel(), isCalling: false);
+            final callData = initialCallData;
+            CallModel callModel = CallModel.fromJson(callData['extra']);
+            return CallScreen(
+              isCalling: false,
+              callModel: callModel,
             );
           },
         ),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:enigma/src/core/network/responses/failure_response.dart';
 import 'package:enigma/src/core/network/responses/success_response.dart';
+import 'package:enigma/src/shared/data/model/push_body_model/push_body_model.dart';
 import 'package:flutter/services.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
 
@@ -11,6 +12,7 @@ class FCMRemoteDataSource {
     required String recipientToken,
     required String title,
     required String body,
+    PushBodyModel? data,
     required String imageUrl,
   }) async {
     const String jsonSource = 'assets/data/enigma-credential.json';
@@ -31,8 +33,15 @@ class FCMRemoteDataSource {
           'body': body,
           'image': imageUrl,
         },
+        'data': (data?.toJson()) ?? {}
       },
     };
+
+    if (!(data?.showNotification ?? true)) {
+      try {
+        notificationData['message']?.remove('notification');
+      } catch (e) {}
+    }
 
     const String senderId = '1015120837572';
     final response = await client.post(
@@ -43,6 +52,9 @@ class FCMRemoteDataSource {
       },
       body: jsonEncode(notificationData),
     );
+
+    print(
+        "Push notification status ${data?.toJson()}-${response.statusCode}-${response.body}");
 
     client.close();
     if (response.statusCode == 200) {

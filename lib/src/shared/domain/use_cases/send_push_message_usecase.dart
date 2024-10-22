@@ -16,6 +16,7 @@ class SendPushMessageUsecase extends UseCase<Either<Failure, Success>, FCMDto> {
         recipientToken: params.recipientToken,
         title: params.title,
         body: params.body,
+        data: params.data,
         imageUrl: params.imageUrl);
     return response;
   }
