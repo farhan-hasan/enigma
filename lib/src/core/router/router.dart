@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -32,10 +33,24 @@ final appInitializationProvider = FutureProvider<dynamic>((ref) async {
   var calls = await FlutterCallkitIncoming.activeCalls();
   if (calls is List) {
     if (calls.isNotEmpty) {
+      for(var c in calls) {
+        print(c.toString());
+      }
       var callData =
           calls[0]; // Assuming CallData is the first call in the list
+      print("RUNTIME TYPE OF EXTRA");
+      print(callData["extra"].runtimeType);
+
+      final extraData = callData["extra"] as Map<Object?, Object?>;
+
+      final Map<String, dynamic> callDataJson =
+      extraData.map((k, v) {
+        print(k.toString());
+        return MapEntry(k.toString(), v);
+      });
+
       ref.read(initialCallDataProvider.notifier).state =
-          callData; // Set the initial call data
+          CallModel.fromJson(callDataJson); // Set the initial call data
       FlutterCallkitIncoming.endAllCalls();
       return callData;
     } else {
@@ -50,6 +65,7 @@ final goRouterProvider = Provider(
     final initialCallData = ref.watch(initialCallDataProvider);
     print("Initial data for call ${initialCallData}");
     return GoRouter(
+      navigatorKey: rootNavigatorKey,
       initialLocation:
           initialCallData == null ? SplashScreen.route : CallScreen.route,
       observers: [BotToastNavigatorObserver()],
@@ -131,8 +147,14 @@ final goRouterProvider = Provider(
           path: CallScreen.route,
           builder: (context, state) {
             // return CallScreen(callModel: CallModel(), isCalling: false);
-            final callData = initialCallData;
-            CallModel callModel = CallModel.fromJson(callData['extra']);
+            // print("Runtime Type: ${initialCallData['extra'].runtimeType}");
+            // print("Runtime Type: ${initialCallData['extra']}");
+            // final Map<String, dynamic> callData =
+            //     initialCallData['extra'].map((k, v) {
+            //       print(k.toString());
+            //   return MapEntry(k.toString(), v);
+            // });
+            CallModel callModel = initialCallData;
             return CallScreen(
               isCalling: false,
               callModel: callModel,

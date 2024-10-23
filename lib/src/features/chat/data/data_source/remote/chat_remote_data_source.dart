@@ -71,16 +71,16 @@ class ChatRemoteDataSource {
         friendUid: friendUid,
       );
       bool doesExist = await DocumentFinder.checkExistence(roomID: roomID);
-      debug(roomID);
-      debug(doesExist);
+      // debug(roomID);
+      // debug(doesExist);
       if (!doesExist) {
         roomID = HashGenerator.idHashing(
           myUid: friendUid,
           friendUid: myUid,
         );
       }
-      debug(roomID);
-      debug(doesExist);
+      // debug(roomID);
+      // debug(doesExist);
 
       Stream<List<ChatModel>> querySnapshot = FirebaseHandler.fireStore
           .collection(FirestoreCollectionName.chatCollection)
