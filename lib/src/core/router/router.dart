@@ -142,9 +142,7 @@ final goRouterProvider = Provider(
         GoRoute(
             path: FriendsScreen.route,
             builder: (context, state) {
-              return FriendsScreen(
-                data: state.pathParameters,
-              );
+              return FriendsScreen();
             }),
         StatefulShellRoute.indexedStack(
             branches: [

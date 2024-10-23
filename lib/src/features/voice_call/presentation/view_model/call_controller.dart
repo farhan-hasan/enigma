@@ -96,7 +96,7 @@ class CallController extends StateNotifier<CallGeneric> {
     engine.registerEventHandler(_rtcEngineEventHandler!);
     await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
     await engine.enableVideo();
-    await engine.startPreview();
+    //await engine.startPreview();
 
     AgoraClient agoraClient = AgoraClient(
       agoraConnectionData: AgoraConnectionData(
