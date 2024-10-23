@@ -29,7 +29,9 @@ class CallController extends StateNotifier<CallGeneric> {
 
     debug("call model stat ${callModel.toJson()}");
 
-    await initiateCallEngine(callModel: callModel);
+    await initiateCallEngine(
+        callModel: callModel,
+        clientRoleType: ClientRoleType.clientRoleBroadcaster);
     sendCallNotification(callModel: callModel);
   }
 
@@ -45,19 +47,24 @@ class CallController extends StateNotifier<CallGeneric> {
             body: jsonEncode(callModel.toJson()))));
   }
 
-  Future<void> initiateCallEngine({required CallModel callModel}) async {
+  Future<void> initiateCallEngine(
+      {required CallModel callModel,
+      required ClientRoleType clientRoleType}) async {
     callModel.token ??= await RTCConfig.fetchToken(
         callModel.uid ?? 0, callModel.channelId ?? "");
 
     RtcEngine engine = createAgoraRtcEngine();
 
-    await engine.initialize(const RtcEngineContext(
-        appId: RTCConfig.APP_ID,
-        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting));
+    await engine.initialize(
+      const RtcEngineContext(
+          appId: RTCConfig.APP_ID,
+          channelProfile: ChannelProfileType.channelProfileCommunication1v1),
+    );
 
     _rtcEngineEventHandler = RtcEngineEventHandler(
       onError: (ErrorCodeType err, String msg) {
         debug('[onError] err: $err, msg: $msg');
+        print('[onError] err: $err, msg: $msg');
       },
       onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
         debug(
@@ -94,25 +101,45 @@ class CallController extends StateNotifier<CallGeneric> {
     );
 
     engine.registerEventHandler(_rtcEngineEventHandler!);
-    await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
+    await engine.setClientRole(role: clientRoleType);
     await engine.enableVideo();
     //await engine.startPreview();
 
     AgoraClient agoraClient = AgoraClient(
+      agoraEventHandlers: AgoraRtcEventHandlers(
+        onConnectionStateChanged: (connection, state, reason) {
+          print("AgoraRTCEventHandles");
+          print(state.name);
+        },
+        onRemoteVideoStateChanged: (connection, remoteUid, state, reason, elapsed) {
+          print("Remote Video State");
+          print(remoteUid);
+          print(state.name);
+        },
+        onLocalVideoStateChanged: (source, state, error) {
+          print("Local Video State");
+          print(state.name);
+        },
+      ),
       agoraConnectionData: AgoraConnectionData(
-          appId: RTCConfig.APP_ID,
-          channelName: callModel.channelId ?? "",
-          uid: callModel.uid),
+        appId: RTCConfig.APP_ID,
+        channelName: callModel.channelId ?? "",
+        uid: callModel.uid,
+      ),
     );
 
     await agoraClient.initialize();
 
+    print("Agora Client Initialized");
+
     state = state.update(engine: engine, agoraClient: agoraClient);
 
-    await joinChannel(callModel: callModel);
+    await joinChannel(callModel: callModel, clientRoleType: clientRoleType);
   }
 
-  Future<void> joinChannel({required CallModel callModel}) async {
+  Future<void> joinChannel(
+      {required CallModel callModel,
+      required ClientRoleType clientRoleType}) async {
     try {
       await leaveChannel();
     } catch (e) {}
@@ -120,9 +147,9 @@ class CallController extends StateNotifier<CallGeneric> {
       token: callModel.token ?? "",
       channelId: callModel.channelId ?? "",
       uid: callModel.uid ?? 0,
-      options: const ChannelMediaOptions(
+      options: ChannelMediaOptions(
         channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-        clientRoleType: ClientRoleType.clientRoleBroadcaster,
+        clientRoleType: clientRoleType,
       ),
     );
   }

@@ -27,6 +27,7 @@ class _AppState extends ConsumerState<App> {
       final router = ref.watch(goRouterProvider);
       return MaterialApp.router(
         debugShowCheckedModeBanner: false,
+
         title: 'Enigma',
         builder: BotToastInit(),
         routerDelegate: router.routerDelegate,

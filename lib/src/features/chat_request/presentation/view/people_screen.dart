@@ -70,60 +70,62 @@ class _PeopleScreenState extends ConsumerState<PeopleScreen> {
           ),
           trailingWidgets: [
             GestureDetector(
-              onTap: () async {
-                ProfileEntity profileEntity;
-                String scanDetails;
-                scanDetails = await BarcodeScanner.scanBarcodeNormal();
-                profileEntity = ProfileEntity.fromJson(jsonDecode(scanDetails));
-
-                showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Send Chat Request'),
-                      content: SingleChildScrollView(
-                          child: Container(
-                        child: Column(
-                          children: [
-                            CircularDisplayPicture(
-                              radius: 23,
-                              imageURL: profileEntity.avatarUrl,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              profileEntity.name ?? "",
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text("Send chat request?"),
-                          ],
-                        ),
-                      )),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('Yes'),
-                          onPressed: () {
-                            ref
-                                .read(chatRequestProvider.notifier)
-                                .sendChatRequest(profileEntity);
-                            ref.read(goRouterProvider).pop();
-                          },
-                        ),
-                        TextButton(
-                          child: const Text('No'),
-                          onPressed: () {
-                            ref.read(goRouterProvider).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
+              // TODO: UNCOMMENT LATWEER
+              // onTap: () async {
+              //   ProfileEntity profileEntity;
+              //   String scanDetails;
+              //
+              //   // scanDetails = await BarcodeScanner.scanBarcodeNormal();
+              //   // profileEntity = ProfileEntity.fromJson(jsonDecode(scanDetails));
+              //
+              //   showDialog<void>(
+              //     context: context,
+              //     builder: (BuildContext context) {
+              //       return AlertDialog(
+              //         title: const Text('Send Chat Request'),
+              //         content: SingleChildScrollView(
+              //             child: Container(
+              //           child: Column(
+              //             children: [
+              //               CircularDisplayPicture(
+              //                 radius: 23,
+              //                 imageURL: profileEntity.avatarUrl,
+              //               ),
+              //               const SizedBox(
+              //                 height: 10,
+              //               ),
+              //               Text(
+              //                 profileEntity.name ?? "",
+              //                 style: Theme.of(context).textTheme.titleLarge,
+              //               ),
+              //               const SizedBox(
+              //                 height: 10,
+              //               ),
+              //               Text("Send chat request?"),
+              //             ],
+              //           ),
+              //         )),
+              //         actions: <Widget>[
+              //           TextButton(
+              //             child: const Text('Yes'),
+              //             onPressed: () {
+              //               ref
+              //                   .read(chatRequestProvider.notifier)
+              //                   .sendChatRequest(profileEntity);
+              //               ref.read(goRouterProvider).pop();
+              //             },
+              //           ),
+              //           TextButton(
+              //             child: const Text('No'),
+              //             onPressed: () {
+              //               ref.read(goRouterProvider).pop();
+              //             },
+              //           ),
+              //         ],
+              //       );
+              //     },
+              //   );
+              // },
               child: Container(
                 width: context.width * .1,
                 height: context.width * .1,
