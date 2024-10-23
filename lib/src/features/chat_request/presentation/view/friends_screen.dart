@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/features/chat_request/domain/entity/chat_request_entity.dart';
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
@@ -12,14 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FriendsScreen extends ConsumerStatefulWidget {
-  FriendsScreen({super.key, required this.data});
+  FriendsScreen({super.key});
 
-  Map<String, dynamic> data;
   ChatRequestEntity? chatRequestEntity;
-  static const route = "/chat_request/:chat_request_entity";
+  static const route = "/friends";
 
-  static setRoute({required ChatRequestEntity chatRequestEntity}) =>
-      "chat_request/${jsonEncode(chatRequestEntity.toJson())}";
+  static setRoute() => "/friends";
 
   @override
   ConsumerState<FriendsScreen> createState() => _ChatRequestScreenState();

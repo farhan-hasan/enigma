@@ -77,6 +77,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     height: 20,
                   ),
                   buildPhoneNumberSection(context, profileEntity),
+                  const SizedBox(
+                    height: 20,
+                  ),
+
                 ],
               )
             ],

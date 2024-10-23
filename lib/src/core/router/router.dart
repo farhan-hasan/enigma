@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/auth/presentation/auth_screen/view/auth_screen.dart';
+import 'package:enigma/src/features/auth/presentation/forget_password/view/forgot_password_screen.dart';
 import 'package:enigma/src/features/auth/presentation/login/view/login_screen.dart';
 import 'package:enigma/src/features/auth/presentation/signup/view/signup_screen.dart';
 import 'package:enigma/src/features/chat/presentation/view/chat_screen.dart';
@@ -111,6 +112,12 @@ final goRouterProvider = Provider(
           },
         ),
         GoRoute(
+          path: ForgotPasswordScreen.route,
+          builder: (context, state) {
+            return ForgotPasswordScreen();
+          },
+        ),
+        GoRoute(
           path: ChatScreen.route,
           builder: (context, state) {
             // debug("path parameter : ${state.pathParameters}");
@@ -135,9 +142,7 @@ final goRouterProvider = Provider(
         GoRoute(
             path: FriendsScreen.route,
             builder: (context, state) {
-              return FriendsScreen(
-                data: state.pathParameters,
-              );
+              return FriendsScreen();
             }),
         StatefulShellRoute.indexedStack(
             branches: [

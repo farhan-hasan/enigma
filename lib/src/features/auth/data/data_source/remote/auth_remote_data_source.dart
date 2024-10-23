@@ -182,7 +182,7 @@ class AuthRemoteDataSource {
       {required String email}) async {
     try {
       await FirebaseHandler.auth.sendPasswordResetEmail(email: email);
-      return Right(Success(message: 'Password reset email sent successfully.'));
+      return Right(Success(message: 'Password reset email sent successfully to $email.'));
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'invalid-email':

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:enigma/src/core/notification/local_notification/local_notification_handler.dart';
+import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/voice_call/data/model/call_model.dart';
 import 'package:enigma/src/shared/data/model/push_body_model/push_body_model.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -45,8 +46,11 @@ class PushNotificationHandler {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       // // push notification while in foreground
+      debug(message.data);
       LocalNotificationHandler.showLocalNotification(
-          "Push notification", "This is description");
+        title: message.data['title'],
+        body: message.data['body'],
+      );
     });
     FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
   }
