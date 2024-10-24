@@ -1,6 +1,5 @@
 import 'package:enigma/src/core/network/remote/firebase/firebase_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
-import 'package:enigma/src/core/rtc/rtc_config.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
 import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/presentation/components/chat_screen_bottom_bar.dart';
@@ -79,8 +78,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               isCalling: true,
                               callModel: CallModel(
                                 channelId: "${userUid}${profileEntity.uid}",
-                                uid:
-                                    RTCConfig.stringToUnsignedInt("${userUid}"),
+                                uid: 0,
                                 senderName: user.profileEntity?.name,
                                 senderAvatar: user.profileEntity?.avatarUrl,
                                 senderUid: user.profileEntity?.uid,
@@ -110,8 +108,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               isCalling: true,
                               callModel: CallModel(
                                 channelId: "${userUid}${profileEntity.uid}",
-                                uid:
-                                    RTCConfig.stringToUnsignedInt("${userUid}"),
+                                uid: 0,
                                 senderName: user.profileEntity?.name,
                                 senderAvatar: user.profileEntity?.avatarUrl,
                                 senderUid: user.profileEntity?.uid,

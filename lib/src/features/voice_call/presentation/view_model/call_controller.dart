@@ -30,8 +30,8 @@ class CallController extends StateNotifier<CallGeneric> {
     debug("call model stat ${callModel.toJson()}");
 
     await initiateCallEngine(
-        callModel: callModel,
-        clientRoleType: ClientRoleType.clientRoleBroadcaster);
+      callModel: callModel,
+    );
     sendCallNotification(callModel: callModel);
   }
 
@@ -47,9 +47,7 @@ class CallController extends StateNotifier<CallGeneric> {
             body: jsonEncode(callModel.toJson()))));
   }
 
-  Future<void> initiateCallEngine(
-      {required CallModel callModel,
-      required ClientRoleType clientRoleType}) async {
+  Future<void> initiateCallEngine({required CallModel callModel}) async {
     callModel.token ??= await RTCConfig.fetchToken(
         callModel.uid ?? 0, callModel.channelId ?? "");
 
@@ -60,9 +58,11 @@ class CallController extends StateNotifier<CallGeneric> {
     await engine.initialize(
       const RtcEngineContext(
           appId: RTCConfig.APP_ID,
-          channelProfile: ChannelProfileType.channelProfileLiveBroadcasting),
+          channelProfile: ChannelProfileType.channelProfileCommunication),
     );
 
+    await engine.enableVideo();
+    await engine.startPreview();
     _rtcEngineEventHandler = RtcEngineEventHandler(
       onError: (ErrorCodeType err, String msg) {
         debug('[onError] err: $err, msg: $msg');
@@ -85,7 +85,7 @@ class CallController extends StateNotifier<CallGeneric> {
         debug(
             '[onUserOffline] connection: ${connection.toJson()}  rUid: $rUid reason: $reason');
 
-        state = state.update(remoteIdJoined: rUid);
+        state = state.update(remoteIdJoined: null);
       },
       onLeaveChannel: (RtcConnection connection, RtcStats stats) {
         debug(
@@ -100,59 +100,33 @@ class CallController extends StateNotifier<CallGeneric> {
     );
 
     engine.registerEventHandler(_rtcEngineEventHandler!);
-    await engine.setClientRole(role: clientRoleType);
-    await engine.enableVideo();
-    print("Before engine start preview: ${RTCConfig.APP_ID}");
 
-    //await engine.startPreview(sourceType: VideoSourceType.videoSourceCamera);
-
-    // AgoraClient agoraClient = AgoraClient(
-    //   agoraEventHandlers: AgoraRtcEventHandlers(
-    //     onConnectionStateChanged: (connection, state, reason) {
-    //       print("AgoraRTCEventHandles");
-    //       print(state.name);
-    //     },
-    //     onRemoteVideoStateChanged: (connection, remoteUid, state, reason, elapsed) {
-    //       print("Remote Video State");
-    //       print(remoteUid);
-    //       print(state.name);
-    //     },
-    //     onLocalVideoStateChanged: (source, state, error) {
-    //       print("Local Video State");
-    //       print(state.name);
-    //     },
-    //   ),
-    //   agoraConnectionData: AgoraConnectionData(
-    //     appId: RTCConfig.APP_ID,
-    //     channelName: callModel.channelId ?? "",
-    //     uid: callModel.uid,
-    //   ),
-    // );
-
-    // await agoraClient.initialize();
-
-    print("Agora Client Initialized");
+    await joinChannel(callModel: callModel);
 
     state = state.update(
       engine: engine, /*agoraClient: agoraClient*/
     );
-    await joinChannel(callModel: callModel, clientRoleType: clientRoleType);
   }
 
-  Future<void> joinChannel(
-      {required CallModel callModel,
-      required ClientRoleType clientRoleType}) async {
+  Future<void> joinChannel({required CallModel callModel}) async {
     try {
       await leaveChannel();
     } catch (e) {}
     await state.engine?.joinChannel(
       token: callModel.token ?? "",
       channelId: callModel.channelId ?? "",
-      uid: callModel.uid ?? 0,
-      options: ChannelMediaOptions(
-        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-        clientRoleType: clientRoleType,
-      ),
+      uid: 0,
+      options: const ChannelMediaOptions(
+          // Automatically subscribe to all video streams
+          autoSubscribeVideo: true,
+          // Automatically subscribe to all audio streams
+          autoSubscribeAudio: true,
+          // Publish camera video
+          publishCameraTrack: true,
+          // Publish microphone audio
+          publishMicrophoneTrack: true,
+          // Set user role to clientRoleBroadcaster (broadcaster) or clientRoleAudience (audience)
+          clientRoleType: ClientRoleType.clientRoleBroadcaster),
     );
   }
 

@@ -105,7 +105,8 @@ class ChatRequestController extends StateNotifier<ChatRequestGeneric> {
   fetchPendingRequest() async {
     bool isSuccess = false;
     List<ChatRequestEntity> listOfChatRequestEntity = [];
-    state = state.update(isPendingRequestLoading: true);
+    state =
+        state.update(isPendingRequestLoading: true, listOfPendingRequest: []);
     FilterDto params = FilterDto(
         firebaseWhereModel:
             FirebaseWhereModel(field: "status", isEqualTo: "pending"));

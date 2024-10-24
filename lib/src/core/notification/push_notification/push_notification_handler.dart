@@ -1,26 +1,16 @@
 import 'dart:convert';
 
-import 'package:enigma/src/core/global/global_variables.dart';
 import 'package:enigma/src/core/notification/local_notification/local_notification_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
-import 'package:enigma/src/core/utils/logger/logger.dart';
-import 'package:enigma/src/features/chat_request/presentation/view/friends_screen.dart';
 import 'package:enigma/src/features/voice_call/data/model/call_model.dart';
 import 'package:enigma/src/features/voice_call/presentation/view/call_screen.dart';
 import 'package:enigma/src/shared/data/model/push_body_model/push_body_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/entities/notification_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
-
-// Lisitnening to the background messages
-
-// Future<void> showCallkitIncoming(String uuid) async {
-//
-// }
 
 @pragma("vm:entry-point")
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -77,15 +67,15 @@ class PushNotificationHandler {
     if (pushBodyModel.type == "incoming_call") {
       CallModel callModel = CallModel.fromJson(jsonDecode(pushBodyModel.body));
       showCallkitIncoming(callModel);
-      // print("Going to friend screen");
-      // try {
-      //   Navigator.of(rootNavigatorKey.currentContext!).push(MaterialPageRoute(
-      //     builder: (context) =>
-      //         CallScreen(callModel: callModel, isCalling: false),
-      //   ));
-      // } catch (e) {
-      //   print("Handle Message Error: $e");
-      // }
+      print("Going to friend screen");
+      try {
+        Navigator.of(rootNavigatorKey.currentContext!).push(MaterialPageRoute(
+          builder: (context) =>
+              CallScreen(callModel: callModel, isCalling: false),
+        ));
+      } catch (e) {
+        print("Handle Message Error: $e");
+      }
     }
   }
 
