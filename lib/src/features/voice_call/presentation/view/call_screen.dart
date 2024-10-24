@@ -30,9 +30,9 @@ class _State extends ConsumerState<CallScreen> {
       if (widget.isCalling) {
         await ref.read(callProvider.notifier).call(callModel: widget.callModel);
       } else {
-        await ref.read(callProvider.notifier).initiateCallEngine(
-              callModel: widget.callModel,
-            );
+        await ref
+            .read(callProvider.notifier)
+            .initiateCallEngine(callModel: widget.callModel);
       }
     });
   }
