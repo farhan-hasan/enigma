@@ -1,5 +1,5 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:agora_uikit/agora_uikit.dart';
+// import 'package:agora_uikit/agora_uikit.dart';
 
 class CallGeneric {
   bool isJoined,
@@ -9,8 +9,9 @@ class CallGeneric {
       muteCamera,
       muteAllRemoteVideo;
   RtcEngine? engine;
-  Set<int> remoteUid;
-  AgoraClient? agoraClient;
+
+  int? remoteIdJoined;
+  // AgoraClient? agoraClient;
 
   CallGeneric(
       {this.isJoined = false,
@@ -19,20 +20,22 @@ class CallGeneric {
       this.openCamera = true,
       this.muteCamera = true,
       this.muteAllRemoteVideo = false,
-      this.remoteUid = const {},
-      this.agoraClient,
+      this.remoteIdJoined,
+
+      //this.agoraClient,
       this.engine});
 
-  CallGeneric update(
-      {bool? isJoined,
-      bool? switchCamera,
-      bool? switchRender,
-      bool? openCamera,
-      bool? muteCamera,
-      bool? muteAllRemoteVideo,
-      RtcEngine? engine,
-      Set<int>? remoteUid,
-      AgoraClient? agoraClient}) {
+  CallGeneric update({
+    bool? isJoined,
+    bool? switchCamera,
+    bool? switchRender,
+    bool? openCamera,
+    bool? muteCamera,
+    bool? muteAllRemoteVideo,
+    RtcEngine? engine,
+    int? remoteIdJoined,
+    //AgoraClient? agoraClient
+  }) {
     return CallGeneric(
         isJoined: isJoined ?? this.isJoined,
         switchCamera: switchCamera ?? this.switchCamera,
@@ -41,7 +44,9 @@ class CallGeneric {
         muteCamera: muteCamera ?? this.muteCamera,
         muteAllRemoteVideo: muteAllRemoteVideo ?? this.muteAllRemoteVideo,
         engine: engine ?? this.engine,
-        remoteUid: remoteUid ?? this.remoteUid,
-        agoraClient: agoraClient ?? this.agoraClient);
+        remoteIdJoined: remoteIdJoined ?? this.remoteIdJoined
+
+        //agoraClient: agoraClient ?? this.agoraClient
+        );
   }
 }

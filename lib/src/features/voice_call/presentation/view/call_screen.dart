@@ -1,8 +1,6 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:agora_uikit/agora_uikit.dart';
 import 'package:enigma/src/features/voice_call/data/model/call_model.dart';
 import 'package:enigma/src/features/voice_call/presentation/view/example_widget_builder.dart';
-import 'package:enigma/src/features/voice_call/presentation/view/stats_monitor.dart';
 import 'package:enigma/src/features/voice_call/presentation/view_model/call_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -49,10 +47,10 @@ class _State extends ConsumerState<CallScreen> {
   @override
   Widget build(BuildContext context) {
     final call = ref.watch(callProvider);
-    print("Agora Client ${call.agoraClient}");
+    // print("Agora Client ${call.agoraClient}");
     print("Agora Engine ${call.engine}");
     return Scaffold(
-      body: call.agoraClient == null && call.engine == null
+      body: /*call.agoraClient == null && */ call.engine == null
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -60,37 +58,33 @@ class _State extends ConsumerState<CallScreen> {
               child: ExampleActionsWidget(
                 displayContentBuilder: (context, isLayoutHorizontal) => Stack(
                   children: [
-                    StatsMonitoringWidget(
-                      rtcEngine: call.engine!,
-                      uid: widget.callModel.uid!,
-                      child: AgoraVideoView(
-                        controller: VideoViewController(
-                          rtcEngine: call.engine!,
-                          canvas: VideoCanvas(uid: widget.callModel.uid),
-                          // useFlutterTexture: _isUseFlutterTexture,
-                          // useAndroidSurfaceView: _isUseAndroidSurfaceView,
-                        ),
-                        onAgoraVideoViewCreated: (viewId) {
-                          call.engine!.startPreview();
-                        },
-                      ),
-                    ),
+                    call.engine == null
+                        ? CircularProgressIndicator()
+                        : AgoraVideoView(
+                            controller: VideoViewController(
+                              rtcEngine: call.engine!,
+                              canvas: VideoCanvas(uid: widget.callModel.uid),
+                              // useFlutterTexture: _isUseFlutterTexture,
+                              // useAndroidSurfaceView: _isUseAndroidSurfaceView,
+                            ),
+                            onAgoraVideoViewCreated: (viewId) {
+                              //call.engine!.startPreview();
+                            },
+                          ),
                     Align(
                       alignment: Alignment.topLeft,
-                      child: StatsMonitoringWidget(
-                        rtcEngine: call.engine!,
-                        uid: widget.callModel.uid!,
-                        child: AgoraVideoView(
-                          controller: VideoViewController.remote(
-                            rtcEngine: call.engine!,
-                            canvas: VideoCanvas(uid: widget.callModel.uid),
-                            connection: RtcConnection(
-                                channelId: widget.callModel.channelId),
-                            // useFlutterTexture: _isUseFlutterTexture,
-                            // useAndroidSurfaceView: _isUseAndroidSurfaceView,
-                          ),
-                        ),
-                      ),
+                      child: call.remoteIdJoined == null
+                          ? Text("user has not joined yet")
+                          : AgoraVideoView(
+                              controller: VideoViewController.remote(
+                                rtcEngine: call.engine!,
+                                canvas: VideoCanvas(uid: call.remoteIdJoined),
+                                connection: RtcConnection(
+                                    channelId: widget.callModel.channelId),
+                                // useFlutterTexture: _isUseFlutterTexture,
+                                // useAndroidSurfaceView: _isUseAndroidSurfaceView,
+                              ),
+                            ),
                     ),
                     // AgoraVideoViewer(
                     //   client: call.agoraClient!,
@@ -114,11 +108,11 @@ class _State extends ConsumerState<CallScreen> {
                   ];
                   final items = channelProfileType
                       .map((e) => DropdownMenuItem(
-                    child: Text(
-                      e.toString().split('.')[1],
-                    ),
-                    value: e,
-                  ))
+                            child: Text(
+                              e.toString().split('.')[1],
+                            ),
+                            value: e,
+                          ))
                       .toList();
 
                   return Column(
@@ -126,7 +120,6 @@ class _State extends ConsumerState<CallScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-
                       if (!kIsWeb &&
                           (defaultTargetPlatform == TargetPlatform.android ||
                               defaultTargetPlatform == TargetPlatform.iOS))
@@ -153,9 +146,9 @@ class _State extends ConsumerState<CallScreen> {
                         //         ]),
                         //   ],
                         // ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                        const SizedBox(
+                          height: 20,
+                        ),
                       const Text('Channel Profile: '),
                       // DropdownButton<ChannelProfileType>(
                       //   items: items,
