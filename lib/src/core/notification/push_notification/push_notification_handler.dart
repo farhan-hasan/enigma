@@ -79,9 +79,10 @@ class PushNotificationHandler {
               pushBodyModel: pushBodyModel,
             );
       } else {
+
         LocalNotificationHandler.showLocalNotification(
-          title: "message.data['body']['senderName']",
-          body: "message.data['body']['senderName']",
+          title: message.notification?.title ?? "",
+          body: message.notification?.body ?? "",
         );
       }
     }
