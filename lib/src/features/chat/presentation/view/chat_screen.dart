@@ -78,7 +78,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         builder: (context) => CallScreen(
                               isCalling: true,
                               callModel: CallModel(
-                                channelId: "${userUid}-${profileEntity.uid}",
+                                channelId: "${userUid}${profileEntity.uid}",
                                 uid:
                                     RTCConfig.stringToUnsignedInt("${userUid}"),
                                 senderName: user.profileEntity?.name,
@@ -109,7 +109,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         builder: (context) => CallScreen(
                               isCalling: true,
                               callModel: CallModel(
-                                channelId: "${userUid}-${profileEntity.uid}",
+                                channelId: "${userUid}${profileEntity.uid}",
                                 uid:
                                     RTCConfig.stringToUnsignedInt("${userUid}"),
                                 senderName: user.profileEntity?.name,

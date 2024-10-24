@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:agora_uikit/agora_uikit.dart';
+// import 'package:agora_uikit/agora_uikit.dart';
 import 'package:enigma/src/core/rtc/rtc_config.dart';
 import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/voice_call/data/model/call_model.dart';
@@ -55,10 +55,12 @@ class CallController extends StateNotifier<CallGeneric> {
 
     RtcEngine engine = createAgoraRtcEngine();
 
+    print("Before engine initialize: ${RTCConfig.APP_ID}");
+
     await engine.initialize(
       const RtcEngineContext(
           appId: RTCConfig.APP_ID,
-          channelProfile: ChannelProfileType.channelProfileCommunication1v1),
+          channelProfile: ChannelProfileType.channelProfileLiveBroadcasting),
     );
 
     _rtcEngineEventHandler = RtcEngineEventHandler(
@@ -76,22 +78,19 @@ class CallController extends StateNotifier<CallGeneric> {
         debug(
             '[onUserJoined] connection: ${connection.toJson()} remoteUid: $rUid elapsed: $elapsed');
 
-        Set<int> uids = state.remoteUid;
-        uids.add(rUid);
-        state = state.update(remoteUid: uids);
+        state = state.update(remoteIdJoined: rUid);
       },
       onUserOffline:
           (RtcConnection connection, int rUid, UserOfflineReasonType reason) {
         debug(
             '[onUserOffline] connection: ${connection.toJson()}  rUid: $rUid reason: $reason');
-        Set<int> uids = state.remoteUid;
-        uids.removeWhere((element) => element == rUid);
-        state = state.update(remoteUid: uids);
+
+        state = state.update(remoteIdJoined: rUid);
       },
       onLeaveChannel: (RtcConnection connection, RtcStats stats) {
         debug(
             '[onLeaveChannel] connection: ${connection.toJson()} stats: ${stats.toJson()}');
-        state = state.update(remoteUid: {}, isJoined: false);
+        state = state.update(isJoined: false);
       },
       onRemoteVideoStateChanged: (RtcConnection connection, int remoteUid,
           RemoteVideoState state, RemoteVideoStateReason reason, int elapsed) {
@@ -103,37 +102,40 @@ class CallController extends StateNotifier<CallGeneric> {
     engine.registerEventHandler(_rtcEngineEventHandler!);
     await engine.setClientRole(role: clientRoleType);
     await engine.enableVideo();
-    //await engine.startPreview();
+    print("Before engine start preview: ${RTCConfig.APP_ID}");
 
-    AgoraClient agoraClient = AgoraClient(
-      agoraEventHandlers: AgoraRtcEventHandlers(
-        onConnectionStateChanged: (connection, state, reason) {
-          print("AgoraRTCEventHandles");
-          print(state.name);
-        },
-        onRemoteVideoStateChanged: (connection, remoteUid, state, reason, elapsed) {
-          print("Remote Video State");
-          print(remoteUid);
-          print(state.name);
-        },
-        onLocalVideoStateChanged: (source, state, error) {
-          print("Local Video State");
-          print(state.name);
-        },
-      ),
-      agoraConnectionData: AgoraConnectionData(
-        appId: RTCConfig.APP_ID,
-        channelName: callModel.channelId ?? "",
-        uid: callModel.uid,
-      ),
-    );
+    //await engine.startPreview(sourceType: VideoSourceType.videoSourceCamera);
 
-    await agoraClient.initialize();
+    // AgoraClient agoraClient = AgoraClient(
+    //   agoraEventHandlers: AgoraRtcEventHandlers(
+    //     onConnectionStateChanged: (connection, state, reason) {
+    //       print("AgoraRTCEventHandles");
+    //       print(state.name);
+    //     },
+    //     onRemoteVideoStateChanged: (connection, remoteUid, state, reason, elapsed) {
+    //       print("Remote Video State");
+    //       print(remoteUid);
+    //       print(state.name);
+    //     },
+    //     onLocalVideoStateChanged: (source, state, error) {
+    //       print("Local Video State");
+    //       print(state.name);
+    //     },
+    //   ),
+    //   agoraConnectionData: AgoraConnectionData(
+    //     appId: RTCConfig.APP_ID,
+    //     channelName: callModel.channelId ?? "",
+    //     uid: callModel.uid,
+    //   ),
+    // );
+
+    // await agoraClient.initialize();
 
     print("Agora Client Initialized");
 
-    state = state.update(engine: engine, agoraClient: agoraClient);
-
+    state = state.update(
+      engine: engine, /*agoraClient: agoraClient*/
+    );
     await joinChannel(callModel: callModel, clientRoleType: clientRoleType);
   }
 
