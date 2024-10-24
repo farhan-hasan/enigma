@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-// import 'package:agora_uikit/agora_uikit.dart';
 import 'package:enigma/src/core/rtc/rtc_config.dart';
 import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/voice_call/data/model/call_model.dart';
@@ -60,19 +59,23 @@ class CallController extends StateNotifier<CallGeneric> {
           appId: RTCConfig.APP_ID,
           channelProfile: ChannelProfileType.channelProfileCommunication),
     );
-
-    await engine.enableVideo();
-    await engine.startPreview();
-    _rtcEngineEventHandler = RtcEngineEventHandler(
+    engine.registerEventHandler(RtcEngineEventHandler(
       onError: (ErrorCodeType err, String msg) {
         debug('[onError] err: $err, msg: $msg');
         print('[onError] err: $err, msg: $msg');
       },
-      onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+      onJoinChannelSuccess: (RtcConnection connection, int elapsed) async {
         debug(
-            '[onJoinChannelSuccess] connection: ${connection.toJson()} elapsed: $elapsed');
+            '[onJoinChannelSuccess] connection: ${connection.localUid} elapsed: $elapsed');
 
-        state = state.update(isJoined: true);
+        state =
+            state.update(isJoined: true, localUidJoined: connection.localUid);
+
+        await state.engine!.startPreview();
+
+        // try {
+        //   state.engine?.startPreview();
+        // } catch (e) {}
       },
       onUserJoined: (RtcConnection connection, int rUid, int elapsed) {
         debug(
@@ -97,15 +100,15 @@ class CallController extends StateNotifier<CallGeneric> {
         debug(
             '[onRemoteVideoStateChanged] connection: ${connection.toJson()} remoteUid: $remoteUid state: $state reason: $reason elapsed: $elapsed');
       },
-    );
+    ));
 
-    engine.registerEventHandler(_rtcEngineEventHandler!);
-
-    await joinChannel(callModel: callModel);
+    await engine.enableVideo();
 
     state = state.update(
       engine: engine, /*agoraClient: agoraClient*/
     );
+
+    await joinChannel(callModel: callModel);
   }
 
   Future<void> joinChannel({required CallModel callModel}) async {
@@ -159,9 +162,9 @@ class CallController extends StateNotifier<CallGeneric> {
   @override
   void dispose() {
     // TODO: implement dispose
-    state.engine?.unregisterEventHandler(_rtcEngineEventHandler!);
+    //state.engine?.unregisterEventHandler(_rtcEngineEventHandler!);
     state.engine?.leaveChannel();
-    state.engine?.release();
+    //state.engine?.release();
     super.dispose();
   }
 }
