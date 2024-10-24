@@ -1,15 +1,20 @@
 import 'dart:convert';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:enigma/src/core/router/router.dart';
+
 // import 'package:agora_uikit/agora_uikit.dart';
 import 'package:enigma/src/core/rtc/rtc_config.dart';
 import 'package:enigma/src/core/utils/logger/logger.dart';
 import 'package:enigma/src/features/voice_call/data/model/call_model.dart';
+import 'package:enigma/src/features/voice_call/presentation/view/call_screen.dart';
 import 'package:enigma/src/features/voice_call/presentation/view_model/call_generic.dart';
 import 'package:enigma/src/shared/data/model/push_body_model/push_body_model.dart';
 import 'package:enigma/src/shared/domain/dto/fcm_dto.dart';
 import 'package:enigma/src/shared/domain/use_cases/send_push_message_usecase.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 final callProvider =
     StateNotifierProvider.autoDispose<CallController, CallGeneric>(
@@ -85,7 +90,7 @@ class CallController extends StateNotifier<CallGeneric> {
         debug(
             '[onUserOffline] connection: ${connection.toJson()}  rUid: $rUid reason: $reason');
 
-        state = state.update(remoteIdJoined: null);
+        state = state.update(remoteIdJoined: rUid);
       },
       onLeaveChannel: (RtcConnection connection, RtcStats stats) {
         debug(
@@ -163,5 +168,40 @@ class CallController extends StateNotifier<CallGeneric> {
     state.engine?.leaveChannel();
     state.engine?.release();
     super.dispose();
+  }
+
+  void showCallDialog({required PushBodyModel pushBodyModel}) {
+    showDialog(
+      context: rootNavigatorKey.currentContext!,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Incoming Call"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  CallModel callModel = CallModel.fromJson(
+                    jsonDecode(pushBodyModel.body),
+                  );
+
+                  context.pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CallScreen(callModel: callModel, isCalling: false),
+                    ),
+                  );
+                },
+                child: const Text("Accept")),
+            TextButton(
+              onPressed: () {
+                context.pop();
+              },
+              child: const Text("Decline"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

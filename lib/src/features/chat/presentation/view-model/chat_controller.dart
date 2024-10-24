@@ -13,6 +13,7 @@ import 'package:enigma/src/features/chat/presentation/view-model/chat_generic.da
 import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/domain/usecases/read_profile_usecase.dart';
+import 'package:enigma/src/shared/data/model/push_body_model/push_body_model.dart';
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:enigma/src/shared/domain/dto/fcm_dto.dart';
 import 'package:enigma/src/shared/domain/dto/profile_picture_dto.dart';
@@ -42,7 +43,7 @@ class ChatController extends StateNotifier<ChatGeneric> {
         BotToast.showText(text: left.message);
       },
       (right) {
-       ref.read(chatProvider.notifier).sendMessageNotification(chatEntity);
+        ref.read(chatProvider.notifier).sendMessageNotification(chatEntity);
       },
     );
   }
@@ -71,8 +72,14 @@ class ChatController extends StateNotifier<ChatGeneric> {
       title: sender?.name ?? "",
       body: chatEntity.content ?? "${chatEntity.mediaLink}",
       imageUrl: "",
+      data: PushBodyModel(
+        showNotification: true,
+        type: "message",
+        body: "",
+      ),
     );
-    Either<Failure, Success> response = await sendPushMessageUsecase.call(fcmDto);
+    Either<Failure, Success> response =
+        await sendPushMessageUsecase.call(fcmDto);
     return response;
   }
 
