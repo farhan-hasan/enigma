@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:enigma/src/core/router/router.dart';
-
 // import 'package:agora_uikit/agora_uikit.dart';
 import 'package:enigma/src/core/rtc/rtc_config.dart';
 import 'package:enigma/src/core/utils/logger/logger.dart';
@@ -15,10 +14,10 @@ import 'package:enigma/src/shared/domain/use_cases/send_push_message_usecase.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-final callProvider =
-    StateNotifierProvider.autoDispose<CallController, CallGeneric>(
-        (ref) => CallController(ref));
+final callProvider = StateNotifierProvider<CallController, CallGeneric>(
+    (ref) => CallController(ref));
 
 class CallController extends StateNotifier<CallGeneric> {
   CallController(this.ref) : super(CallGeneric());
@@ -53,6 +52,7 @@ class CallController extends StateNotifier<CallGeneric> {
   }
 
   Future<void> initiateCallEngine({required CallModel callModel}) async {
+    await [Permission.microphone, Permission.camera].request();
     callModel.token ??= await RTCConfig.fetchToken(
         callModel.uid ?? 0, callModel.channelId ?? "");
 
@@ -67,7 +67,6 @@ class CallController extends StateNotifier<CallGeneric> {
     );
     engine.registerEventHandler(RtcEngineEventHandler(
       onError: (ErrorCodeType err, String msg) {
-        debug('[onError] err: $err, msg: $msg');
         print('[onError] err: $err, msg: $msg');
       },
       onJoinChannelSuccess: (RtcConnection connection, int elapsed) async {
@@ -76,8 +75,6 @@ class CallController extends StateNotifier<CallGeneric> {
 
         state =
             state.update(isJoined: true, localUidJoined: connection.localUid);
-
-        await state.engine!.startPreview();
 
         // try {
         //   state.engine?.startPreview();
@@ -109,17 +106,18 @@ class CallController extends StateNotifier<CallGeneric> {
     ));
 
     await engine.enableVideo();
+    await engine.startPreview();
 
     state = state.update(
       engine: engine, /*agoraClient: agoraClient*/
     );
 
-    await joinChannel(callModel: callModel);
+    joinChannel(callModel: callModel);
   }
 
   Future<void> joinChannel({required CallModel callModel}) async {
     try {
-      await leaveChannel();
+      await state.engine?.leaveChannel();
     } catch (e) {}
     await state.engine?.joinChannel(
       token: callModel.token ?? "",

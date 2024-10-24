@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -33,7 +32,7 @@ final appInitializationProvider = FutureProvider<dynamic>((ref) async {
   var calls = await FlutterCallkitIncoming.activeCalls();
   if (calls is List) {
     if (calls.isNotEmpty) {
-      for(var c in calls) {
+      for (var c in calls) {
         print(c.toString());
       }
       var callData =
@@ -43,14 +42,15 @@ final appInitializationProvider = FutureProvider<dynamic>((ref) async {
 
       final extraData = callData["extra"] as Map<Object?, Object?>;
 
-      final Map<String, dynamic> callDataJson =
-      extraData.map((k, v) {
+      final Map<String, dynamic> callDataJson = extraData.map((k, v) {
         print(k.toString());
         return MapEntry(k.toString(), v);
       });
 
       ref.read(initialCallDataProvider.notifier).state =
-          CallModel.fromJson(callDataJson); // Set the initial call data
+          CallModel.fromJson(callDataJson);
+
+      // Set the initial call data
       FlutterCallkitIncoming.endAllCalls();
       return callData;
     } else {
@@ -63,7 +63,7 @@ final appInitializationProvider = FutureProvider<dynamic>((ref) async {
 final goRouterProvider = Provider(
   (ref) {
     final initialCallData = ref.watch(initialCallDataProvider);
-    print("Initial data for call ${initialCallData}");
+    print("Initial data for call ${initialCallData.runtimeType}");
     return GoRouter(
       navigatorKey: rootNavigatorKey,
       initialLocation:
