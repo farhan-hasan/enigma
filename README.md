@@ -3,6 +3,7 @@
 This application provides a seamless chat experience with support for voice and video calls, making communication easier and more interactive.
 
 ![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
 ![Android Studio](https://img.shields.io/badge/android%20studio-346ac1?style=for-the-badge&logo=android%20studio&logoColor=white)
 ![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)
@@ -28,7 +29,7 @@ This application provides a seamless chat experience with support for voice and 
 2. Flutter for cross-platform application
 3. Firebase for Backend
 4. Agora SDK for Real-Time-Communication
-5. FastAPI for Backend Services
+5. Python and FastAPI for Backend Services
 
 ## Highlights
 - Codebase follows **MVVM** and **Clean Architecture**
