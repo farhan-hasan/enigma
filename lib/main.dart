@@ -12,3 +12,6 @@ void main() async {
 
 // TODO:
 // 1. Implement streams for story, last seen, chat request, pending request, people etc.
+// TODO: POLISHING
+// 1. make text messages encrypted.
+// 2. change notification icons.
