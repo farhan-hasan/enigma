@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -10,7 +11,6 @@ import 'package:enigma/src/features/chat/domain/entity/chat_entity.dart';
 import 'package:enigma/src/features/chat/domain/usecases/add_chat_usecase.dart';
 import 'package:enigma/src/features/chat/domain/usecases/get_chat_usecase.dart';
 import 'package:enigma/src/features/chat/presentation/view-model/chat_generic.dart';
-import 'package:enigma/src/features/chat_request/presentation/view_model/chat_request_controller.dart';
 import 'package:enigma/src/features/profile/domain/entity/profile_entity.dart';
 import 'package:enigma/src/features/profile/domain/usecases/read_profile_usecase.dart';
 import 'package:enigma/src/shared/data/model/push_body_model/push_body_model.dart';
@@ -75,7 +75,7 @@ class ChatController extends StateNotifier<ChatGeneric> {
       data: PushBodyModel(
         showNotification: true,
         type: "message",
-        body: "",
+        body: jsonEncode(sender?.toJson()),
       ),
     );
     Either<Failure, Success> response =
