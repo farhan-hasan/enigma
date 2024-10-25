@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_keys.dart';
 import 'package:enigma/src/core/database/local/shared_preference/shared_preference_manager.dart';
+import 'package:enigma/src/core/notification/push_notification/push_notification_handler.dart';
 import 'package:enigma/src/core/router/router.dart';
 import 'package:enigma/src/core/utils/chat_utils/chat_utils.dart';
 import 'package:enigma/src/core/utils/extension/context_extension.dart';
@@ -48,6 +49,8 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     WidgetsBinding.instance.addPostFrameCallback((t) async {
       init();
     });
+    print("Calling Interacted Message");
+    PushNotificationHandler.setupInteractedMessage();
     super.initState();
   }
 
