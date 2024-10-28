@@ -1,6 +1,6 @@
 
 # Enigma
-This application provides a seamless chat experience with support for voice and video calls, making communication easier and more interactive. Special thanks to @farhan-hasan and @Nayem-Ali for their dedication and contribution.
+This application provides a seamless chat experience with support for voice and video calls, making communication easier and more interactive. Special thanks to core contributors [Farhan Hasan](https://github.com/farhan-hasan) and [Nayem Ali](https://github.com/Nayem-Ali).
 
 ![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
