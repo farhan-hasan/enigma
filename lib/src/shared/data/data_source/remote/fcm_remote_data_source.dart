@@ -33,6 +33,10 @@ class FCMRemoteDataSource {
           'body': body,
           'image': imageUrl,
         },
+        'android': {
+          'notification': {"click_action": "OPEN_ACTIVITY_1"},
+          'priority': 'high',
+        },
         'data': (data?.toJson()) ?? {}
       },
     };

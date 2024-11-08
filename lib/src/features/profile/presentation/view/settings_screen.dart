@@ -21,6 +21,7 @@ import 'package:enigma/src/features/profile/presentation/view_model/generic/prof
 import 'package:enigma/src/shared/dependency_injection/dependency_injection.dart';
 import 'package:enigma/src/shared/widgets/shared_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -128,6 +129,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     height: 20,
                   ),
                   buildPhoneNumberSection(context, profileController),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextButton(
+                      onPressed: () async {
+                        const platform =
+                            MethodChannel('skywalker_notification');
+                        try {
+                          await platform.invokeMethod('showCallNotification');
+                        } on PlatformException catch (e) {
+                          print(
+                              "Failed to create notification: '${e.message}'.");
+                        }
+                      },
+                      child: Text("Test Method Channel Notification"))
                 ],
               )
             ],

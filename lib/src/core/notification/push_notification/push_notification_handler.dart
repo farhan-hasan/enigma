@@ -23,7 +23,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.data}");
   print("Runtimetype: ${message.data.runtimeType}");
   await Firebase.initializeApp();
-  PushNotificationHandler.handleMessage(message, AppMode.TERMINATED);
+  // PushNotificationHandler.handleMessage(message, AppMode.TERMINATED);
 }
 
 @pragma("vm:entry-point")
@@ -159,6 +159,7 @@ class PushNotificationHandler {
       appName: 'Enigma',
       avatar: '${callModel.senderAvatar}',
       textAccept: 'Accept',
+
       textDecline: 'Decline',
       missedCallNotification: const NotificationParams(
         showNotification: true,
