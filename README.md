@@ -38,7 +38,9 @@ This application provides a seamless chat experience with support for voice and 
 - **Deeplink** implemented for chats and calls in Foreground, Background and Terminated state.
 
 ## Demo
-Coming soon...
+https://github.com/user-attachments/assets/75836646-9a8c-49e9-b2aa-4f7363a4569c
+
+
 
 
 ## Installation
