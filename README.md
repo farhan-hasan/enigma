@@ -44,6 +44,23 @@ https://github.com/user-attachments/assets/75836646-9a8c-49e9-b2aa-4f7363a4569c
 
 
 ## Installation
+
+This guide will help you connect your Firebase project to your Flutter app using FlutterFire.
+
+## Prerequisites
+- Flutter installed (`flutter --version`)
+- Firebase project created ([Firebase Console](https://console.firebase.google.com/))
+- `firebase-tools` installed globally (`npm install -g firebase-tools`)
+
+## Steps to Connect Firebase
+
+### Add Firebase to Your Flutter App
+Run the following command in your Flutter project root directory:
+
+```bash
+dart pub global activate flutterfire_cli
+flutterfire configure
+``` 
 Clone the repository:
 ```bash
   git clone https://github.com/Sifat-16/enigma.git
